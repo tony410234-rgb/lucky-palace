@@ -40,9 +40,38 @@ const SC={
   ${[20,60,330,370].map((x,i)=>`<path class="sway2" d="M${x} 830q-14-40 0-80t0-80t0-80" stroke="#2aa860" stroke-width="10" fill="none" stroke-linecap="round" style="animation-delay:-${i}s"/>`).join('')}
   ${em('🪸',120,830,44)}${em('🐚',290,860,30)}${em('⭐',230,880,26)}${em('🐠',80,200,34,'')}${em('🐟',320,300,28)}`)
 };
+
+/* ---- 보너스 진입용 가로 파노라마 (1600x900) ---- */
+const PW=(inner,defs='')=>`<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs>${defs}</defs>${inner}</svg>`;
+const sky=(id,a,b,c)=>`<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset=".55" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></linearGradient>`;
+const ground=(a,b)=>`<path d="M0 500H1600V900H0z" fill="url(#gr)"/><path d="M700 500L560 900H1040L900 500z" fill="${b}" opacity=".35"/>`;
+const PANO={
+ buffalo:()=>PW(`<rect width="1600" height="520" fill="url(#sk)"/><circle cx="800" cy="470" r="260" fill="#fff" opacity=".45"/><circle cx="800" cy="470" r="140" fill="#fffbe0"/>
+  <path d="M0 520V250h70v-40h110v40h40v270zM1360 520V290h60v-60h120v60h60v230z" fill="#c8502a"/><path d="M0 520V300h50v220zM1430 520V330h40v190z" fill="#8a2a10" opacity=".6"/>
+  <path d="M260 520v-60h50v-30h60v90zM1200 520v-70h70v70z" fill="#e08a4a" opacity=".8"/>${ground()}<path d="M0 500Q400 470 800 500T1600 495V520H0z" fill="#fff3c0" opacity=".6"/>
+  ${em('🌵',120,820,180)}${em('🌵',1480,850,200)}${em('🌵',330,640,80)}${em('🌵',1260,630,70)}`,sky('sk','#fff6c8','#ffd75a','#ffb03a')+sky('gr','#f6d28a','#e8a85a','#c07a3a')),
+ dragon:()=>PW(`<rect width="1600" height="560" fill="url(#sk)"/><circle cx="800" cy="300" r="220" fill="#ffe080" opacity=".5"/>
+  ${[[180,180,1.8],[1350,140,2],[520,330,1.2],[1080,360,1.4],[90,420,1.3],[1500,430,1.5]].map(([x,y,s])=>cloud(x,y,s*2,'#ffd34d',.55)).join('')}
+  <path d="M0 560L180 360 320 470 480 330 640 560zM960 560L1120 340 1260 460 1420 320 1600 470V560z" fill="#7a0a14" opacity=".8"/>
+  <path d="M0 560h1600V900H0z" fill="url(#gr)"/><path d="M200 640h260l-40-40H240zM1140 640h260l-40-40h-180z" fill="#3a0306"/>${lantern(300,40,2)}${lantern(1300,40,2)}`,sky('sk','#ffcf6a','#ff6a2a','#a00a14')+sky('gr','#5a0a10','#3a0306','#1a0204')),
+ tiger:()=>PW(`<rect width="1600" height="560" fill="url(#sk)"/><circle cx="800" cy="260" r="120" fill="#fff8d8"/><circle cx="800" cy="260" r="220" fill="#fff8d8" opacity=".2"/>
+  ${leaf(80,200,30,4,'#1f6a2a')}${leaf(1520,240,150,4,'#2a7a30')}${leaf(60,520,-20,4.5,'#165a20')}${leaf(1540,560,200,4.5,'#1f6a2a')}
+  <path d="M0 540h1600V900H0z" fill="url(#gr)"/>${leaf(200,860,-30,4,'#2a8a3a')}${leaf(1400,870,210,4,'#2a8a3a')}${em('🌺',300,700,90)}${em('🌺',1300,690,80)}`,sky('sk','#d8ff9a','#4aa84a','#0f4a1a')+sky('gr','#3a8a3a','#1f5a24','#0a2a0c')),
+ ocean:()=>PW(`<rect width="1600" height="900" fill="url(#sk)"/>${Array.from({length:8},(_,i)=>`<polygon points="${100+i*190},0 ${190+i*190},0 ${i*190-100},900 ${i*190-240},900" fill="#fff" opacity=".07"/>`).join('')}
+  <path d="M0 760Q400 720 800 750T1600 740V900H0z" fill="#e6c88a"/>${[60,140,1460,1540].map(x=>`<path d="M${x} 860q-30-80 0-160t0-160t0-160" stroke="#2aa860" stroke-width="22" fill="none" stroke-linecap="round"/>`).join('')}${em('🪸',300,860,140)}${em('🪸',1300,870,120)}${em('🐚',600,880,60)}`,sky('sk','#7ae0ff','#1a7ad0','#04204a')),
+ egypt:()=>PW(`<rect width="1600" height="560" fill="url(#sk)"/>${stars(60,400)}<circle cx="1250" cy="160" r="80" fill="#fff6d6"/>
+  <path d="M220 560L560 180 900 560zM820 560L1100 260 1380 560z" fill="url(#py)"/><path d="M560 180L900 560H700zM1100 260L1380 560H1220z" fill="#8a5418"/>
+  <path d="M0 540h1600V900H0z" fill="url(#gr)"/>${em('🌴',140,820,200)}${em('🌴',1460,840,220)}`,sky('sk','#2a0b52','#7a2a8a','#ff9a4a')+sky('gr','#e8b05a','#c8862a','#7a4a12')+lg('py','#ffe08a','#c8862a')),
+ panda:()=>PW(`<rect width="1600" height="560" fill="url(#sk)"/><path d="M0 560Q200 300 420 460T820 380T1200 440T1600 400V560z" fill="#d8a0e0" opacity=".7"/><path d="M0 560Q300 420 600 500T1200 470T1600 500V560z" fill="#b070c8" opacity=".7"/>
+  <path d="M0 540h1600V900H0z" fill="url(#gr)"/>${[40,110,1480,1550].map(x=>`<g transform="scale(1)">${bamboo(x)}</g>`).join('')}${lantern(400,60,2)}${lantern(1200,60,2)}${em('🌸',300,300,60)}${em('🌸',1300,340,50)}`,sky('sk','#ffe0f4','#ffa0d0','#c070e0')+sky('gr','#7ad07a','#4ab85a','#2a8a3a')),
+ piggy:()=>PW(`<rect width="1600" height="560" fill="url(#sk)"/><circle cx="1300" cy="140" r="70" fill="#ffe14a"/>${cloud(300,140,3)}${cloud(900,90,2.4,'#fff',.9)}${cloud(1450,260,2)}
+  <path d="M0 540Q400 420 800 500T1600 470V900H0z" fill="#6ad06a"/><path d="M0 600Q500 540 1000 590T1600 580V900H0z" fill="url(#gr)"/>
+  <g transform="translate(1150 380) scale(2)"><rect x="0" y="40" width="90" height="70" fill="#c82a1a"/><path d="M-8 44L45 0L98 44z" fill="#8a1a0a"/><rect x="30" y="66" width="30" height="44" fill="#fff"/></g>${em('🌻',150,840,160)}${em('🌻',1470,860,150)}`,sky('sk','#cff2ff','#8fdcff','#5ab8f0')+sky('gr','#5ac85a','#3aa040','#1f7a2a')),
+ lucky:()=>PW(`<rect width="1600" height="900" fill="url(#sk)"/>`,sky('sk','#e0203a','#5a0014','#120005'))
+};
 const D={
  egypt:{m:'🐈‍⬛',pl:['🏺','💰'],pr:['⚱️','🪙'],orn:['🪲','🪲'],fx:['✦','twk',12,'#ffd34d'],
-  win:['황금이다냥!','파라오의 보물!','한 번 더냥!'],big:['파라오의 축복이다냥!!','부자 됐다냥!!'],lose:['냥…','다음엔 꼭!'],idle:['파라오 냥이 등장','냥냥 황금 줄게']},
+  win:['신전의 보물이다','파라오가 허락했다','황금을 받아라'],big:['아누비스의 심판!!','사막의 왕이 되어라!!'],lose:['…아직이다','다시 도전하라'],idle:['신전의 수호자','황금의 문이 열린다']},
  buffalo:{m:'🦬',pl:['🌵','🪶'],pr:['🔥','🪙'],orn:['🦅','🌵'],fx:['•','rise',14,'#ffb03a'],
   win:['음머어!','달려라!','좋았어!'],big:['천둥이다!!','대평원의 왕!!'],lose:['흠…','한 번 더 달려!'],idle:['우다다다','들소 파워!']},
  lucky:{m:'🐰',pl:['🎩','🍀'],pr:['🎲','💰'],orn:['🍀','💎'],fx:['🪙','fall',8],
@@ -67,6 +96,7 @@ function fx([ch,mode,n,col]){
 }
 return {
  svg:id=>SC[id]?SC[id]():'<svg viewBox="0 0 10 10"></svg>',
+ pano:id=>(PANO[id]||PANO.lucky)(),
  fx:id=>{const f=D[id].fx.slice();f[2]=Math.max(3,Math.round(f[2]*.7));return fx(f)},
  get:id=>D[id]
 };

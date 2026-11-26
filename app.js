@@ -68,6 +68,7 @@ function popup(html,{autoMs=0,cls=''}={}){
 }
 function toast(t,ms=1400){const el=$('toast');el.textContent=t;el.classList.remove('on');el.offsetHeight;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),ms)}
 const TIERS=[[10,'BIG WIN'],[25,'MEGA WIN'],[50,'SUPER WIN'],[100,'EPIC WIN'],[300,'LEGENDARY']];
+const T1=(t,c='')=>`<span class="t3 pop ${c}"><span class="ex">${t}</span><span class="fr">${t}</span></span>`;
 const T3=t=>{const w=t.split(' ');return w.map(x=>`<span class="t3 pop"><span class="ex">${x}</span><span class="fr">${x}</span></span>`).join('')};
 const TCLS={'BIG WIN':'tier-big','MEGA WIN':'tier-mega','SUPER WIN':'tier-super','EPIC WIN':'tier-epic','LEGENDARY':'tier-legend'};
 function boom(n=1){if(RM)return;const cx0=innerWidth/2,cy0=innerHeight*.42;
@@ -136,9 +137,9 @@ const box=$('box');let reels=[],strips=[],tcols=[],tEls=[],C=70;
 function openGame(id){
  G=GAMES.byId[id];document.body.dataset.g=id;
  $('gtt').textContent=G.en;$('mtitle').innerHTML=G.en;$('ge1').textContent=$('ge2').textContent=G.hero;
- document.body.classList.toggle('jpon',!!G.jp);
+ document.body.classList.toggle('jpon',!!G.jp);document.body.classList.toggle('nobuy',id==='lucky');
  $('spin').querySelector('.spi').textContent={egypt:'🪲',buffalo:'🦬',lucky:'7 7 7',panda:'🐼',piggy:'🐷',dragon:'🐉',tiger:'🐾',ocean:'🫧'}[id]||'';
- const pk=['panda','piggy','dragon','lucky'].includes(id)?'pot':'pile';$('ped').src=U(PED(pk));document.querySelector('.mzone').dataset.ped=pk;$('jp').dataset.hero=G.hero;const LN=G.lines?G.lines.length:G.mode==='tumble'?'∞':243;$$('.pil b').forEach(e=>e.textContent=LN);$('clines').textContent=G.lines?`${G.lines.length} LINES · FEATURE`:G.mode==='tumble'?'SCATTER PAYS · TUMBLE':'243 WAYS · FEATURE';document.body.dataset.rows=G.rows;
+ const pk=['panda','piggy','lucky'].includes(id)?'pot':'pile';$('ped').src=U(PED(pk));document.querySelector('.mzone').dataset.ped=pk;$('jp').dataset.hero=G.hero;const LN=G.lines?G.lines.length:G.mode==='tumble'?'∞':243;$$('.pil b').forEach(e=>e.textContent=LN);$('clines').textContent=G.lines?`${G.lines.length} LINES · FEATURE`:G.mode==='tumble'?'SCATTER PAYS · TUMBLE':'243 WAYS · FEATURE';document.body.dataset.rows=G.rows;
  const dc=DECOR.get(id);$('scene').innerHTML=`<img class="scimg" src="${U(DECOR.svg(id))}" alt="">`+DECOR.fx(id);$('mascE').innerHTML=IMG(CHARS[id]);$('crest').src=U(CHARS[id]);$('propL').innerHTML=dc.pl.map(e=>`<span>${e}</span>`).join('');$('propR').innerHTML=dc.pr.map(e=>`<span>${e}</span>`).join('');$('ornL').textContent=dc.orn[0];$('ornR').textContent=dc.orn[1];
  document.documentElement.style.setProperty('--rows',G.rows);
  box.style.gridTemplateColumns=`repeat(${G.cols},minmax(0,1fr))`;
@@ -273,7 +274,7 @@ function clearWins(){const s=$('lines');if(s)s.innerHTML='';box.classList.remove
 async function holdSpinUI(hs,b){
  const hsEl=$('hs'),bar=$('hsbar');
  AUDIO.setIntense(true);
- await popup(`<h3>HOLD &amp; SPIN</h3><p>코인 ${hs.init.filter(Boolean).length}개 고정! 리스핀 3회, 새 코인이 나오면 3회로 초기화.<br>${hs.init.length}칸을 모두 채우면 <b style="color:#ff5252">GRAND JACKPOT</b></p><button class="go">시작!</button>`,{autoMs:auto?2500:0});
+ await cinematic(0,{big:'HOLD',line:'&amp; SPIN BONUS',sub:`코인 ${hs.init.filter(Boolean).length}개 고정! 리스핀 3회 · 새 코인이 나오면 3회로 초기화<br>${hs.init.length}칸을 모두 채우면 <b style="color:#ff5252">GRAND JACKPOT</b>`});
  const board=hs.init.slice();
  const lab=x=>IMG(G.draw(x,b)),N=board.length;
  hsEl.innerHTML=board.map(x=>`<div class="hc">${x?lab(x):''}</div>`).join('');hsEl.classList.add('on');
@@ -299,7 +300,7 @@ async function holdSpinUI(hs,b){
 }
 async function jackpot(t,v){
  const p=document.querySelector(`.plq[data-t="${t}"]`);p&&p.classList.add('hitjp');sfx.jp();buzz([100,50,100,50,300]);boom(t==='GRAND'?3:2);flash();shake();if(t==='GRAND'||t==='MAJOR')shower(true);
- await popup(`<div class="bl"></div><div>${T3(t)}</div><div>${T3('JACKPOT').replace(/t3 pop/,'t3 sm pop')}</div><div class="num big" style="margin-top:8px">${fmt(v)}</div><button class="go">받기</button>`,{autoMs:auto?2600:0,cls:'jpc t-'+t});
+ await popup(`<div class="bl"></div><div>${T3(t)}</div><div>${T3('JACKPOT').replace(/t3 pop/,'t3 t3s pop')}</div><div class="num big" style="margin-top:8px">${fmt(v)}</div><button class="go">받기</button>`,{autoMs:auto?2600:0,cls:'jpc t-'+t});
  shower(false);
  p&&p.classList.remove('hitjp');
 }
@@ -333,7 +334,7 @@ async function wheelUI(w,b){return await wheelUp(b,'벨 3개! 휠 업그레이�
 
 async function jpWheelUI(w,b){
  AUDIO.setIntense(true);sfx.jp();flash();shake();
- await popup(`<h3>JACKPOT WHEEL!</h3><div class="big" style="font-family:${GAMES.EF}">🐯</div><p>잭팟 확정! 어떤 잭팟일까?</p><button class="go">돌리기</button>`,{autoMs:auto?1800:0});
+ await cinematic(0,{big:'WHEEL',line:'JACKPOT GUARANTEED',sub:'잭팟 확정! 어떤 잭팟일까?',btn:'SPIN'});
  const segs=G.SEG.map(t=>[t,1,GAMES.JCOL[t]]);
  await spinWheel('JACKPOT WHEEL',segs,w.i,t=>t);
  const v=jpVal(w.tier,b);pool()[w.tier]=0;$('wres').innerHTML=`<b style="font-size:28px;color:#ffd34d">${w.tier}!</b>`;
@@ -342,13 +343,77 @@ async function jpWheelUI(w,b){
  if(!fs)AUDIO.setIntense(false);
  return v;
 }
+/* ---------- free game cinematic ---------- */
+const TOPS={buffalo:'buf',dragon:'drg',tiger:'tig',ocean:'wha',egypt:'msk',panda:'pan',piggy:'P',lucky:'r7'};
+const CMODE={dragon:'fly',ocean:'rise'};
+const CDUST={buffalo:'💨',tiger:'🐾',piggy:'🪙',panda:'🌸',egypt:'✨',dragon:'🔥',ocean:'🫧',lucky:'🍀'};
+let buying=false;
+async function cinematic(n,o={}){
+ const id=G.id,stage=document.querySelector('.stage');
+ AUDIO.setIntense(true);AUDIO.duck(true);sfx.whoosh();
+ if(RM){await fsSign(n,o);AUDIO.duck(false);return}
+ const up=stage.animate([{transform:'translateY(0)'},{transform:'translateY(-150vh)'}],{duration:650,easing:'cubic-bezier(.5,0,.8,.4)',fill:'forwards'});
+ await sleep(480);
+ const cv=document.createElement('div');cv.className='cine';
+ cv.innerHTML=`<img class="cbg" src="${U(DECOR.pano(id))}" alt=""><div class="cglow"></div>`;
+ document.body.appendChild(cv);cv.animate([{opacity:0},{opacity:1}],{duration:350,fill:'forwards'});
+ await sleep(350);
+ const W=innerWidth,H=innerHeight,N=9,img=o.heart?U(`<svg viewBox="0 0 100 100">${ICONS['💖']||ICONS['💌']}</svg>`):U(CHARS[id]),mode=o.heart?'rise':CMODE[id]||'run',sz=Math.min(W,H)*.6,hy=H*.6;
+ sfx.rumble(2.8);
+ const shk=setInterval(()=>{shake();buzz(25)},380);
+ for(let i=0;i<N;i++){
+  const d=document.createElement('img');d.src=img;d.className='runner';d.style.width=sz+'px';d.style.marginLeft=(-sz/2)+'px';d.style.marginTop=(-sz)+'px';cv.appendChild(d);
+  const lane=(i%5-2)*1.1+(Math.random()-.5)*.7,ph=Math.random()*6,fr=[];
+  for(let k=0;k<=14;k++){const t=k/14;let x,y,sc,r=0,op=1;
+   if(mode==='fly'){sc=.05+t*t*2.6;x=W/2+Math.sin(t*6+ph)*W*.18*(1+t*2)+lane*W*.04*t*4;y=H*.35+Math.cos(t*5+ph)*H*.06+t*t*H*.8;r=Math.sin(t*6+ph)*18}
+   else if(mode==='rise'){sc=.4+t*1.5;x=W/2+lane*W*.13+Math.sin(t*8+ph)*30;y=H*1.25-t*H*1.5;r=Math.sin(t*7+ph)*10}
+   else{sc=.06+t*t*3.2;x=W/2+lane*W*.05*(1+t*8);y=hy+t*t*H*.95-Math.abs(Math.sin(t*22+ph))*sz*.12*sc;r=Math.sin(t*22+ph)*5}
+   if(t>.85)op=1-(t-.85)/.15;
+   fr.push({transform:`translate(${x}px,${y}px) scale(${sc}) rotate(${r}deg)`,opacity:op})}
+  d.animate(fr,{duration:2000,delay:i*210,easing:'linear',fill:'both'});
+ }
+ const dust=o.heart?'💕':CDUST[id],dt=setInterval(()=>{for(let j=0;j<3;j++){const s=document.createElement('span');s.className='sp';s.textContent=dust;s.style.fontSize=(30+Math.random()*40)+'px';cv.appendChild(s);const x=W*(.2+Math.random()*.6),y=H*(.6+Math.random()*.35);
+  s.animate([{transform:`translate(${x}px,${y}px) scale(.3)`,opacity:.9},{transform:`translate(${x+(Math.random()-.5)*200}px,${y-80-Math.random()*120}px) scale(1.6)`,opacity:0}],{duration:900,easing:'ease-out'}).onfinish=()=>s.remove()}},140);
+ await sleep(2000+N*210-300);
+ clearInterval(shk);clearInterval(dt);flash();sfx.boom();
+ clearWins();const saved=cur;cur=Array.from({length:G.cols},()=>Array.from({length:G.rows},()=>({s:TOPS[id]})));drawStatic();
+ cv.animate([{opacity:1},{opacity:0}],{duration:400,fill:'forwards'}).onfinish=()=>cv.remove();
+ up.cancel();stage.animate([{transform:'translateY(-150vh)'},{transform:'translateY(14px)',offset:.78},{transform:'translateY(0)'}],{duration:700,easing:'ease-out'});
+ await sleep(720);shake();buzz(80);
+ const cols=G.mode==='tumble'?tcols:reels;
+ for(let c=0;c<cols.length;c++){cols[c].querySelectorAll('.cell,.tc').forEach(e=>e.classList.add('gold'));sfx.ding(c);await sleep(170)}
+ burst(60);await sleep(450);
+ await fsSign(n,o);
+ cur=saved;drawStatic();AUDIO.duck(false);
+}
+async function fsSign(n,o={}){
+ sfx.sign();boom(1);
+ const big=o.big||String(n),ln=o.line||'FREE GAMES WON';
+ await popup(`<div class="dia${big.length>3?' wide':''}"><div>${T3(big)}<span class="t3 t3s"><span class="ex">${ln}</span><span class="fr">${ln}</span></span></div></div>${o.sub?`<p class="csub">${o.sub}</p>`:''}<button class="go start">${o.btn||'START'}</button>`,{cls:'fsign',autoMs:auto?2600:0});
+}
+async function buffalonize(u){
+ AUDIO.sfx.sign();flash();shake();
+ const ic=k=>`<img src="${U(`<svg viewBox="0 0 100 100">${ICONS[k]}</svg>`)}" alt="">`;
+ const from={eag:'🦅',wolf:'🐺',cou:'🐆',elk:'🦌'}[u];
+ await popup(`<div>${T1('ANIMALS GOT','t3s')}</div><div>${T1('BUFFALONIZED','t3s')}</div><div class="upg">${ic(from)}<span class="arr">MOVE LIKE</span>${ic('🦬')}</div><p>이번 프리게임 동안 이 동물은 전부 버팔로로 나와요!</p><button class="go">좋아!</button>`,{cls:'bw tier-epic',autoMs:auto?2600:0});
+}
+async function buyFS(){
+ if(busy||fs||!G||G.id==='lucky')return;
+ const b=bet(),cost=b*60;
+ const ok=await new Promise(res=>{pop.innerHTML=`<div class="card wood"><h3>프리게임 구입</h3><div class="price">🪙 ${short(cost)}</div><p style="color:#ffe9c0">현재 베팅 ${short(b)}의 60배 · 바로 프리게임 시작!</p><div class="yn"><button class="n" data-v="0">✕</button><button class="y" data-v="1">✓</button></div></div>`;pop.classList.add('on');
+  pop.onclick=e=>{const x=e.target.closest('[data-v]');if(x){pop.onclick=null;pop.classList.remove('on');res(x.dataset.v==='1')}else if(!e.target.closest('.card')){pop.onclick=null;pop.classList.remove('on');res(false)}}});
+ if(!ok)return;
+ if(S.bal<cost){toast('코인 부족!');return}
+ S.bal-=cost;renderBal(true);S.xp+=cost;buying=true;force='fs';sfx.chaching();save();spin();
+}
 /* ---------- main spin ---------- */
 async function spin(){
  if(reelsMoving){if(G.mode!=='tumble')slam();return}
  if(busy||!G)return;
  AUDIO.init();hideDbl();
  const free=!!fs,b=free?fs.bet:bet();
- if(!free){
+ if(!free&&buying){buying=false}
+ else if(!free){
   if(S.bal<b){auto=false;renderBtns();toast('코인 부족!');buzz(80);$('charge').animate&&showScreenHint();return}
   S.bal-=b;renderBal(false);
   if(G.jp){const p=pool();for(const t in p)p[t]+=b*({GRAND:.004,MAJOR:.003,MINOR:.002,MINI:.001})[t]}
@@ -410,14 +475,13 @@ async function spin(){
   if(free)fs.total+=fx;else{S.bal+=fx;renderBal(true)}
   setWin(free?fs.total:fx,free?'FREE SPIN WIN':'BONUS WIN');
  }
+ if(o.upgrade&&free){for(const u of o.upgrade){await buffalonize(u)}banner()}
  if(o.lvlUp&&free){sfx.lvl();burst(50);await popup(`<h3>LEVEL UP!</h3><p>돼지 ${fs.st.pigs}마리 수집!</p><div class="big num">x${o.lvlUp}</div><p>코인 배수 x${o.lvlUp} · 프리스핀 +10회</p><button class="go">계속</button>`,{autoMs:auto?2200:0})}
  if(o.fsAward){
   await sleep(500);mascot('big');
   if(free){fs.left+=o.fsAward;sfx.scat();toast(`+${o.fsAward} FREE SPINS!`,1600);banner();await sleep(1200)}
   else{
-   sfx.jp();burst(60);
-   const extra={egypt:'모든 당첨금 3배!',buffalo:'와일드에 x2·x3·x5 배수!',panda:'배수 폭죽 등장!',piggy:'돼지 4마리마다 코인 배수 업!'}[G.id]||'';
-   await popup(`<h3>FREE SPINS</h3><div class="num big">${o.fsAward}회</div><p>${extra}</p><button class="go">시작!</button>`,{autoMs:auto?2600:0});
+   await cinematic(o.fsAward);
    fs={left:o.fsAward,total:0,bet:b,n:0,st:G.fsInit(o.fsAward)};document.body.classList.add('fs');AUDIO.setIntense(true);banner();
   }
  }
@@ -437,7 +501,7 @@ async function spin(){
 }
 function showWinsT(wins){box.classList.add('dim');wins.forEach(w=>w.cells.forEach(([c,r])=>tEls[c][r]?.classList.add('hit')))}
 function spinBtnIdle(){$('spin').classList.remove('stop');$('spin').querySelector('.spt').textContent='SPIN'}
-function banner(){if(!fs)return;const ex=G.id==='egypt'?' · x3':G.id==='piggy'?` · 코인 x${fs.st.lvl} · 🐷${fs.st.pigs}`:'';$('banner').textContent=`FREE SPINS ${fs.n} / ${fs.n+fs.left}${ex}`}
+function banner(){if(!fs)return;const ex=G.id==='egypt'?' · x3':G.id==='piggy'?` · 코인 x${fs.st.lvl} · 🐷${fs.st.pigs}`:G.id==='buffalo'?` · 황금🦬 ${fs.st.golds}/4${fs.st.upg.length?` · 변신 ${fs.st.upg.length}`:''}`:'';$('banner').textContent=`FREE SPINS ${fs.n} / ${fs.n+fs.left}${ex}`}
 function showScreenHint(){if(S.bal<BETS[0])toast('로비에서 무료충전!',1500)}
 
 /* ---------- double up ---------- */
@@ -471,7 +535,7 @@ const PICKE={egypt:'🏺',buffalo:'💰',lucky:'🎁',panda:'🥠',piggy:'🥚',
 const PT=[['MINI',10,60],['MINOR',30,28],['MAJOR',100,10.5],['GRAND',1000,1.5]];
 async function pickBonus(b,opt={}){const PE=opt.emoji||PICKE[G.id];
  AUDIO.setIntense(true);sfx.jp();flash();shake();burst(40);
- await popup(`<h3>${opt.title||'MYSTERY BONUS!'}</h3><div class="big" style="font-family:${GAMES.EF}">${PE}</div><p>12개 중 같은 잭팟 3개를 먼저 모으면 당첨!<br>${opt.jp?'잭팟 확정! MINI~GRAND':'MINI 10배 · MINOR 30배 · MAJOR 100배 · GRAND 1000배'}</p><button class="go">시작!</button>`,{autoMs:auto?2200:0});
+ await cinematic(0,{big:'PICK',line:opt.jp?'JACKPOT PICK BONUS':'MYSTERY PICK BONUS',sub:`<b>${opt.title||'미스터리 보너스'}</b><br>12개 중 같은 잭팟 3개를 먼저 모으면 당첨!<br>${opt.jp?'잭팟 확정! MINI~GRAND':'MINI 10배 · MINOR 30배 · MAJOR 100배 · GRAND 1000배'}`});
  const tg=opt.tier?PT.findIndex(t=>t[0]===opt.tier):wpick(PT.map((t,i)=>[i,t[2]]));
  const seq=[tg,tg];PT.forEach((t,i)=>{if(i!==tg){const k=Math.floor(Math.random()*3);for(let j=0;j<k;j++)seq.push(i)}});
  for(let i=seq.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[seq[i],seq[j]]=[seq[j],seq[i]]}seq.push(tg);
@@ -520,7 +584,7 @@ function mascot(kind){const m=$('masc'),dc=DECOR.get(G.id),L=[...(dc[kind]||dc.i
  const talk=kind==='big'||kind==='idle'||(kind==='win'&&Math.random()<.2)||(kind==='lose'&&Math.random()<.35);const b=$('bub');if(talk){b.textContent=L[Math.floor(Math.random()*L.length)];b.classList.add('on')}clearTimeout(mbT);mbT=setTimeout(()=>b.classList.remove('on'),kind==='big'?2800:1700);
  setTimeout(()=>m.classList.remove('jump','dance','sad','spin3d','big'),kind==='big'?2800:1300)}
 $('masc').onclick=()=>{mascot('idle');const m=$('masc');m.classList.add('spin3d');setTimeout(()=>m.classList.remove('spin3d'),1100);AUDIO.voice(SIG[G.id].v)};
-const SIG={egypt:{e:['🪲','✨','🪙','✨'],m:'swirl',v:'meow'},buffalo:{e:['💨','🪶','🪙','💨'],m:'quake',v:'moo'},lucky:{e:['🍀','7️⃣','💎','🎲','🪙'],m:'burst',v:'squeak'},
+const SIG={egypt:{e:['🪲','✨','🪙','✨'],m:'swirl',v:'growl'},buffalo:{e:['💨','🪶','🪙','💨'],m:'quake',v:'moo'},lucky:{e:['🍀','7️⃣','💎','🎲','🪙'],m:'burst',v:'squeak'},
  panda:{e:['🥟','🍡','🌸','🥟'],m:'throw',v:'boing'},piggy:{e:['🪙','🪙','💰','🪙'],m:'fountain',v:'oink'},dragon:{e:['🔥','🔥','🧧','✨'],m:'breath',v:'roar'},
  tiger:{e:['🐾','✨','🍌','🐾'],m:'roar',v:'growl'},ocean:{e:['🫧','💎','🐚','🫧'],m:'bubbles',v:'bloop'}};
 function sigFX(level){
@@ -552,7 +616,7 @@ const LADT={egypt:{t:'피라미드 오르기',top:'👑',st:'🧱',tok:'🐫'},o
 async function ladderBonus(b){
  const T=LADT[G.id]||LADT.egypt,M=[2,4,6,10,15,25,40,70,120,250],P=[.9,.85,.8,.75,.7,.62,.55,.5,.45,.4];
  AUDIO.setIntense(true);sfx.jp();flash();
- await popup(`<h3>${T.t}!</h3><div class="big" style="font-family:${GAMES.EF}">${T.top}</div><p>한 칸씩 올라갈수록 상금이 커져요. 실패하면 상금 절반!<br>꼭대기 ${M[9]}배 · 언제든 멈추고 받을 수 있어요</p><button class="go">출발!</button>`,{autoMs:auto?2000:0});
+ await cinematic(0,{big:'CLIMB',line:'LADDER BONUS',sub:`<b>${T.t}</b><br>한 칸씩 올라갈수록 상금이 커져요. 실패하면 상금 절반!<br>꼭대기 ${M[9]}배 · 언제든 멈추고 받을 수 있어요`,btn:'GO'});
  let lv=-1,prize=0,state='go';
  const cell=i=>{const c=i<lv?'done':i===lv?(state==='fail'?'fail':'done cur'):'';return `<div class="${c}"><em>${i===lv?(state==='fail'?'💥':T.tok):i===9?T.top:T.st}</em>x${M[i]}<small>${short(M[i]*b)}</small></div>`};
  const order=[9,8,7,6,5,0,1,2,3,4];
@@ -570,7 +634,7 @@ async function ladderBonus(b){
 const WTIERS=[{n:'브론즈 휠',c:['#cd7f32','#8a4a1a','#e0a060'],s:[5,8,10,'UP',15,20,5,10,'UP',25,8,15]},{n:'실버 휠',c:['#c0c8d8','#6a7a9a','#e8eef8'],s:[20,30,'UP',50,25,40,'UP',75,30,60,'UP',100]},{n:'골드 휠',c:['#ffd34d','#c8840f','#fff3b0'],s:[100,150,200,300,500,'GRAND',100,250,150,200,300,120]}];
 async function wheelUp(b,sub){
  AUDIO.setIntense(true);sfx.jp();flash();
- await popup(`<h3>UPGRADE WHEEL!</h3><div class="big" style="font-family:${GAMES.EF}">🎡</div><p>${sub||'보너스 휠!'}<br>UP이 나오면 더 큰 휠로 업그레이드 — 골드 휠 최대 GRAND</p><button class="go">돌리기</button>`,{autoMs:auto?1800:0});
+ await cinematic(0,{big:'WHEEL',line:'UPGRADE BONUS',sub:`${sub||'보너스 휠!'}<br>UP이 나오면 더 큰 휠로 업그레이드 — 골드 휠 최대 GRAND`,btn:'SPIN'});
  let v=0;
  for(let t=0;t<3;t++){
   const W=WTIERS[t],i=Math.floor(Math.random()*W.s.length),r=W.s[i];
@@ -587,7 +651,7 @@ const MS=['🍒','🔔','💎','7️⃣','👑'],MSW=[5,4,3,2,1],MP3=[10,20,40,8
 async function miniSlot(b){
  const T=G.id==='piggy'?'꿀꿀 미니 슬롯':'딤섬 미니 슬롯';
  AUDIO.setIntense(true);sfx.jp();flash();
- await popup(`<h3>${T}!</h3><div class="big" style="font-family:${GAMES.EF}">🎰</div><p>슬롯 속 슬롯! 무료 7회<br>같은 그림 3개면 최대 200배</p><button class="go">시작!</button>`,{autoMs:auto?1800:0});
+ await cinematic(7,{line:'MINI SLOT SPINS',sub:`<b>${T}</b><br>슬롯 속 슬롯! 무료 7회 · 같은 그림 3개면 최대 200배`});
  let total=0,left=7;
  const msp=()=>MS[wpick(MSW.map((w,i)=>[i,w]))];
  pop.innerHTML=`<div class="card bcard"><h3>${T}</h3><div class="mslot">${[0,1,2].map(i=>`<div class="mreel"><div class="ms" id="ms${i}"><span>${msp()}</span></div></div>`).join('')}</div><div class="prize" id="mtot">0</div><p id="mleft">남은 스핀 ${left}</p><div class="mpay">${MS.map((s,i)=>`<span>${s}${s}${s} ${MP3[i]}배</span>`).join('')}<span>아무거나 2개 1~10배</span></div></div>`;pop.classList.add('on');pop.onclick=null;
@@ -607,6 +671,7 @@ async function miniSlot(b){
 const T_=(a,b)=>S.turbo?b:a;
 async function heartBonus(b){
  const L=window.LOVE||{};const notes=L.notes&&L.notes.length?L.notes:['사랑해 💕'];
+ await cinematic(0,{big:'LOVE',line:'HEART BONUS',sub:`${L.her||'소현'}만을 위한 하트 보너스 💕`,heart:1});
  AUDIO.sfx.heart();heartRain(50);
  for(let i=0;i<3;i++){const d=document.createElement('div');d.className='giant';d.textContent='💖';d.style.fontSize='min(30vw,30vh)';d.style.left=(30+i*20)+'%';document.body.appendChild(d);d.animate([{transform:'translateY(-80vh) scale(.5) rotateY(0)'},{transform:'translateY(0) scale(1.1) rotateY(360deg)',offset:.6},{transform:'translateY(0) scale(1) rotateY(720deg)',opacity:1,offset:.85},{transform:'scale(0)',opacity:0}],{duration:1800,delay:i*200,easing:'cubic-bezier(.3,1.3,.5,1)'}).onfinish=()=>d.remove()}
  await sleep(1700);
@@ -677,6 +742,7 @@ sp.addEventListener('pointerdown',()=>{held=false;holdT=setTimeout(()=>{held=tru
 ['pointerup','pointerleave','pointercancel'].forEach(ev=>sp.addEventListener(ev,()=>clearTimeout(holdT)));
 sp.addEventListener('click',()=>{if(held){held=false;return}if(auto&&!reelsMoving){auto=false;renderBtns();toast('AUTO 정지',800);return}spin()});
 $('lever').onclick=()=>spin();
+$('buy').onclick=()=>{sfx.click();buyFS()};
 $('auto').onclick=()=>{auto=!auto;renderBtns();sfx.click();if(auto&&!busy)spin()};
 $('turbo').onclick=()=>{S.turbo=!S.turbo;renderBtns();sfx.click();save()};
 $$('.bgmB').forEach(b=>b.onclick=()=>{S.bgm=!S.bgm;AUDIO.init();AUDIO.set('bgm',S.bgm);renderBtns();save()});
@@ -696,6 +762,47 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){auto=false
 addEventListener('resize',()=>{if(G&&!busy&&document.body.dataset.g!=='lobby'){size();drawStatic()}});
 
 renderBal(false);renderLvl();renderBtns();renderCharge();renderJP();renderLW();
+
+/* ---------- 주인장 리모컨 (원격 선물·설정) ---------- */
+const RAPI='https://api.github.com/repos/tony410234-rgb/lucky-palace/contents/remote.json';
+let rBusy=false;
+async function remoteFetch(){
+ try{const r=await fetch(RAPI+'?t='+Date.now(),{cache:'no-store',headers:{Accept:'application/vnd.github.raw+json'}});if(r.ok)return await r.json()}catch(e){}
+ try{const r=await fetch('remote.json?t='+Date.now(),{cache:'no-store'});if(r.ok)return await r.json()}catch(e){}
+ return null}
+async function remoteCheck(){
+ if(rBusy||document.hidden)return;
+ if(busy||fs||pop.classList.contains('on')){clearTimeout(remoteCheck.t);remoteCheck.t=setTimeout(remoteCheck,5000);return}
+ rBusy=true;
+ try{
+  const d=await remoteFetch();if(!d||!Array.isArray(d.items))return;
+  S.rseen=S.rseen||[];
+  if(!S.rinit){S.rinit=1;/* 처음 설치 시: 예전 설정·예약은 건너뛰고 선물·메시지만 받기 */d.items.forEach(it=>{if(it.t!=='coins'&&it.t!=='msg')S.rseen.push(it.id)});save()}
+  for(const it of d.items){
+   if(!it||!it.id||S.rseen.includes(it.id))continue;
+   if(busy||fs||pop.classList.contains('on')){remoteCheck.t=setTimeout(remoteCheck,5000);break}
+   S.rseen.push(it.id);if(S.rseen.length>300)S.rseen=S.rseen.slice(-300);save();
+   await remoteApply(it);
+  }
+ }finally{rBusy=false}
+}
+async function remoteApply(it){
+ const L=window.LOVE||{},own=L.owner||'태율랜드 주인장';
+ const esc=t=>String(t||'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'})[c]);
+ if(it.t==='coins'){const a=Math.max(0,Math.min(1e9,+it.amt||0));if(!a)return;
+  sfx.jp();flash();heartRain(30);
+  await popup(`<div class="hb">🎁</div><h3>주인장의 선물이 도착했어요!</h3>${it.msg?`<div class="note">"${esc(it.msg)}"</div>`:''}<div class="prize">+${fmt(a)}</div><div class="sig" style="color:#fff">- ${own} -</div><button class="go">고마워 자기야 💕</button>`,{cls:'hcard'});
+  S.bal+=a;save();renderBal(true);try{shower(true);sfx.pile();setTimeout(()=>shower(false),2600)}catch(e){}
+ }else if(it.t==='msg'){AUDIO.sfx.heart();heartRain(36);
+  await popup(`<div class="hb">💌</div><h3>주인장의 편지</h3><div class="note">"${esc(it.msg)}"</div><div class="sig" style="color:#fff">- ${own} -</div><button class="go">나도 사랑해 💕</button>`,{cls:'hcard'});
+ }else if(it.t==='luck'){S.luck=Math.max(.5,Math.min(20,+it.val||1));save();
+ }else if(it.t==='setbal'){S.bal=Math.max(0,Math.min(1e12,+it.val||0));save();renderBal(true);
+  if(it.msg)await popup(`<div class="hb">💰</div><h3>잔액이 새로 설정됐어요</h3><div class="note">"${esc(it.msg)}"</div><div class="prize">${fmt(S.bal)}</div><button class="go">확인</button>`,{cls:'hcard'});
+ }else if(it.t==='force'){if(FORCE[it.val])force=it.val;
+ }
+}
+setTimeout(remoteCheck,4000);setInterval(remoteCheck,90000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(remoteCheck,1200)});
 /* ---------- 태율랜드 ---------- */
 function heartRain(n=40){const d=document.createElement('div');d.className='hrain';d.innerHTML=Array.from({length:n},()=>`<span style="left:${Math.random()*96}vw;font-size:${16+Math.random()*26}px;animation-duration:${3+Math.random()*4}s;animation-delay:${Math.random()*2.5}s">${['❤️','💕','💖','🥰','💗'][Math.floor(Math.random()*5)]}</span>`).join('');document.body.appendChild(d);setTimeout(()=>d.remove(),9000)}
 function loveCard(){const L=window.LOVE||{};const notes=L.notes&&L.notes.length?L.notes:['사랑해 💕'];const day=Math.floor((Date.now()+9*3600e3)/864e5);$('note').textContent=notes[day%notes.length];

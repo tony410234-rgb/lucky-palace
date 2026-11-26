@@ -439,7 +439,7 @@ body[data-g=lucky] #spin .spi{font:900 .55em/1 'Lilita One',sans-serif;color:#ff
 .t3{position:relative;display:inline-block;font:400 clamp(58px,min(18vw,30vh),150px)/.92 'Lilita One','Arial Black',sans-serif;letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
 .t3 .ex{display:block;color:var(--t3d,#c2410c);-webkit-text-stroke:.07em var(--t3s,#5a1404);text-shadow:0 1px 0 var(--t3d,#c2410c),0 2px 0 var(--t3d,#c2410c),0 3px 0 var(--t3m,#a8320a),0 4px 0 var(--t3m,#a8320a),0 5px 0 var(--t3m,#a8320a),0 6px 0 var(--t3s,#6a1a04),0 7px 0 var(--t3s,#6a1a04),0 8px 0 var(--t3s,#6a1a04),0 9px 0 var(--t3s,#5a1404),0 10px 0 var(--t3s,#5a1404),0 18px 26px #000c}
 .t3 .fr{position:absolute;left:0;top:0;right:0;background:linear-gradient(var(--t1,#fffbe0) 8%,var(--t2,#ffe066) 38%,var(--t3,#ffb020) 62%,var(--t4,#ff8a00));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:.025em #fff8}
-.t3.sm{font-size:clamp(34px,min(10vw,15vh),78px)}
+.t3.t3s{font-size:clamp(34px,min(10vw,15vh),78px)}
 .bw .t3{display:block;margin:0 auto}
 .bw .bwn{margin-top:6px}
 .bw .bwn .t3{font-size:clamp(40px,min(12vw,16vh),90px);--t3d:#8a4a00;--t3m:#6a3a00;--t3s:#3a1a00;--t1:#fff;--t2:#fff3a0;--t3:#ffd34d;--t4:#ffb020}
@@ -467,6 +467,39 @@ body[data-g=lucky] #spin .spi{font:900 .55em/1 'Lilita One',sans-serif;color:#ff
  body[data-g=lucky] #game #spin{width:clamp(96px,16vw,130px);height:clamp(62px,15vh,80px)}
  #lobby .cjp{top:6px}
 }
+
+/* ===== bonus cinematic ===== */
+.cine{position:fixed;inset:0;z-index:18;overflow:hidden;background:radial-gradient(120% 70% at 50% 0%,var(--b1),var(--b2) 38%,var(--b3));pointer-events:none}
+.cine .cbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.02);animation:cpush 3s ease-in forwards}
+@keyframes cpush{to{transform:scale(1.2)}}
+.cine .cglow{position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 55%,#fff8 0,transparent 70%);mix-blend-mode:screen;animation:aurap 1s ease-in-out infinite}
+.cine .runner{position:absolute;left:0;top:0;transform-origin:50% 100%;will-change:transform,opacity;filter:drop-shadow(0 16px 10px #000a)}
+.cine .ctitle{position:absolute;left:0;right:0;top:12%;text-align:center}
+.gold img{filter:sepia(1) saturate(3.5) hue-rotate(-10deg) brightness(1.15) drop-shadow(0 0 8px #ffd34d);animation:land .45s ease-out}
+.fsign{background:none!important;border:0!important;box-shadow:none!important;width:min(620px,100%)!important;animation:signin .7s cubic-bezier(.3,1.5,.5,1)!important}
+@keyframes signin{from{transform:scale(0) rotate(-8deg)}}
+.dia{position:relative;width:min(88vw,560px,110vh);aspect-ratio:2.3;margin:0 auto;clip-path:polygon(13% 0,87% 0,100% 50%,87% 100%,13% 100%,0 50%);background:linear-gradient(135deg,#fffbe0,#ffcc33 25%,#8a5408 50%,#ffe58a 70%,#a86a08);padding:9px;filter:drop-shadow(0 0 24px #ffd34d)}
+.dia>div{width:100%;height:100%;clip-path:polygon(13% 0,87% 0,100% 50%,87% 100%,13% 100%,0 50%);background:radial-gradient(#4a3010,#160c02);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background-image:radial-gradient(circle,#fff6c0 0 2.5px,transparent 3.5px),radial-gradient(#4a3010,#160c02);background-size:22px 22px,100% 100%;background-position:0 0,0 0}
+.dia>div{background-image:radial-gradient(#4a3010,#160c02)}
+.dia .t3{font-size:clamp(54px,min(16vw,22vh),120px)}
+.dia.wide .t3:not(.t3s){font-size:clamp(40px,min(11vw,15vh),84px)}
+.fsign .csub{color:#fff;font-size:14px;line-height:1.5;margin:10px auto 4px;max-width:520px;text-shadow:0 2px 4px #000;background:rgba(0,0,0,.45);border-radius:12px;padding:8px 12px}
+.dia .t3.t3s{font-size:clamp(20px,min(5.5vw,7vh),38px)}
+.fsign .go.start{background:linear-gradient(#7ad0ff,#1a6ad0)!important;color:#fff!important;box-shadow:0 5px 0 #0a3a8a!important;font:900 22px/1 'Lilita One',sans-serif!important;letter-spacing:2px;min-width:170px}
+.wood{background:linear-gradient(#b87a3a,#7a4a1a 40%,#5a3010)!important;border:5px solid #3a1e08!important;box-shadow:0 0 0 3px #e0a52a,0 12px 30px #000c!important;border-radius:18px!important}
+.wood h3{color:#ffe066!important;text-shadow:0 3px 0 #3a1e08!important}
+.wood .price{font:900 clamp(30px,8vw,44px)/1.1 Cinzel,serif;color:#fff;text-shadow:0 3px 0 #3a1e08;margin:8px 0}
+.wood .yn{display:flex;gap:16px;justify-content:center;margin-top:10px}
+.wood .yn button{width:90px;height:56px;border-radius:14px;font-size:30px;color:#fff;box-shadow:0 5px 0 #0008}
+.wood .yn .n{background:linear-gradient(#ff6a6a,#c0102a)}.wood .yn .y{background:linear-gradient(#8aff6a,#1fa83a)}
+.upg{display:flex;align-items:center;justify-content:center;gap:12px;margin:10px 0}
+.upg img{width:clamp(70px,20vw,110px);height:auto}
+.upg .arr{font:900 18px 'Lilita One',sans-serif;color:#fff;background:linear-gradient(#ff6a3a,#c02a0a);padding:8px 14px;border-radius:10px;clip-path:polygon(0 0,80% 0,100% 50%,80% 100%,0 100%)}
+.scene::after{content:"";position:absolute;inset:0;background:linear-gradient(#ff4a9acc,#ff8a3a88 35%,#ffb03a22 65%,transparent);opacity:0;transition:opacity 1.2s;pointer-events:none}
+body.fs .scene::after{opacity:1}
+body:not(.nobuy) #lvlBtn{display:none}
+body.nobuy #buy{display:none}
+#buy{background:linear-gradient(#ffb03a,#c05a0a)!important;border-color:#ffe08a!important;color:#fff;font-size:11px;line-height:1.1}
 @media (prefers-reduced-motion:reduce){.gcard .hero,.gcard .rays,.bw h3,.hit,.antic{animation:none!important}}
 </style>
 </head>
@@ -548,6 +581,7 @@ body[data-g=lucky] #spin .spi{font:900 .55em/1 'Lilita One',sans-serif;color:#ff
       <button class="sm" id="auto">AUTO</button>
       <button class="sm" id="turbo">터보</button>
       <button class="sm" id="lvlBtn"><span class="lvT">LV 1</span></button>
+      <button class="sm" id="buy">프리게임<br>구입</button>
     </div>
     <button id="spin"><i class="spi"></i><b class="spt">SPIN</b><small>길게: 오토</small></button>
   </div>
@@ -559,7 +593,7 @@ body[data-g=lucky] #spin .spi{font:900 .55em/1 'Lilita One',sans-serif;color:#ff
 <div id="toast"></div>
 <div id="flash"></div>
 <canvas id="fx"></canvas>
-<script src="chars.js"></script>
+<script src="chars.js"></script><script src="heroes.js"></script>
 <script src="art.js"></script>
 <script src="games.js"></script>
 <script src="audio.js"></script>
