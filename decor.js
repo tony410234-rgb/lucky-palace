@@ -66,7 +66,8 @@ function fx([ch,mode,n,col]){
   return `<span style="--x:${mode==='fly'?'0':x};--d:${d};--dl:${dl};--a:${a};--s:${sz};--y:${y};${col?`color:${col};`:''}${mode==='fly'?`top:0;`:''}">${ch}</span>`}).join('')}</div>`;
 }
 return {
- scene:id=>(SC[id]?SC[id]():'')+fx(D[id].fx),
+ svg:id=>SC[id]?SC[id]():'<svg viewBox="0 0 10 10"></svg>',
+ fx:id=>{const f=D[id].fx.slice();f[2]=Math.max(3,Math.round(f[2]*.7));return fx(f)},
  get:id=>D[id]
 };
 })();

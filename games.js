@@ -28,16 +28,31 @@ function linesEval(g,lines,pay,stop){
 
 /* ---------- art ---------- */
 const EF="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif";
-const tile=(g,inner,sw=4.5)=>`<svg viewBox="0 0 100 100"><rect x="4" y="4" width="92" height="92" rx="14" fill="url(#${g})" stroke="url(#gG)" stroke-width="${sw}"/><rect x="10" y="9" width="80" height="32" rx="10" fill="#fff" opacity=".14"/><g filter="url(#ds)">${inner}</g></svg>`;
+const SERIF="Georgia,'Noto Serif','Times New Roman',serif",SANS="'Arial Black','Noto Sans KR','Noto Sans CJK KR',Arial,sans-serif";
+const DARK={lR:'#4a000c',lB:'#06164a',lGr:'#06300f',lP:'#22064a',lO:'#4a1e00'};
+const tile=(g,inner,sw=0)=>`<svg viewBox="0 0 100 100"><rect x="3" y="5" width="94" height="94" rx="16" fill="#000" opacity=".5"/><rect x="2" y="1" width="96" height="95" rx="16" fill="url(#gF)"/><rect x="5.5" y="4.5" width="89" height="88" rx="13" fill="url(#gF2)"/><rect x="8" y="7" width="84" height="83" rx="11" fill="url(#${g})"/><rect x="8" y="7" width="84" height="83" rx="11" fill="url(#vig)"/><path d="M19 9h62a9 9 0 0 1 9 9v13q-40 12-80 0V18a9 9 0 0 1 9-9z" fill="url(#gls)"/><g filter="url(#ds)">${inner}</g>${sw>5?'<rect x="3.5" y="2.5" width="93" height="92" rx="15" fill="none" stroke="#fff" stroke-width="2" opacity=".75"/>':''}</svg>`;
 const emo=(e,s=60,y=72,x=50)=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="${s}" style="font-family:${EF}">${e}</text>`;
 const etile=(g,e,s,y)=>tile(g,emo(e,s,y));
-const royal=(L,g,font='Cinzel,serif',wt=900)=>`<svg viewBox="0 0 100 100"><text x="50" y="${L.length>1?76:82}" text-anchor="middle" font-family="${font}" font-weight="${wt}" font-size="${L.length>1?58:78}" fill="url(#${g})" stroke="#1a0530" stroke-width="3.5" paint-order="stroke" filter="url(#ds)">${L}</text></svg>`;
-const label=(t,y=86,fs=22,font='Cinzel,serif',fill='url(#gG)')=>`<text x="50" y="${y}" text-anchor="middle" font-family="${font}" font-weight="900" font-size="${fs}" fill="${fill}" stroke="#2a0008" stroke-width="3.5" paint-order="stroke">${t}</text>`;
-const badge=(svg,t,col='#ff2a44')=>svg.replace(/<\/svg>$/,`<g><circle cx="77" cy="77" r="19" fill="${col}" stroke="#fff" stroke-width="3"/><text x="77" y="84" text-anchor="middle" font-family="Lilita One,sans-serif" font-size="19" fill="#fff">${t}</text></g></svg>`);
-const coinSVG=(lab,jp,font='Black Han Sans,sans-serif',grad='cG')=>{const col=jp==='MAJOR'?'#b04bff':jp==='MINOR'?'#2f7dff':jp==='MINI'?'#22c24f':jp==='GRAND'?'#ff2a44':null;
- const fz=jp?(jp.length>4?17:19):lab.length>5?17:lab.length>4?20:24;
- return `<svg viewBox="0 0 100 100"><g filter="url(#ds)"><circle cx="50" cy="50" r="44" fill="url(#${grad})" stroke="#6e3f03" stroke-width="3"/><circle cx="50" cy="50" r="35" fill="${col||'#b36d06'}" opacity="${col?.95:.35}" stroke="#fff3b0" stroke-width="2.5"/><path d="M22 34a32 32 0 0 1 30-18" stroke="#fff" stroke-width="5" fill="none" opacity=".55" stroke-linecap="round"/><text x="50" y="${50+fz*.36}" text-anchor="middle" font-family="${jp?'Cinzel,serif':font}" font-weight="900" font-size="${fz}" fill="#fff" stroke="#3a1500" stroke-width="3" paint-order="stroke">${lab}</text></g></svg>`};
-
+const royal=(L,g,font)=>{const f=font&&/Lilita|Bungee/.test(font)?SANS:SERIF,big=L.length>1,y=big?73:79,fs=big?54:74;
+ const t=(dy,fill,ex='')=>`<text x="50" y="${y+dy}" text-anchor="middle" font-family="${f}" font-weight="900" font-size="${fs}" fill="${fill}" ${ex}>${L}</text>`;
+ return `<svg viewBox="0 0 100 100"><g filter="url(#ds2)">${t(6,'#0a0010')}${t(4,DARK[g]||'#220030')}${t(2,DARK[g]||'#220030')}${t(0,`url(#${g})`,'stroke="#fff3c0" stroke-width="1.6"')}${t(0,'url(#hiG)')}</g><path d="M78 14l4 6-4 6-4-6z" fill="#fff" opacity=".9"/></svg>`};
+const label=(t,y=86,fs=22,font,fill='url(#gG)')=>`<text x="50" y="${y}" text-anchor="middle" font-family="${font&&/Cinzel|Rye/.test(font)?SERIF:SANS}" font-weight="900" font-size="${fs}" fill="${fill}" stroke="#2a0008" stroke-width="3.5" paint-order="stroke">${t}</text>`;
+const badge=(svg,t,col='#ff2a44')=>svg.replace(/<\/svg>$/,`<g><circle cx="77" cy="77" r="19" fill="${col}" stroke="#fff" stroke-width="3"/><text x="77" y="84" text-anchor="middle" font-family="${SANS}" font-weight="900" font-size="18" fill="#fff">${t}</text></g></svg>`);
+const coinSVG=(lab,jp,font,grad='cG')=>{const col=jp==='MAJOR'?'#b04bff':jp==='MINOR'?'#2f7dff':jp==='MINI'?'#22c24f':jp==='GRAND'?'#ff2a44':null;
+ const fz=jp?(jp.length>4?16:18):lab.length>5?16:lab.length>4?19:23;
+ return `<svg viewBox="0 0 100 100"><ellipse cx="50" cy="94" rx="34" ry="5" fill="#000" opacity=".4"/><g filter="url(#ds)"><circle cx="50" cy="52" r="44" fill="#6e3f03"/><circle cx="50" cy="49" r="44" fill="url(#${grad})"/><circle cx="50" cy="49" r="36" fill="${col||'#9a5a04'}" opacity="${col?.95:.35}"/><circle cx="50" cy="49" r="36" fill="none" stroke="#fff3b0" stroke-width="3"/><circle cx="50" cy="49" r="40.5" fill="none" stroke="#6e3f03" stroke-width="1.5" stroke-dasharray="3 3"/><path d="M20 34a33 33 0 0 1 32-20" stroke="#fff" stroke-width="6" fill="none" opacity=".6" stroke-linecap="round"/><text x="50" y="${49+fz*.36}" text-anchor="middle" font-family="${jp?SERIF:SANS}" font-weight="900" font-size="${fz}" fill="#fff" stroke="#3a1500" stroke-width="3.5" paint-order="stroke">${lab}</text></g></svg>`};
+const DEFS=`<linearGradient id="gG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff8c8"/><stop offset=".4" stop-color="#ffd34d"/><stop offset=".75" stop-color="#c8840f"/><stop offset="1" stop-color="#6e3f03"/></linearGradient>
+<linearGradient id="gF" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fffbe0"/><stop offset=".25" stop-color="#ffd34d"/><stop offset=".5" stop-color="#a86a08"/><stop offset=".72" stop-color="#ffe58a"/><stop offset="1" stop-color="#6e3f03"/></linearGradient>
+<linearGradient id="gF2" x1="1" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#b8770c"/><stop offset="1" stop-color="#5a3002"/></linearGradient>
+<radialGradient id="vig" cx=".5" cy=".42" r=".7"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></radialGradient>
+<linearGradient id="gls" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="hiG" x1="0" y1="0" x2="0" y2="1"><stop offset=".15" stop-color="#fff" stop-opacity=".75"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient>
+${[['tR','#ff6a7a','#d0102a','#5a0610'],['tB','#6ab4ff','#1a5ad0','#081a5a'],['tGr','#6af09a','#1a9a4a','#063a18'],['tP','#c890ff','#7a2ad0','#26064a'],['tT','#5af0e0','#0aa098','#033a36'],['tN','#ffb060','#a02a6a','#1a0638'],['tO','#ffc880','#e06a10','#5a2200'],['tY','#fff090','#e0a810','#6a4600'],['tBr','#e0aa72','#8a5424','#3a1e08'],['tPk','#ffc0e4','#e0509a','#6a0a40'],['tSky','#b0e8ff','#3a9ae0','#0a3a7a'],['tK','#7a7a90','#2a2a3a','#05050a']].map(([i,a,b,c])=>`<linearGradient id="${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset=".55" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></linearGradient>`).join('')}
+${[['lR','#ffd0d0','#ff2a44','#a0001a'],['lB','#d8eeff','#3a8aff','#0a2a9a'],['lGr','#d8ffdc','#2ad05a','#0a6a24'],['lP','#f4d8ff','#b04bff','#4a0b9a'],['lO','#fff4c0','#ffa21f','#a04000']].map(([i,a,b,c])=>`<linearGradient id="${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset=".5" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></linearGradient>`).join('')}
+<radialGradient id="cG" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#fffbe0"/><stop offset=".35" stop-color="#ffd34d"/><stop offset=".8" stop-color="#c07a08"/><stop offset="1" stop-color="#7a4503"/></radialGradient>
+<radialGradient id="fG" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#fff6c0"/><stop offset=".35" stop-color="#ff9a1f"/><stop offset=".8" stop-color="#d0201a"/><stop offset="1" stop-color="#6a0606"/></radialGradient>
+<filter id="ds" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#000" flood-opacity=".65"/></filter>
+<filter id="ds2" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000" flood-opacity=".7"/></filter>`;
 /* =============== 1. EGYPT =============== */
 const EG=(()=>{
  const WT={T:13,J:13,Q:12,K:11,A:10,ank:7,eye:6,cat:5,scb:4,msk:3,W:[0,3,3,3,3],S:2.6,C:12};
@@ -133,8 +148,8 @@ const LK=(()=>{
  const BARS=['b1','b2','b3'];
  const cell=()=>{const s=wsel(WT,0);return s==='W2'?{s:'W',m:2}:s==='W5'?{s:'W',m:5}:{s}};
  const F="Bungee,sans-serif";
- const bar=n=>`<svg viewBox="0 0 100 100"><g filter="url(#ds)">${Array.from({length:n},(_,i)=>{const h=n===1?34:n===2?26:21,gap=4,tot=n*h+(n-1)*gap,y=50-tot/2+i*(h+gap);return `<rect x="10" y="${y}" width="80" height="${h}" rx="6" fill="#111" stroke="url(#gG)" stroke-width="3"/><text x="50" y="${y+h*.78}" text-anchor="middle" font-family="${F}" font-size="${h*.8}" fill="#fff">BAR</text>`}).join('')}</g></svg>`;
- const seven=g=>`<svg viewBox="0 0 100 100"><text x="50" y="88" text-anchor="middle" font-family="${F}" font-size="96" fill="url(#${g})" stroke="url(#gG)" stroke-width="5" paint-order="stroke" filter="url(#ds)">7</text></svg>`;
+ const bar=n=>`<svg viewBox="0 0 100 100"><g filter="url(#ds)">${Array.from({length:n},(_,i)=>{const h=n===1?34:n===2?26:21,gap=4,tot=n*h+(n-1)*gap,y=50-tot/2+i*(h+gap);return `<rect x="10" y="${y+2}" width="80" height="${h}" rx="6" fill="#000" opacity=".6"/><rect x="10" y="${y}" width="80" height="${h}" rx="6" fill="url(#tK)" stroke="url(#gF)" stroke-width="3"/><rect x="13" y="${y+2}" width="74" height="${h*.4}" rx="4" fill="url(#gls)"/><text x="50" y="${y+h*.76}" text-anchor="middle" font-family="${SANS}" font-weight="900" font-size="${h*.72}" fill="#fff">BAR</text>`}).join('')}</g></svg>`;
+ const seven=g=>`<svg viewBox="0 0 100 100"><g filter="url(#ds2)"><text x="50" y="93" text-anchor="middle" font-family="${SANS}" font-weight="900" font-size="96" fill="#3a1a00">7</text><text x="50" y="88" text-anchor="middle" font-family="${SANS}" font-weight="900" font-size="96" fill="url(#${g})" stroke="url(#gG)" stroke-width="5" paint-order="stroke">7</text><text x="50" y="88" text-anchor="middle" font-family="${SANS}" font-weight="900" font-size="96" fill="url(#hiG)">7</text></g></svg>`;
  const ART={X:'<svg viewBox="0 0 100 100"></svg>',ch:`<svg viewBox="0 0 100 100"><g filter="url(#ds)">${emo('🍒',72,78)}</g></svg>`,
   b1:bar(1),b2:bar(2),b3:bar(3),b7:seven('lB'),r7:seven('lR'),
   bell:`<svg viewBox="0 0 100 100"><g filter="url(#ds)">${emo('🔔',64,70)}${label('BONUS',94,17,F,'#fff')}</g></svg>`,
@@ -175,7 +190,7 @@ const PD=(()=>{
  let K=1;
  const BOMBS=[[2,30],[3,22],[4,16],[5,12],[6,8],[8,6],[10,5],[12,3],[15,2.5],[20,2],[25,1.2],[50,.5],[100,.15]];
  const cell=fs=>{if(fs&&Math.random()<.035)return {s:'B',m:pick(BOMBS)};return {s:wsel(WT,0)}};
- const ball=(g,e,s=64,ring='')=>`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="url(#${g})" ${ring||'stroke="#fff6" stroke-width="3"'}/><ellipse cx="38" cy="28" rx="18" ry="9" fill="#fff" opacity=".25"/><g filter="url(#ds)">${emo(e,s,50+s*.36)}</g></svg>`;
+ const ball=(g,e,s=64,ring='')=>`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="95" rx="32" ry="4" fill="#000" opacity=".35"/><circle cx="50" cy="51" r="45" fill="#000" opacity=".3"/><circle cx="50" cy="48" r="45" fill="url(#gF)" ${ring?'':'opacity=".0"'}/><circle cx="50" cy="48" r="${ring?40:44}" fill="url(#${g})" stroke="#fff8" stroke-width="2.5"/><circle cx="50" cy="48" r="${ring?40:44}" fill="url(#vig)"/><ellipse cx="38" cy="26" rx="20" ry="10" fill="url(#gls)"/><g filter="url(#ds)">${emo(e,s,48+s*.36)}</g></svg>`;
  const F="Lilita One,sans-serif";
  const ART={pan:ball('tK','🐼',66,'stroke="url(#gG)" stroke-width="6"'),lan:ball('tR','🏮'),dum:ball('tY','🥟'),dan:ball('tPk','🍡'),tea:ball('tGr','🍵'),bam:ball('tT','🎋'),pea:ball('tO','🍑'),oni:ball('tSky','🍙'),
   S:`<svg viewBox="0 0 100 100"><g filter="url(#ds)">${emo('🧧',70,72)}${label('FREE',94,20,F,'#ffd34d')}</g></svg>`,
@@ -370,6 +385,6 @@ const OC=(()=>{
 })();
 const pick_=pick;
 
-return {list:[DR,EG,TG,OC,BF,LK,PD,PG],byId:{egypt:EG,buffalo:BF,lucky:LK,panda:PD,piggy:PG,dragon:DR,tiger:TG,ocean:OC},JPS,JPW,JCOL,coinSVG,short,emo,EF};
+return {DEFS,list:[DR,EG,TG,OC,BF,LK,PD,PG],byId:{egypt:EG,buffalo:BF,lucky:LK,panda:PD,piggy:PG,dragon:DR,tiger:TG,ocean:OC},JPS,JPW,JCOL,coinSVG,short,emo,EF};
 })();
 if(typeof module!=='undefined')module.exports=GAMES;
