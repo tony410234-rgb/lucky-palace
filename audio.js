@@ -40,7 +40,8 @@ const VO={
  moo:()=>{tone(150,.7,0,'sawtooth',.06,110);tone(152,.7,0,'square',.025,112)},
  squeak:()=>{tone(1400,.08,0,'sine',.12,2200);tone(1600,.1,.1,'sine',.1,2600)},
  grunt:()=>{tone(180,.18,0,'sawtooth',.07,120);tone(160,.22,.2,'sawtooth',.06,100)},
- oink:()=>{tone(320,.12,0,'sawtooth',.07,220);tone(300,.14,.14,'sawtooth',.07,200)}
+ oink:()=>{tone(320,.12,0,'sawtooth',.07,220);tone(300,.14,.14,'sawtooth',.07,200)},
+ meow:()=>{tone(520,.18,0,'triangle',.12,880);tone(880,.3,.16,'triangle',.1,480)}
 };
 const sfx={
  click:()=>{fm(1800,.05,0,.05,2,200)},

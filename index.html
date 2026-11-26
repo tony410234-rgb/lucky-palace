@@ -233,7 +233,7 @@ body.fs .banner{display:block}
 .pil.l{left:4px}.pil.r{right:4px}
 .pil b{width:30px;height:30px;flex:none;border-radius:50%;display:grid;place-items:center;font:900 12px/1 Arial,sans-serif;color:#fff;background:radial-gradient(circle at 35% 30%,#ff9ad0,#c0106a 60%,#5a0030);border:2px solid #fff3b0;box-shadow:0 3px 6px #0008;text-shadow:0 1px 0 #0008}
 .pil::before,.pil::after{content:"";position:absolute;left:3px;right:3px;height:6px;border-radius:3px;background:#5a3002;opacity:.5}.pil::before{top:16px}.pil::after{bottom:16px}
-.jp{position:relative;margin-top:22px;padding:22px 10px 8px;border-radius:26px 26px 12px 12px;background:linear-gradient(#3a0b52,#14052e);border:3px solid transparent;background-clip:padding-box;box-shadow:0 0 0 3px #e0a52a,0 0 0 5px #6e3f03,0 8px 20px #0009,inset 0 0 18px #000;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px}
+.jp{position:relative;margin-top:44px;padding:22px 10px 8px;border-radius:26px 26px 12px 12px;background:linear-gradient(#3a0b52,#14052e);border:3px solid transparent;background-clip:padding-box;box-shadow:0 0 0 3px #e0a52a,0 0 0 5px #6e3f03,0 8px 20px #0009,inset 0 0 18px #000;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px}
 .jp::before{content:attr(data-hero);position:absolute;left:50%;top:-30px;transform:translateX(-50%);font-size:44px;line-height:1;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;filter:drop-shadow(0 4px 4px #000a);z-index:2}
 .jp::after{content:"";position:absolute;left:50%;top:-14px;width:84px;height:30px;margin-left:-42px;border-radius:40px 40px 0 0;background:linear-gradient(#ffe58a,#b8770c);box-shadow:0 0 0 2px #6e3f03}
 .jp .plq{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:4px 10px;border-radius:10px;background:linear-gradient(#05010d,#1a0b2e);border:1px solid #ffd34d66}
@@ -380,6 +380,17 @@ body[data-g=dragon]{--aura:#ff6a2a99}body[data-g=ocean]{--aura:#6ae0ff99}body[da
  .wheelwrap{width:min(300px,62vh)}
 }
 
+/* ===== illustrated characters ===== */
+img.ei{width:1.05em;height:1.05em;display:inline-block;vertical-align:-.18em;object-fit:contain;pointer-events:none}
+.m3d img{width:1.2em;height:auto;display:block;filter:drop-shadow(0 10px 8px #0008)}
+.masc{filter:none!important}
+.giant img{width:100%;height:auto;display:block}
+.gcard .hero img{width:1.35em;height:auto;display:block}
+.gcard .hero{top:4%!important}
+.jp::before{display:none!important}
+.crest{position:absolute;left:50%;top:-62px;width:76px;transform:translateX(-50%);z-index:3;filter:drop-shadow(0 4px 4px #000a);pointer-events:none}
+#game .mtitle em img{width:2.2em;height:auto;display:block;margin:0 auto}
+@media (orientation:landscape) and (max-height:600px){#game .crest{display:none}}
 /* ===== v2.1 per-game skins ===== */
 :root{--con1:#2a1a5a;--con2:#0c0624;--btnA:#5a2fd0;--btnB:#2a0f7a;--btnE:#8a6bff;--spA:#8dff7a;--spB:#1fb83a;--spC:#0a6a1a;--spE:#d9ffd0;--spS:#064a10;--spR:50%;--spT:#fff}
 body[data-g=egypt]{--con1:#3a1a6a;--con2:#12052a;--btnA:#7a4cff;--btnB:#3a138a;--btnE:#ffd34d;--spA:#fff3b0;--spB:#e0a52a;--spC:#7a4a05;--spE:#fff8d8;--spS:#4a2a00;--spT:#4a1a00}
@@ -412,11 +423,11 @@ body[data-g=lucky] #spin .spi{font:900 .55em/1 'Lilita One',sans-serif;color:#ff
 .mzone{min-height:260px}
 .mzone{--pw:min(62vw,250px);--pb:0px}
 .pedestal{position:absolute;left:50%;bottom:var(--pb);width:var(--pw);transform:translateX(-50%);z-index:0;pointer-events:none}
-.mzone[data-ped=pot] .masc{margin-bottom:calc(var(--pb) + var(--pw)*.3)}
-.mzone[data-ped=pile] .masc{margin-bottom:calc(var(--pb) + var(--pw)*.17)}
+.mzone[data-ped=pot] .masc{margin-bottom:calc(var(--pb) + var(--pw)*.17)}
+.mzone[data-ped=pile] .masc{margin-bottom:calc(var(--pb) + var(--pw)*.04)}
 .mzone .props{margin-bottom:var(--pb)}
 .mzone>.props,.mzone>.masc{z-index:1}
-.masc .m3d{position:relative;top:-.12em}
+.masc .m3d{position:relative}
 /* lobby jackpot labels */
 .cjp{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:2;text-align:center;font:900 12px/1 'Lilita One',sans-serif;color:#ffe066;text-shadow:0 2px 0 #7a3b00;white-space:nowrap}
 .cjp b{display:block;margin-top:3px;padding:3px 10px;border-radius:999px;background:#0009;border:1px solid #ffd34d88;color:#fff;font:900 12px/1.2 Cinzel,serif}
@@ -508,7 +519,7 @@ body[data-g=lucky] #spin .spi{font:900 .55em/1 'Lilita One',sans-serif;color:#ff
     <div class="ibs" style="display:flex;gap:6px"><button class="ib bgmB" aria-label="배경음악">🎵</button><button class="ib sfxB" aria-label="효과음">🔊</button></div>
   </div>
   <div class="gtitle" id="gtitle"><span class="ge" id="ge1"></span><span class="gt" id="gtt"></span><span class="ge" id="ge2"></span></div>
-  <div class="jp" id="jp">
+  <div class="jp" id="jp"><img class="crest" id="crest" alt="">
     <div class="plq g" data-t="GRAND"><b>GRAND</b><span class="num">0</span></div>
     <div class="plq ma" data-t="MAJOR"><b>MAJOR</b><span class="num">0</span></div>
     <div class="plq mi" data-t="MINOR"><b>MINOR</b><span class="num">0</span></div>
@@ -548,6 +559,8 @@ body[data-g=lucky] #spin .spi{font:900 .55em/1 'Lilita One',sans-serif;color:#ff
 <div id="toast"></div>
 <div id="flash"></div>
 <canvas id="fx"></canvas>
+<script src="chars.js"></script>
+<script src="art.js"></script>
 <script src="games.js"></script>
 <script src="audio.js"></script>
 <script src="decor.js"></script>

@@ -1,7 +1,7 @@
 const DECOR=(()=>{
 const R=(a,b)=>a+Math.random()*(b-a);
 const EF="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif";
-const em=(e,x,y,s,cls='')=>`<text x="${x}" y="${y}" font-size="${s}" text-anchor="middle" class="${cls}" style="font-family:${EF}">${e}</text>`;
+const em=(e,x,y,s,cls='')=>{const I=typeof ICONS!=='undefined'&&ICONS[e];if(I){const w=s*1.1,cy=y-s*.36;return `<g transform="translate(${(x-w/2).toFixed(1)} ${(cy-w/2).toFixed(1)}) scale(${(w/100).toFixed(3)})">${I}</g>`}return `<text x="${x}" y="${y}" font-size="${s}" text-anchor="middle" class="${cls}" style="font-family:${EF}">${e}</text>`};
 const stars=(n,h=420,col='#fff')=>Array.from({length:n},()=>`<circle cx="${R(0,400).toFixed(0)}" cy="${R(0,h).toFixed(0)}" r="${R(.6,2).toFixed(1)}" fill="${col}" opacity="${R(.3,.9).toFixed(2)}"/>`).join('');
 const W=(inner,defs='')=>`<svg viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice"><defs>${defs}</defs>${inner}</svg>`;
 const lg=(id,a,b,o1=1,o2=1)=>`<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}" stop-opacity="${o1}"/><stop offset="1" stop-color="${b}" stop-opacity="${o2}"/></linearGradient>`;
@@ -12,7 +12,7 @@ const cloud=(x,y,s,col='#fff',o=1)=>`<g opacity="${o}" transform="translate(${x}
 const SC={
  egypt:()=>W(`${stars(70)}<circle cx="320" cy="120" r="90" fill="#fff3c4" opacity=".1"/><circle cx="320" cy="120" r="44" fill="#fff6d6"/><circle cx="306" cy="110" r="8" fill="#e8dcb0"/><circle cx="330" cy="135" r="5" fill="#e8dcb0"/>
   <path d="M-20 760L120 590L260 760z" fill="url(#py)"/><path d="M120 590L260 760H170z" fill="#7a4a12"/><path d="M200 780L320 640L440 780z" fill="url(#py)"/><path d="M320 640L440 780H360z" fill="#6a3e0e"/>
-  <path d="M0 760Q120 720 220 750T400 740V900H0z" fill="#8a5418"/><path d="M0 820Q160 780 400 815V900H0z" fill="#4a2a0a"/>${em('🌴',40,770,70)}${em('🌴',372,800,60)}${em('🐪',280,812,40)}`,lg('py','#ffd36a','#b5741f')),
+  <path d="M0 760Q120 720 220 750T400 740V900H0z" fill="#8a5418"/><path d="M0 820Q160 780 400 815V900H0z" fill="#4a2a0a"/>${em('🌴',40,770,70)}${em('🌴',372,800,60)}`,lg('py','#ffd36a','#b5741f')),
  buffalo:()=>W(`<circle cx="200" cy="700" r="160" fill="#ffb03a" opacity=".25"/><circle cx="200" cy="700" r="100" fill="#ffd36a"/>
   <path d="M0 690h60v-80h70v80h40v-40h50v40h90v-120h60v120h30V900H0z" fill="#7a2a10"/><path d="M0 740h400V900H0z" fill="#5a1a08"/><path d="M0 790Q200 760 400 795V900H0z" fill="#3a1004"/>
   ${em('🌵',50,800,64)}${em('🌵',360,820,52)}${em('🦅',90,180,40,'')}${em('🦅',300,260,30,'')}`),
@@ -41,8 +41,8 @@ const SC={
   ${em('🪸',120,830,44)}${em('🐚',290,860,30)}${em('⭐',230,880,26)}${em('🐠',80,200,34,'')}${em('🐟',320,300,28)}`)
 };
 const D={
- egypt:{m:'🐫',pl:['🏺','💰'],pr:['⚱️','🪙'],orn:['🪲','🪲'],fx:['✦','twk',12,'#ffd34d'],
-  win:['황금이다!','사막의 보물!','한 번 더!'],big:['파라오의 축복!!','부자 됐다!!'],lose:['모래바람이…','다음엔 꼭!'],idle:['낙타도 돈 좋아해','피라미드 가자!']},
+ egypt:{m:'🐈‍⬛',pl:['🏺','💰'],pr:['⚱️','🪙'],orn:['🪲','🪲'],fx:['✦','twk',12,'#ffd34d'],
+  win:['황금이다냥!','파라오의 보물!','한 번 더냥!'],big:['파라오의 축복이다냥!!','부자 됐다냥!!'],lose:['냥…','다음엔 꼭!'],idle:['파라오 냥이 등장','냥냥 황금 줄게']},
  buffalo:{m:'🦬',pl:['🌵','🪶'],pr:['🔥','🪙'],orn:['🦅','🌵'],fx:['•','rise',14,'#ffb03a'],
   win:['음머어!','달려라!','좋았어!'],big:['천둥이다!!','대평원의 왕!!'],lose:['흠…','한 번 더 달려!'],idle:['우다다다','들소 파워!']},
  lucky:{m:'🐰',pl:['🎩','🍀'],pr:['🎲','💰'],orn:['🍀','💎'],fx:['🪙','fall',8],

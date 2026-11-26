@@ -31,7 +31,7 @@ const EF="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif";
 const SERIF="Georgia,'Noto Serif','Times New Roman',serif",SANS="'Arial Black','Noto Sans KR','Noto Sans CJK KR',Arial,sans-serif";
 const DARK={lR:'#4a000c',lB:'#06164a',lGr:'#06300f',lP:'#22064a',lO:'#4a1e00'};
 const tile=(g,inner,sw=0)=>`<svg viewBox="0 0 100 100"><rect x="3" y="5" width="94" height="94" rx="16" fill="#000" opacity=".5"/><rect x="2" y="1" width="96" height="95" rx="16" fill="url(#gF)"/><rect x="5.5" y="4.5" width="89" height="88" rx="13" fill="url(#gF2)"/><rect x="8" y="7" width="84" height="83" rx="11" fill="url(#${g})"/><rect x="8" y="7" width="84" height="83" rx="11" fill="url(#vig)"/><path d="M19 9h62a9 9 0 0 1 9 9v13q-40 12-80 0V18a9 9 0 0 1 9-9z" fill="url(#gls)"/><g filter="url(#ds)">${inner}</g>${sw>5?'<rect x="3.5" y="2.5" width="93" height="92" rx="15" fill="none" stroke="#fff" stroke-width="2" opacity=".75"/>':''}</svg>`;
-const emo=(e,s=60,y=72,x=50)=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="${s}" style="font-family:${EF}">${e}</text>`;
+const emo=(e,s=60,y=72,x=50)=>{const I=typeof ICONS!=='undefined'&&ICONS[e];if(I){const w=s*1.08,cy=y-s*.36;return `<g transform="translate(${(x-w/2).toFixed(1)} ${(cy-w/2).toFixed(1)}) scale(${(w/100).toFixed(3)})">${I}</g>`}return `<text x="${x}" y="${y}" text-anchor="middle" font-size="${s}" style="font-family:${EF}">${e}</text>`};
 const etile=(g,e,s,y)=>tile(g,emo(e,s,y));
 const royal=(L,g,font)=>{const f=font&&/Lilita|Bungee/.test(font)?SANS:SERIF,big=L.length>1,y=big?73:79,fs=big?54:74;
  const t=(dy,fill,ex='')=>`<text x="50" y="${y+dy}" text-anchor="middle" font-family="${f}" font-weight="900" font-size="${fs}" fill="${fill}" ${ex}>${L}</text>`;
