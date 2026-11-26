@@ -9,7 +9,11 @@ const bamboo=x=>`<g class="sway2"><rect x="${x}" y="0" width="16" height="900" f
 const lantern=(x,y,s=1)=>`<g class="sway" transform="translate(${x} ${y}) scale(${s})"><path d="M0 -60v40" stroke="#5a2a00" stroke-width="2"/><rect x="-14" y="-24" width="28" height="6" rx="2" fill="#ffd34d"/><ellipse cx="0" cy="6" rx="24" ry="28" fill="#e0202a"/><ellipse cx="-6" cy="0" rx="8" ry="18" fill="#ff6a5a" opacity=".6"/><path d="M-24 6h48M-20 -10h40M-20 22h40" stroke="#a00a14" stroke-width="2"/><rect x="-14" y="32" width="28" height="6" rx="2" fill="#ffd34d"/><path d="M0 38v18" stroke="#ffd34d" stroke-width="3"/><circle cx="0" cy="6" r="30" fill="#ff8a3a" opacity=".15"/></g>`;
 const leaf=(x,y,r,s,c)=>`<ellipse cx="${x}" cy="${y}" rx="${70*s}" ry="${22*s}" fill="${c}" transform="rotate(${r} ${x} ${y})"/><path d="M${x-60*s*Math.cos(r*Math.PI/180)} ${y-60*s*Math.sin(r*Math.PI/180)}L${x+60*s*Math.cos(r*Math.PI/180)} ${y+60*s*Math.sin(r*Math.PI/180)}" stroke="#0a3a10" stroke-width="2" opacity=".5"/>`;
 const cloud=(x,y,s,col='#fff',o=1)=>`<g opacity="${o}" transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="0" rx="40" ry="18" fill="${col}"/><ellipse cx="-22" cy="-10" rx="22" ry="18" fill="${col}"/><ellipse cx="14" cy="-16" rx="26" ry="22" fill="${col}"/></g>`;
+const temple=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M-130 -150L0 -210L130 -150Z" fill="#f4ecff" stroke="#c8b4e8" stroke-width="3"/><path d="M-80 -165L0 -195L80 -165Z" fill="#ffd34d" opacity=".7"/><rect x="-140" y="-150" width="280" height="18" fill="#fff" stroke="#c8b4e8" stroke-width="3"/>${[-110,-66,-22,22,66,110].map(c=>`<rect x="${c-12}" y="-132" width="24" height="132" fill="#f8f4ff" stroke="#c8b4e8" stroke-width="2"/><path d="M${c-6} -128v124M${c+6} -128v124" stroke="#d8ccf0" stroke-width="2"/>`).join('')}<rect x="-150" y="0" width="300" height="16" fill="#fff" stroke="#c8b4e8" stroke-width="3"/><rect x="-162" y="16" width="324" height="14" fill="#e8e0f8" stroke="#c8b4e8" stroke-width="3"/></g>`;
+const col=(x,y,h,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect x="-34" y="-12" width="68" height="16" fill="#f4ecff" stroke="#c8b4e8" stroke-width="3"/><rect x="-26" y="4" width="52" height="${h}" fill="#fbf8ff" stroke="#c8b4e8" stroke-width="3"/>${[-14,0,14].map(c=>`<path d="M${c} 8v${h-8}" stroke="#d8ccf0" stroke-width="3"/>`).join('')}<path d="M-40 -12h80l-8-14h-64z" fill="#ffe08a" stroke="#c89a3a" stroke-width="2"/></g>`;
 const SC={
+ olympus:()=>W(`<rect width="400" height="900" fill="url(#bgO)"/>${stars(30,400,'#fff')}${cloud(60,160,1.6,'#fff',.7)}${cloud(330,120,1.3,'#fff',.6)}${cloud(200,300,2,'#f0e8ff',.5)}${col(40,420,480,1.1)}${col(370,440,460,1.1)}
+  <circle cx="200" cy="160" r="70" fill="#fff8d0" opacity=".45"/><path d="M0 760Q200 700 400 760V900H0z" fill="#efe6ff"/>${cloud(80,800,2.4,'#fff',.9)}${cloud(330,820,2.2,'#fff',.85)}${cloud(200,870,2.6,'#f4eeff',.95)}`,lg('bgO','#8ab8ff','#d8c8ff')),
  egypt:()=>W(`${stars(70)}<circle cx="320" cy="120" r="90" fill="#fff3c4" opacity=".1"/><circle cx="320" cy="120" r="44" fill="#fff6d6"/><circle cx="306" cy="110" r="8" fill="#e8dcb0"/><circle cx="330" cy="135" r="5" fill="#e8dcb0"/>
   <path d="M-20 760L120 590L260 760z" fill="url(#py)"/><path d="M120 590L260 760H170z" fill="#7a4a12"/><path d="M200 780L320 640L440 780z" fill="url(#py)"/><path d="M320 640L440 780H360z" fill="#6a3e0e"/>
   <path d="M0 760Q120 720 220 750T400 740V900H0z" fill="#8a5418"/><path d="M0 820Q160 780 400 815V900H0z" fill="#4a2a0a"/>${em('🌴',40,770,70)}${em('🌴',372,800,60)}`,lg('py','#ffd36a','#b5741f')),
@@ -46,6 +50,7 @@ const PW=(inner,defs='')=>`<svg viewBox="0 0 1600 900" preserveAspectRatio="xMid
 const sky=(id,a,b,c)=>`<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset=".55" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></linearGradient>`;
 const ground=(a,b)=>`<path d="M0 500H1600V900H0z" fill="url(#gr)"/><path d="M700 500L560 900H1040L900 500z" fill="${b}" opacity=".35"/>`;
 const PANO={
+ olympus:()=>PW(`<rect width="1600" height="900" fill="url(#sk)"/><circle cx="800" cy="260" r="160" fill="#fff8d0" opacity=".6"/><circle cx="800" cy="260" r="300" fill="#fff8d0" opacity=".18"/>${temple(800,560,1.6)}${col(140,280,620,1.6)}${col(1460,300,600,1.6)}${cloud(200,640,4,'#fff',.9)}${cloud(1400,660,4,'#fff',.9)}${cloud(800,820,6,'#f4eeff',.95)}${cloud(500,180,2.4,'#fff',.6)}${cloud(1150,140,2.2,'#fff',.6)}`,sky('sk','#5a8aff','#a8b8ff','#f4e8ff')),
  buffalo:()=>PW(`<rect width="1600" height="520" fill="url(#sk)"/><circle cx="800" cy="470" r="260" fill="#fff" opacity=".45"/><circle cx="800" cy="470" r="140" fill="#fffbe0"/>
   <path d="M0 520V250h70v-40h110v40h40v270zM1360 520V290h60v-60h120v60h60v230z" fill="#c8502a"/><path d="M0 520V300h50v220zM1430 520V330h40v190z" fill="#8a2a10" opacity=".6"/>
   <path d="M260 520v-60h50v-30h60v90zM1200 520v-70h70v70z" fill="#e08a4a" opacity=".8"/>${ground()}<path d="M0 500Q400 470 800 500T1600 495V520H0z" fill="#fff3c0" opacity=".6"/>
@@ -70,6 +75,8 @@ const PANO={
  lucky:()=>PW(`<rect width="1600" height="900" fill="url(#sk)"/>`,sky('sk','#e0203a','#5a0014','#120005'))
 };
 const D={
+ olympus:{m:'👸',pl:['🏺','💎'],pr:['👑','💎'],orn:['⚡','⚡'],fx:['✦','twk',14,'#fff3b0'],
+  win:['여신의 축복이에요','반짝반짝!','잘했어요!'],big:['올림푸스의 기적!!','신들의 보물이에요!!'],lose:['괜찮아요…','다음엔 축복을!'],idle:['여신이 지켜보고 있어요','번개의 힘을!']},
  egypt:{m:'🐈‍⬛',pl:['🏺','💰'],pr:['⚱️','🪙'],orn:['🪲','🪲'],fx:['✦','twk',12,'#ffd34d'],
   win:['신전의 보물이다','파라오가 허락했다','황금을 받아라'],big:['아누비스의 심판!!','사막의 왕이 되어라!!'],lose:['…아직이다','다시 도전하라'],idle:['신전의 수호자','황금의 문이 열린다']},
  buffalo:{m:'🦬',pl:['🌵','🪶'],pr:['🔥','🪙'],orn:['🦅','🌵'],fx:['•','rise',14,'#ffb03a'],

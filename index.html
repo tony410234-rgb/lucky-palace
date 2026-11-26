@@ -473,7 +473,7 @@ body[data-g=lucky] #spin .spi{font:900 .55em/1 'Lilita One',sans-serif;color:#ff
 .cine .cbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.02);animation:cpush 3s ease-in forwards}
 @keyframes cpush{to{transform:scale(1.2)}}
 .cine .cglow{position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 55%,#fff8 0,transparent 70%);mix-blend-mode:screen;animation:aurap 1s ease-in-out infinite}
-.cine .runner{position:absolute;left:0;top:0;transform-origin:50% 100%;will-change:transform,opacity;filter:drop-shadow(0 16px 10px #000a)}
+.cine .runner{position:absolute;left:0;top:0;transform-origin:50% 100%;will-change:transform,opacity}
 .cine .ctitle{position:absolute;left:0;right:0;top:12%;text-align:center}
 .gold img{filter:sepia(1) saturate(3.5) hue-rotate(-10deg) brightness(1.15) drop-shadow(0 0 8px #ffd34d);animation:land .45s ease-out}
 .fsign{background:none!important;border:0!important;box-shadow:none!important;width:min(620px,100%)!important;animation:signin .7s cubic-bezier(.3,1.5,.5,1)!important}
@@ -501,6 +501,14 @@ body:not(.nobuy) #lvlBtn{display:none}
 body.nobuy #buy{display:none}
 #buy{background:linear-gradient(#ffb03a,#c05a0a)!important;border-color:#ffe08a!important;color:#fff;font-size:11px;line-height:1.1}
 @media (prefers-reduced-motion:reduce){.gcard .hero,.gcard .rays,.bw h3,.hit,.antic{animation:none!important}}
+
+body[data-g=olympus]{--b1:#ffe08a;--b2:#6a5ad0;--b3:#1a1050;--fr:linear-gradient(160deg,#fffbe0,#ffd34d 25%,#a86a08 50%,#ffe58a 70%,#8a5004);--reel:linear-gradient(#1a3a5a,#0e2440 50%,#1a3a5a);--box:#2a2a7a;--tfont:"Cinzel",serif;--aura:#ffe9a099}
+body[data-g=olympus]{--con1:#5a4ab0;--con2:#1a1050;--btnA:#8a6aff;--btnB:#3a1aa0;--btnE:#e8d8ff;--spA:#fffbe0;--spB:#ffcc33;--spC:#a86a08;--spE:#3a1a00;--spS:#5a3002}
+.c-olympus{background:radial-gradient(circle at 50% 30%,#fff3c0,#8a9aff 50%,#2a1a6a)}
+.wood .yn2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.wood .opt{border:3px solid #ffe08a;border-radius:14px;padding:10px 6px;color:#fff;font:900 15px/1.3 Jua,sans-serif;background:linear-gradient(#8a5ad0,#4a1a9a);box-shadow:0 4px 0 #2a0a5a}
+.wood .opt.sup{background:linear-gradient(#ff6ab8,#a0186a);box-shadow:0 4px 0 #5a0040}
+.wood .opt b{display:block;color:#ffe08a;font-size:19px;margin-top:4px}
 </style>
 </head>
 <body data-g="lobby">
@@ -595,7 +603,7 @@ body.nobuy #buy{display:none}
 <canvas id="fx"></canvas>
 <script src="chars.js"></script><script src="heroes.js"></script>
 <script src="art.js"></script>
-<script src="games.js"></script>
+<script src="games.js"></script><script src="faces.js"></script><script src="olympus.js"></script>
 <script src="audio.js"></script>
 <script src="decor.js"></script>
 <script src="love.js"></script>

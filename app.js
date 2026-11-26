@@ -19,7 +19,7 @@ function eify(root){if(!ERE||!root)return;const w=document.createTreeWalker(root
  for(const t of list){const s=t.nodeValue,f=document.createDocumentFragment();let last=0;ERE.lastIndex=0;let m;
   while((m=ERE.exec(s))){f.append(s.slice(last,m.index));const im=document.createElement('img');im.className='ei';im.alt='';im.src=IURL(m[0]);f.append(im);last=m.index+m[0].length}
   f.append(s.slice(last));t.replaceWith(f)}}
-new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes){if(n.nodeType===1)eify(n);else if(n.nodeType===3&&n.parentNode)eify(n.parentNode)}}).observe(document.documentElement,{childList:true,subtree:true});
+new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes){if(n.nodeType===1){if(n.tagName==='IMG'||n.tagName==='CANVAS'||!n.textContent)continue;eify(n)}else if(n.nodeType===3&&n.parentNode)eify(n.parentNode)}}).observe(document.documentElement,{childList:true,subtree:true});
 setTimeout(()=>eify(document.body),0);
 
 /* ---------- state ---------- */
@@ -138,7 +138,7 @@ function openGame(id){
  G=GAMES.byId[id];document.body.dataset.g=id;
  $('gtt').textContent=G.en;$('mtitle').innerHTML=G.en;$('ge1').textContent=$('ge2').textContent=G.hero;
  document.body.classList.toggle('jpon',!!G.jp);document.body.classList.toggle('nobuy',id==='lucky');
- $('spin').querySelector('.spi').textContent={egypt:'🪲',buffalo:'🦬',lucky:'7 7 7',panda:'🐼',piggy:'🐷',dragon:'🐉',tiger:'🐾',ocean:'🫧'}[id]||'';
+ $('spin').querySelector('.spi').textContent={olympus:'⚡',egypt:'🪲',buffalo:'🦬',lucky:'7 7 7',panda:'🐼',piggy:'🐷',dragon:'🐉',tiger:'🐾',ocean:'🫧'}[id]||'';
  const pk=['panda','piggy','lucky'].includes(id)?'pot':'pile';$('ped').src=U(PED(pk));document.querySelector('.mzone').dataset.ped=pk;$('jp').dataset.hero=G.hero;const LN=G.lines?G.lines.length:G.mode==='tumble'?'∞':243;$$('.pil b').forEach(e=>e.textContent=LN);$('clines').textContent=G.lines?`${G.lines.length} LINES · FEATURE`:G.mode==='tumble'?'SCATTER PAYS · TUMBLE':'243 WAYS · FEATURE';document.body.dataset.rows=G.rows;
  const dc=DECOR.get(id);$('scene').innerHTML=`<img class="scimg" src="${U(DECOR.svg(id))}" alt="">`+DECOR.fx(id);$('mascE').innerHTML=IMG(CHARS[id]);$('crest').src=U(CHARS[id]);$('propL').innerHTML=dc.pl.map(e=>`<span>${e}</span>`).join('');$('propR').innerHTML=dc.pr.map(e=>`<span>${e}</span>`).join('');$('ornL').textContent=dc.orn[0];$('ornR').textContent=dc.orn[1];
  document.documentElement.style.setProperty('--rows',G.rows);
@@ -344,10 +344,10 @@ async function jpWheelUI(w,b){
  return v;
 }
 /* ---------- free game cinematic ---------- */
-const TOPS={buffalo:'buf',dragon:'drg',tiger:'tig',ocean:'wha',egypt:'msk',panda:'pan',piggy:'P',lucky:'r7'};
-const CMODE={dragon:'fly',ocean:'rise'};
-const CDUST={buffalo:'💨',tiger:'🐾',piggy:'🪙',panda:'🌸',egypt:'✨',dragon:'🔥',ocean:'🫧',lucky:'🍀'};
-let buying=false;
+const TOPS={olympus:'cro',buffalo:'buf',dragon:'drg',tiger:'tig',ocean:'wha',egypt:'msk',panda:'pan',piggy:'P',lucky:'r7'};
+const CMODE={olympus:'fly',dragon:'fly',ocean:'rise'};
+const CDUST={olympus:'✨',buffalo:'💨',tiger:'🐾',piggy:'🪙',panda:'🌸',egypt:'✨',dragon:'🔥',ocean:'🫧',lucky:'🍀'};
+let buying=false,superNext=false;
 async function cinematic(n,o={}){
  const id=G.id,stage=document.querySelector('.stage');
  AUDIO.setIntense(true);AUDIO.duck(true);sfx.whoosh();
@@ -358,7 +358,7 @@ async function cinematic(n,o={}){
  cv.innerHTML=`<img class="cbg" src="${U(DECOR.pano(id))}" alt=""><div class="cglow"></div>`;
  document.body.appendChild(cv);cv.animate([{opacity:0},{opacity:1}],{duration:350,fill:'forwards'});
  await sleep(350);
- const W=innerWidth,H=innerHeight,N=9,img=o.heart?U(`<svg viewBox="0 0 100 100">${ICONS['💖']||ICONS['💌']}</svg>`):U(CHARS[id]),mode=o.heart?'rise':CMODE[id]||'run',sz=Math.min(W,H)*.6,hy=H*.6;
+ const W=innerWidth,H=innerHeight,N=innerWidth*innerHeight>600000?9:7,img=o.heart?U(`<svg viewBox="0 0 100 100">${ICONS['💖']||ICONS['💌']}</svg>`):U(typeof FACES!=='undefined'&&FACES[id]?FACES[id]:CHARS[id]),mode=o.heart?'rise':CMODE[id]||'run',sz=Math.min(W,H)*.6,hy=H*.6;
  sfx.rumble(2.8);
  const shk=setInterval(()=>{shake();buzz(25)},380);
  for(let i=0;i<N;i++){
@@ -372,7 +372,7 @@ async function cinematic(n,o={}){
    fr.push({transform:`translate(${x}px,${y}px) scale(${sc}) rotate(${r}deg)`,opacity:op})}
   d.animate(fr,{duration:2000,delay:i*210,easing:'linear',fill:'both'});
  }
- const dust=o.heart?'💕':CDUST[id],dt=setInterval(()=>{for(let j=0;j<3;j++){const s=document.createElement('span');s.className='sp';s.textContent=dust;s.style.fontSize=(30+Math.random()*40)+'px';cv.appendChild(s);const x=W*(.2+Math.random()*.6),y=H*(.6+Math.random()*.35);
+ const dk=o.heart?'💕':CDUST[id],dsrc=ICONS[dk]?IURL(dk):null,dt=setInterval(()=>{for(let j=0;j<2;j++){const s=document.createElement(dsrc?'img':'span');s.className='sp';if(dsrc){s.src=dsrc;s.alt='';const z=30+Math.random()*40;s.style.width=s.style.height=z+'px'}else s.textContent=dk;s.style.fontSize=(30+Math.random()*40)+'px';cv.appendChild(s);const x=W*(.2+Math.random()*.6),y=H*(.6+Math.random()*.35);
   s.animate([{transform:`translate(${x}px,${y}px) scale(.3)`,opacity:.9},{transform:`translate(${x+(Math.random()-.5)*200}px,${y-80-Math.random()*120}px) scale(1.6)`,opacity:0}],{duration:900,easing:'ease-out'}).onfinish=()=>s.remove()}},140);
  await sleep(2000+N*210-300);
  clearInterval(shk);clearInterval(dt);flash();sfx.boom();
@@ -395,21 +395,28 @@ async function buffalonize(u){
  AUDIO.sfx.sign();flash();shake();
  const ic=k=>`<img src="${U(`<svg viewBox="0 0 100 100">${ICONS[k]}</svg>`)}" alt="">`;
  const from={eag:'🦅',wolf:'🐺',cou:'🐆',elk:'🦌'}[u];
- await popup(`<div>${T1('ANIMALS GOT','t3s')}</div><div>${T1('BUFFALONIZED','t3s')}</div><div class="upg">${ic(from)}<span class="arr">MOVE LIKE</span>${ic('🦬')}</div><p>이번 프리게임 동안 이 동물은 전부 버팔로로 나와요!</p><button class="go">좋아!</button>`,{cls:'bw tier-epic',autoMs:auto?2600:0});
+ await popup(`<div>${T1('ANIMALS GOT','t3s')}</div><div>${T1('BUFFALONIZED','t3s')}</div><div class="upg"><img src="${U(G.ART[u])}" alt=""><span class="arr">MOVE LIKE</span><img src="${U(G.ART.buf)}" alt=""></div><p>이번 프리게임 동안 이 동물은 전부 버팔로로 나와요!</p><button class="go">좋아!</button>`,{cls:'bw tier-epic',autoMs:auto?2600:0});
 }
 async function buyFS(){
  if(busy||fs||!G||G.id==='lucky')return;
- const b=bet(),cost=b*60;
- const ok=await new Promise(res=>{pop.innerHTML=`<div class="card wood"><h3>프리게임 구입</h3><div class="price">🪙 ${short(cost)}</div><p style="color:#ffe9c0">현재 베팅 ${short(b)}의 60배 · 바로 프리게임 시작!</p><div class="yn"><button class="n" data-v="0">✕</button><button class="y" data-v="1">✓</button></div></div>`;pop.classList.add('on');
-  pop.onclick=e=>{const x=e.target.closest('[data-v]');if(x){pop.onclick=null;pop.classList.remove('on');res(x.dataset.v==='1')}else if(!e.target.closest('.card')){pop.onclick=null;pop.classList.remove('on');res(false)}}});
- if(!ok)return;
+ const b=bet(),sup=!!G.superBuy,c1=b*(G.buyX||60),c2=b*(G.superX||150);
+ const body=sup?`<h3>프리게임 구입</h3><div class="yn2"><button class="opt" data-v="1">프리게임<b>🪙 ${short(c1)}</b></button><button class="opt sup" data-v="2">슈퍼 프리게임<br><small>배수 오브 2배</small><b>🪙 ${short(c2)}</b></button></div><div class="yn"><button class="n" data-v="0">✕</button></div>`
+  :`<h3>프리게임 구입</h3><div class="price">🪙 ${short(c1)}</div><p style="color:#ffe9c0">현재 베팅 ${short(b)}의 ${G.buyX||60}배 · 바로 프리게임 시작!</p><div class="yn"><button class="n" data-v="0">✕</button><button class="y" data-v="1">✓</button></div>`;
+ const v=await new Promise(res=>{pop.innerHTML=`<div class="card wood">${body}</div>`;pop.classList.add('on');
+  pop.onclick=e=>{const x=e.target.closest('[data-v]');if(x){pop.onclick=null;pop.classList.remove('on');res(+x.dataset.v)}else if(!e.target.closest('.card')){pop.onclick=null;pop.classList.remove('on');res(0)}}});
+ if(!v)return;
+ const cost=v===2?c2:c1;
  if(S.bal<cost){toast('코인 부족!');return}
- S.bal-=cost;renderBal(true);S.xp+=cost;buying=true;force='fs';sfx.chaching();save();spin();
+ S.bal-=cost;renderBal(true);S.xp+=cost;buying=true;superNext=v===2;force='fs';sfx.chaching();save();spin();
 }
 /* ---------- main spin ---------- */
+let lastAct=0;
+/* 프리게임 멈춤 방지: 프리게임 중 아무 진행 없이 6초 지나면 자동으로 다음 스핀 */
+setInterval(()=>{if(fs&&!busy&&!reelsMoving&&G&&!pop.classList.contains('on')&&!document.hidden&&document.body.dataset.g!=='lobby'&&Date.now()-lastAct>6000){lastAct=Date.now();spin()}},2000);
 async function spin(){
  if(reelsMoving){if(G.mode!=='tumble')slam();return}
  if(busy||!G)return;
+ lastAct=Date.now();
  AUDIO.init();hideDbl();
  const free=!!fs,b=free?fs.bet:bet();
  if(!free&&buying){buying=false}
@@ -439,10 +446,10 @@ async function spin(){
    await tumbleCascade(s.grid,s.wins,o.steps[i+1].grid);
   }
   win=acc;
-  if(free&&o.bm>0){
-   o.bombs.forEach(([c,r])=>tEls[c][r].classList.add('hit'));box.classList.add('dim');sfx.boom();buzz([80,40,160]);
-   toast(`폭죽 x${o.bm}!`,1400);burst(40);await sleep(900);
-   const nw=o.base*o.bm*b;await countWin(fs.total+acc,fs.total+nw,T(900,400));win=nw;
+  if(o.bm>0){const off=free?fs.total:0;
+   o.bombs.forEach(([c,r])=>tEls[c][r].classList.add('hit'));box.classList.add('dim');sfx.boom();if(G.id==='olympus'){AUDIO.voice('zap');flash()}buzz([80,40,160]);
+   toast(`${G.multName||'폭죽'} x${o.bm}!`,1400);burst(40);await sleep(900);
+   const nw=o.base*o.bm*b;await countWin(off+acc,off+nw,T(900,400));win=nw;
   }
   if(o.scWin){win+=o.scWin*b;showWinsT([{cells:o.scCells}])}
   cur=o.grid;
@@ -481,8 +488,8 @@ async function spin(){
   await sleep(500);mascot('big');
   if(free){fs.left+=o.fsAward;sfx.scat();toast(`+${o.fsAward} FREE SPINS!`,1600);banner();await sleep(1200)}
   else{
-   await cinematic(o.fsAward);
-   fs={left:o.fsAward,total:0,bet:b,n:0,st:G.fsInit(o.fsAward)};document.body.classList.add('fs');AUDIO.setIntense(true);banner();
+   await cinematic(o.fsAward,superNext?{line:'SUPER FREE GAMES'}:{});
+   fs={left:o.fsAward,total:0,bet:b,n:0,st:G.fsInit(o.fsAward,superNext)};superNext=false;document.body.classList.add('fs');AUDIO.setIntense(true);banner();
   }
  }
  // level
@@ -495,13 +502,13 @@ async function spin(){
   S.bal+=t;renderBal(true);setWin(t,'FREE SPINS TOTAL');renderBet();
  }
  save();renderJP();renderCharge();
- busy=false;
+ busy=false;lastAct=Date.now();
  if(!free&&!fs&&!auto&&win+fx>0&&!o.fsAward&&win+fx<b*500)offerDbl(win+fx);
  if(fs||auto){await sleep(fs?T(700,350):(win>0?T(900,500):T(350,150)));if(!busy&&(fs||auto)&&document.body.dataset.g!=='lobby')spin()}
 }
 function showWinsT(wins){box.classList.add('dim');wins.forEach(w=>w.cells.forEach(([c,r])=>tEls[c][r]?.classList.add('hit')))}
 function spinBtnIdle(){$('spin').classList.remove('stop');$('spin').querySelector('.spt').textContent='SPIN'}
-function banner(){if(!fs)return;const ex=G.id==='egypt'?' · x3':G.id==='piggy'?` · 코인 x${fs.st.lvl} · 🐷${fs.st.pigs}`:G.id==='buffalo'?` · 황금🦬 ${fs.st.golds}/4${fs.st.upg.length?` · 변신 ${fs.st.upg.length}`:''}`:'';$('banner').textContent=`FREE SPINS ${fs.n} / ${fs.n+fs.left}${ex}`}
+function banner(){if(!fs)return;const ex=G.id==='egypt'?' · x3':G.id==='piggy'?` · 코인 x${fs.st.lvl} · 🐷${fs.st.pigs}`:G.id==='olympus'?` · 누적 x${fs.st.mult}${fs.st.sup?' · SUPER':''}`:G.id==='buffalo'?` · 황금🦬 ${fs.st.golds}/4${fs.st.upg.length?` · 변신 ${fs.st.upg.length}`:''}`:'';$('banner').textContent=`FREE SPINS ${fs.n} / ${fs.n+fs.left}${ex}`}
 function showScreenHint(){if(S.bal<BETS[0])toast('로비에서 무료충전!',1500)}
 
 /* ---------- double up ---------- */
@@ -531,7 +538,7 @@ async function gamble(amount){
  renderBal(true);save();busy=false;
 }
 /* ---------- mystery pick ---------- */
-const PICKE={egypt:'🏺',buffalo:'💰',lucky:'🎁',panda:'🥠',piggy:'🥚',dragon:'🧧',tiger:'🥥',ocean:'🐚'};
+const PICKE={olympus:'🏺',egypt:'🏺',buffalo:'💰',lucky:'🎁',panda:'🥠',piggy:'🥚',dragon:'🧧',tiger:'🥥',ocean:'🐚'};
 const PT=[['MINI',10,60],['MINOR',30,28],['MAJOR',100,10.5],['GRAND',1000,1.5]];
 async function pickBonus(b,opt={}){const PE=opt.emoji||PICKE[G.id];
  AUDIO.setIntense(true);sfx.jp();flash();shake();burst(40);
@@ -584,7 +591,7 @@ function mascot(kind){const m=$('masc'),dc=DECOR.get(G.id),L=[...(dc[kind]||dc.i
  const talk=kind==='big'||kind==='idle'||(kind==='win'&&Math.random()<.2)||(kind==='lose'&&Math.random()<.35);const b=$('bub');if(talk){b.textContent=L[Math.floor(Math.random()*L.length)];b.classList.add('on')}clearTimeout(mbT);mbT=setTimeout(()=>b.classList.remove('on'),kind==='big'?2800:1700);
  setTimeout(()=>m.classList.remove('jump','dance','sad','spin3d','big'),kind==='big'?2800:1300)}
 $('masc').onclick=()=>{mascot('idle');const m=$('masc');m.classList.add('spin3d');setTimeout(()=>m.classList.remove('spin3d'),1100);AUDIO.voice(SIG[G.id].v)};
-const SIG={egypt:{e:['🪲','✨','🪙','✨'],m:'swirl',v:'growl'},buffalo:{e:['💨','🪶','🪙','💨'],m:'quake',v:'moo'},lucky:{e:['🍀','7️⃣','💎','🎲','🪙'],m:'burst',v:'squeak'},
+const SIG={olympus:{e:['⚡','✨','💎','✨'],m:'burst',v:'aria'},egypt:{e:['🪲','✨','🪙','✨'],m:'swirl',v:'growl'},buffalo:{e:['💨','🪶','🪙','💨'],m:'quake',v:'moo'},lucky:{e:['🍀','7️⃣','💎','🎲','🪙'],m:'burst',v:'squeak'},
  panda:{e:['🥟','🍡','🌸','🥟'],m:'throw',v:'boing'},piggy:{e:['🪙','🪙','💰','🪙'],m:'fountain',v:'oink'},dragon:{e:['🔥','🔥','🧧','✨'],m:'breath',v:'roar'},
  tiger:{e:['🐾','✨','🍌','🐾'],m:'roar',v:'growl'},ocean:{e:['🫧','💎','🐚','🫧'],m:'bubbles',v:'bloop'}};
 function sigFX(level){
@@ -681,10 +688,10 @@ async function heartBonus(b){
 }
 /* ---------- admin ---------- */
 const FORCE={fs:['프리스핀',o=>o.fsAward>0],big:['빅윈',o=>o.total>=15&&!o.fsAward],hs:['홀드앤스핀',o=>!!o.hs],grand:['GRAND 잭팟',o=>o.hs&&o.hs.full],wheel:['보너스 휠',o=>!!o.wheel],mega:['휠 MEGA 500배',o=>o.wheel&&o.wheel.v>=500],collect:['돼지 수집',o=>o.collect&&o.collect.amt>=5],jpw:['잭팟 휠',o=>!!o.jpw],jgrand:['휠 GRAND',o=>o.jpw&&o.jpw.tier==='GRAND'],pick:['진주 잭팟',o=>!!o.pick],pgrand:['진주 GRAND',o=>o.pick&&o.pick.tier==='GRAND'],mystery:['미스터리 보너스',null],bonus:['보너스 게임',null],heart:['소현 하트 💖',null]};
-const GF={egypt:['fs','hs','grand','big'],buffalo:['fs','big'],lucky:['wheel','mega','big'],panda:['fs','big'],piggy:['fs','collect','big'],dragon:['fs','hs','grand','big'],tiger:['fs','jpw','jgrand','big'],ocean:['fs','pick','pgrand','big']};
+const GF={olympus:['fs','big'],egypt:['fs','hs','grand','big'],buffalo:['fs','big'],lucky:['wheel','mega','big'],panda:['fs','big'],piggy:['fs','collect','big'],dragon:['fs','hs','grand','big'],tiger:['fs','jpw','jgrand','big'],ocean:['fs','pick','pgrand','big']};
 let force=null;
 const featured=o=>o.fsAward||o.hs||o.wheel||o.jpw||o.pick||(o.collect&&o.collect.amt>=3)||o.total>=10;
-const BM={egypt:'ladder',ocean:'ladder',tiger:'ladder',buffalo:'wheelup',dragon:'wheelup',panda:'mini',piggy:'mini'};
+const BM={olympus:'wheelup',egypt:'ladder',ocean:'ladder',tiger:'ladder',buffalo:'wheelup',dragon:'wheelup',panda:'mini',piggy:'mini'};
 function rollOutcome(){const o=rollBase();const L=Math.min(5,Math.max(1,S.luck||1));
  if(BM[G.id]&&!o.bonus&&Math.random()<L/300)o.bonus=BM[G.id];
  if(!o.heart&&Math.random()<L/500)o.heart=true;
@@ -804,12 +811,12 @@ async function remoteApply(it){
 setTimeout(remoteCheck,4000);setInterval(remoteCheck,90000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(remoteCheck,1200)});
 /* ---------- 태율랜드 ---------- */
-function heartRain(n=40){const d=document.createElement('div');d.className='hrain';d.innerHTML=Array.from({length:n},()=>`<span style="left:${Math.random()*96}vw;font-size:${16+Math.random()*26}px;animation-duration:${3+Math.random()*4}s;animation-delay:${Math.random()*2.5}s">${['❤️','💕','💖','🥰','💗'][Math.floor(Math.random()*5)]}</span>`).join('');document.body.appendChild(d);setTimeout(()=>d.remove(),9000)}
+function heartRain(n=40){n=Math.min(n,innerWidth*innerHeight>600000?40:26);const d=document.createElement('div');d.className='hrain';const HK=['❤️','💕','💖','🥰','💗'];d.innerHTML=Array.from({length:n},()=>{const k=HK[Math.floor(Math.random()*5)],z=16+Math.random()*26;return `<span style="left:${Math.random()*96}vw;font-size:${z}px;animation-duration:${3+Math.random()*4}s;animation-delay:${Math.random()*2.5}s">${ICONS[k]?`<img class="ei" alt="" src="${IURL(k)}">`:k}</span>`}).join('');document.body.appendChild(d);setTimeout(()=>d.remove(),9000)}
 function loveCard(){const L=window.LOVE||{};const notes=L.notes&&L.notes.length?L.notes:['사랑해 💕'];const day=Math.floor((Date.now()+9*3600e3)/864e5);$('note').textContent=notes[day%notes.length];
  if(L.since){const d=Math.floor((Date.now()-new Date(L.since+'T00:00:00+09:00'))/864e5)+1;$('dday').textContent=d>0?`우리 D+${d}`:''}
  if(L.her)$('vip').textContent=`VIP ${L.her}님 전용 카지노`}
 loveCard();
-(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v3.4'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
+(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v3.5'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
 (async()=>{const L=window.LOVE||{};heartRain(46);
  await popup(`<div class="hb">💝</div><h3>${(L.welcome||'웰컴 자기야 오늘도 사랑해🥰')}</h3><div class="sig">- ${L.owner||'태율랜드 주인장'} -</div><button class="go">나도 사랑해 💕</button>`,{cls:'wel'});
  AUDIO.init();[784,988,1175,1568].forEach((f,i)=>AUDIO.tone(f,.3,i*.12,'sine',.08));heartRain(24);})();

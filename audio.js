@@ -41,6 +41,8 @@ const VO={
  squeak:()=>{tone(1400,.08,0,'sine',.12,2200);tone(1600,.1,.1,'sine',.1,2600)},
  grunt:()=>{tone(180,.18,0,'sawtooth',.07,120);tone(160,.22,.2,'sawtooth',.06,100)},
  oink:()=>{tone(320,.12,0,'sawtooth',.07,220);tone(300,.14,.14,'sawtooth',.07,200)},
+ aria:()=>{[880,1046,1318,1760].forEach((f,i)=>tone(f,.4,i*.07,'sine',.07,f*1.003));tone(1760,.6,.3,'triangle',.04,1760)},
+ zap:()=>{tone(1800,.25,0,'sawtooth',.06,120);nz(.35,0,.14,3000,'highpass')},
  meow:()=>{tone(520,.18,0,'triangle',.12,880);tone(880,.3,.16,'triangle',.1,480)}
 };
 const sfx={
@@ -62,6 +64,10 @@ const sfx={
  oink:()=>VO.oink(),
  step:i=>{fm(523*2**(i/6),.3,0,.12,2,400);thump(0,.3,140+i*15)},
  fail:()=>{tone(140,.5,0,'square',.08,70);tone(147,.5,0,'square',.06,72);crash(0,.08,.4)},
+ whoosh:()=>sweep(.7,0,.2,180,3500),
+ rumble:(d=2.5)=>{if(!st.sfx||!init())return;try{noise(sfxG,{t:ac.currentTime,d,v:.3,type:'lowpass',f:160});for(let i=0;i<d/.16;i++)thump(i*.16,.25+.25*(i/(d/.16)),60+Math.random()*20)}catch(e){}},
+ ding:i=>{fm(784*2**(i/7),.35,0,.1,3.5,500)},
+ sign:()=>{crash(0,.18,1.6);brass(523,.25,0,.07);brass(659,.25,.12,.07);brass(784,.6,.24,.08);brass(1047,.9,.36,.08);[2093,2637,3136,4186].forEach((f,i)=>fm(f,.5,.36+i*.07,.06,3.5,700))},
  heart:()=>{[784,988,1175,1568,1976].forEach((f,i)=>fm(f,.8,i*.12,.07,2,300));crash(.6,.06,1.2)},
  clink:(n=1,spread=.25,v=.05)=>{if(!st.sfx||!init())return;try{const t=ac.currentTime;for(let i=0;i<n;i++)clinkAt(t+Math.random()*spread,1700+Math.random()*2200,v)}catch(e){}},
  chaching:()=>{if(!st.sfx||!init())return;try{const t=ac.currentTime;noise(sfxG,{t,d:.09,v:.18,type:'bandpass',f:2400});clinkAt(t+.03,2600,.09);clinkAt(t+.1,3500,.08);osc(sfxG,{f:2093,t:t+.14,d:.7,type:'triangle',v:.09});osc(sfxG,{f:2637,t:t+.14,d:.7,type:'triangle',v:.07});osc(sfxG,{f:3136,t:t+.2,d:.6,type:'sine',v:.05});for(let i=0;i<8;i++)clinkAt(t+.2+Math.random()*.5,1800+Math.random()*2000,.04)}catch(e){}},
@@ -78,6 +84,9 @@ const TH={
  lobby:{bpm:96,root:50,scale:MAJ,chords:[[0,4,7,11],[-3,0,4,7],[2,5,9,12],[-5,-1,2,5]],swing:.2,
   lead:{wave:'triangle',rh:'x..x..x.x...x.x.',v:.08,oct:12},bass:{wave:'triangle',pat:'x...x...x...x...',mode:'walk',v:.2},pad:{wave:'sine',v:.04},
   dr:{k:'x.......x.......',s:'....x.......x...',h:'x.x.x.x.x.x.x.x.',hv:.02}},
+ olympus:{bpm:96,root:50,scale:[0,2,4,7,9,11],chords:[[0,4,7,11],[5,9,12,16],[-3,0,4,7],[7,11,14,17]],arp:true,
+  lead:{wave:'triangle',rh:'x..x..x.x..x.x..',v:.07,oct:24},bass:{wave:'sine',pat:'x.......x...x...',mode:'root',v:.24},pad:{wave:'sawtooth',v:.016,cut:1200},
+  dr:{k:'x.......x.......',s:'....x.......x...',h:'..x...x...x...x.',hv:.018}},
  egypt:{bpm:104,root:50,scale:[0,1,4,5,7,8,10],chords:[[0,4,7],[1,5,8],[0,4,7],[-2,1,5]],
   lead:{wave:'sawtooth',rh:'x.xx..x.x.xx.x..',v:.05,cut:2400,oct:12},bass:{wave:'triangle',pat:'x..x..x.x..x..x.',mode:'root',v:.22},pad:{wave:'sawtooth',v:.018,cut:800},
   dr:{k:'x..x....x..x....',s:'....x.......x..x',t:'......x.......x.',h:'..x...x...x...x.',hv:.03}},
