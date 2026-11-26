@@ -34,9 +34,9 @@ const etile=(g,e,s,y)=>tile(g,emo(e,s,y));
 const royal=(L,g,font='Cinzel,serif',wt=900)=>`<svg viewBox="0 0 100 100"><text x="50" y="${L.length>1?76:82}" text-anchor="middle" font-family="${font}" font-weight="${wt}" font-size="${L.length>1?58:78}" fill="url(#${g})" stroke="#1a0530" stroke-width="3.5" paint-order="stroke" filter="url(#ds)">${L}</text></svg>`;
 const label=(t,y=86,fs=22,font='Cinzel,serif',fill='url(#gG)')=>`<text x="50" y="${y}" text-anchor="middle" font-family="${font}" font-weight="900" font-size="${fs}" fill="${fill}" stroke="#2a0008" stroke-width="3.5" paint-order="stroke">${t}</text>`;
 const badge=(svg,t,col='#ff2a44')=>svg.replace(/<\/svg>$/,`<g><circle cx="77" cy="77" r="19" fill="${col}" stroke="#fff" stroke-width="3"/><text x="77" y="84" text-anchor="middle" font-family="Lilita One,sans-serif" font-size="19" fill="#fff">${t}</text></g></svg>`);
-const coinSVG=(lab,jp,font='Black Han Sans,sans-serif')=>{const col=jp==='MAJOR'?'#b04bff':jp==='MINOR'?'#2f7dff':jp==='MINI'?'#22c24f':jp==='GRAND'?'#ff2a44':null;
+const coinSVG=(lab,jp,font='Black Han Sans,sans-serif',grad='cG')=>{const col=jp==='MAJOR'?'#b04bff':jp==='MINOR'?'#2f7dff':jp==='MINI'?'#22c24f':jp==='GRAND'?'#ff2a44':null;
  const fz=jp?(jp.length>4?17:19):lab.length>5?17:lab.length>4?20:24;
- return `<svg viewBox="0 0 100 100"><g filter="url(#ds)"><circle cx="50" cy="50" r="44" fill="url(#cG)" stroke="#6e3f03" stroke-width="3"/><circle cx="50" cy="50" r="35" fill="${col||'#b36d06'}" opacity="${col?.95:.35}" stroke="#fff3b0" stroke-width="2.5"/><path d="M22 34a32 32 0 0 1 30-18" stroke="#fff" stroke-width="5" fill="none" opacity=".55" stroke-linecap="round"/><text x="50" y="${50+fz*.36}" text-anchor="middle" font-family="${jp?'Cinzel,serif':font}" font-weight="900" font-size="${fz}" fill="#fff" stroke="#3a1500" stroke-width="3" paint-order="stroke">${lab}</text></g></svg>`};
+ return `<svg viewBox="0 0 100 100"><g filter="url(#ds)"><circle cx="50" cy="50" r="44" fill="url(#${grad})" stroke="#6e3f03" stroke-width="3"/><circle cx="50" cy="50" r="35" fill="${col||'#b36d06'}" opacity="${col?.95:.35}" stroke="#fff3b0" stroke-width="2.5"/><path d="M22 34a32 32 0 0 1 30-18" stroke="#fff" stroke-width="5" fill="none" opacity=".55" stroke-linecap="round"/><text x="50" y="${50+fz*.36}" text-anchor="middle" font-family="${jp?'Cinzel,serif':font}" font-weight="900" font-size="${fz}" fill="#fff" stroke="#3a1500" stroke-width="3" paint-order="stroke">${lab}</text></g></svg>`};
 
 /* =============== 1. EGYPT =============== */
 const EG=(()=>{
@@ -64,7 +64,7 @@ const EG=(()=>{
   const full=board.every(Boolean);
   return {init,steps,board,full,seedVal:board.filter(Boolean).reduce((a,x)=>a+(x.jp?JP[x.jp]:x.v),0)+(full?JP.GRAND:0)};
  }
- return {id:'egypt',name:'스카라베 골드',en:'SCARAB GOLD',sub:'20라인 · 홀드앤스핀 · 4단 잭팟',hero:'🪲',badge:'JACKPOT',font:'Cinzel,serif',
+ return {jp:true,id:'egypt',name:'스카라베 골드',en:'SCARAB GOLD',sub:'20라인 · 홀드앤스핀 · 4단 잭팟',hero:'🪲',badge:'JACKPOT',font:'Cinzel,serif',
   cols:5,rows:3,mode:'reels',lines:L20,ART,JP,
   draw:(x,b)=>x.s==='C'?coinSVG(x.jp||short(x.v*b),x.jp):ART[x.s],
   fill:c=>cell(c),
@@ -248,6 +248,128 @@ const PG=(()=>{
  };
 })();
 
-return {list:[EG,BF,LK,PD,PG],byId:{egypt:EG,buffalo:BF,lucky:LK,panda:PD,piggy:PG},coinSVG,short,emo,EF};
+const L30=[...L20,[1,0,1,0,1],[1,2,1,2,1],[0,0,1,0,0],[2,2,1,2,2],[0,1,2,2,2],[2,1,0,0,0],[0,2,0,2,0],[2,0,2,0,2],[1,0,2,0,1],[1,2,0,2,1]];
+const L40=[[0,0,0,0,0],[1,1,1,1,1],[2,2,2,2,2],[3,3,3,3,3],[0,1,2,1,0],[1,2,3,2,1],[3,2,1,2,3],[2,1,0,1,2],
+ [0,1,0,1,0],[1,0,1,0,1],[1,2,1,2,1],[2,1,2,1,2],[2,3,2,3,2],[3,2,3,2,3],[0,0,1,0,0],[1,1,0,1,1],[1,1,2,1,1],[2,2,1,2,2],[2,2,3,2,2],[3,3,2,3,3],
+ [0,1,1,1,0],[1,0,0,0,1],[1,2,2,2,1],[2,1,1,1,2],[2,3,3,3,2],[3,2,2,2,3],[0,1,2,3,3],[3,2,1,0,0],[0,0,1,2,3],[3,3,2,1,0],
+ [0,1,2,2,2],[3,2,1,1,1],[1,2,3,3,3],[2,1,0,0,0],[0,2,0,2,0],[3,1,3,1,3],[1,3,1,3,1],[2,0,2,0,2],[1,0,1,2,1],[2,3,2,1,2]];
+const JPS={MINI:10,MINOR:30,MAJOR:100,GRAND:1000};
+const JPW=[['MINI',58],['MINOR',29],['MAJOR',11],['GRAND',2]];
+const JCOL={MINI:'#22c24f',MINOR:'#2f7dff',MAJOR:'#b04bff',GRAND:'#ff2a44'};
+function makeHS(n,coinFn,q){return g=>{
+ const rows=g[0].length,board=Array(n).fill(null);g.forEach((col,c)=>col.forEach((x,r)=>{if(x.s==='C')board[c*rows+r]=x}));
+ const init=board.slice(),steps=[];let sp=3;
+ while(sp>0&&board.some(x=>!x)){sp--;const add=[];for(let i=0;i<n;i++)if(!board[i]&&Math.random()<q){board[i]=coinFn();add.push([i,board[i]])}steps.push(add);if(add.length)sp=3}
+ const full=board.every(Boolean);
+ return {init,steps,board,full,seedVal:board.filter(Boolean).reduce((a,x)=>a+(x.jp?JPS[x.jp]:x.v),0)+(full?JPS.GRAND:0)};
+}}
+const anticBy=(keys,th)=>g=>{const a=[];let k=0;for(let c=0;c<g.length;c++){a.push(c>=2&&k>=th);k+=g[c].filter(x=>keys.includes(x.s)).length}return a};
+
+/* =============== 6. DRAGON (5x4, 40 lines, fireball hold&spin) =============== */
+const DR=(()=>{
+ const WT={T:13,J:13,Q:12,K:11,A:10,koi:7,tur:6,pea:5,drg:3.5,W:[0,3,3,3,3],S:1.6,C:7.5};
+ let PM=4;
+ const BASE={T:P(5,10,30),J:P(5,10,30),Q:P(5,12,40),K:P(8,15,50),A:P(8,20,60),koi:P(10,30,100),tur:P(15,40,150),pea:P(20,60,200),drg:P(30,100,500,2),W:P(30,100,500,2)};
+ let PAY=scale(BASE,PM);
+ const COINS=[[0.5,30],[1,26],[2,18],[3,10],[5,7],[8,4],['MINI',3],['MINOR',1.2],['MAJOR',0.25]];
+ const coin=()=>{const v=pick(COINS);return typeof v==='string'?{s:'C',jp:v}:{s:'C',v}};
+ const cell=(c,fs)=>{const s=wsel(fs?{...WT,W:[0,5,5,5,5]}:WT,c);return s==='C'?coin():{s}};
+ const hs=makeHS(20,coin,.065);
+ const SCAT={3:[2,8],4:[10,12],5:[50,20]};
+ const F="Lilita One,sans-serif";
+ const ART={T:royal('10','lO',F,400),J:royal('J','lB',F,400),Q:royal('Q','lGr',F,400),K:royal('K','lR',F,400),A:royal('A','lP',F,400),
+  koi:etile('tSky','🐟',60,72),tur:etile('tGr','🐢',60,72),pea:etile('tO','🦚',62,72),drg:tile('tR',emo('🐉',70,76),6),
+  W:tile('tR',emo('🔥',46,54)+label('WILD',88,26,F)),S:tile('tY',emo('🏯',52,62)+label('FREE',91,20,F,'#fff'))};
+ return {id:'dragon',name:'드래곤 포춘',en:'DRAGON FORTUNE',sub:'40라인 · 5×4 · 파이어볼 홀드앤스핀 · 4단 잭팟',hero:'🐉',badge:'NEW JACKPOT',font:F,jp:true,
+  cols:5,rows:4,mode:'reels',lines:L40,ART,
+  draw:(x,b)=>x.s==='C'?coinSVG(x.jp||short(x.v*b),x.jp,undefined,'fG'):ART[x.s],
+  coinDraw:(x,b)=>coinSVG(x.jp||short(x.v*b),x.jp,undefined,'fG'),
+  fill:(c,fs)=>cell(c,fs),antic:anticBy(['S','C'],2),
+  fsInit:n=>({left:n}),
+  spin(fs){
+   const g=gen(5,4,c=>cell(c,fs));
+   const wins=linesEval(g,L40,PAY,['S','C']).map(w=>({...w,amt:w.amt/40}));
+   let total=wins.reduce((a,w)=>a+w.amt,0),fsAward=0;const sc=count(g,'S');
+   if(sc>=3){const [m,f]=SCAT[Math.min(sc,5)];total+=m;fsAward=fs?5:f;wins.push({cells:cellsOf(g,'S'),amt:m,scat:true})}
+   if(fs)total*=2;
+   const h=count(g,'C')>=6?hs(g):null;
+   return {grid:g,wins,total,fsAward,hs:h,simExtra:h?h.seedVal:0};
+  },
+  setPM:v=>{PM=v;PAY=scale(BASE,v)},
+  paytable:{order:['drg','pea','tur','koi','A','K','Q','J','T'],get pay(){return PAY},unit:40,
+   rules:['40라인 · 5×4 릴','파이어볼 6개 이상 → HOLD & SPIN (20칸), 20칸 다 채우면 GRAND','🏯 3/4/5개 → 프리스핀 8/12/20회, 와일드 증가 + 당첨 2배']}
+ };
+})();
+
+/* =============== 7. TIGER (5x3, 30 lines, jackpot wheel) =============== */
+const TG=(()=>{
+ const WT={T:13,J:13,Q:12,K:11,A:10,par:7,gor:6,ele:5,tig:3.5,W:[0,3,3,3,3],S:2.4,JP:[5,0,5,0,5]};
+ let PM=3;
+ const BASE={T:P(5,10,30),J:P(5,10,30),Q:P(5,12,40),K:P(8,15,50),A:P(8,20,60),par:P(10,30,100),gor:P(15,40,150),ele:P(20,60,200),tig:P(30,100,500,2),W:P(30,100,500,2)};
+ let PAY=scale(BASE,PM);
+ const SCAT={3:10,4:15,5:20};
+ const cell=(c,fs)=>{const w=fs?{...WT,tig:7}:WT;return {s:wsel(w,c)}};
+ const F="Rye,serif";
+ const ART={T:royal('10','lO',F,400),J:royal('J','lB',F,400),Q:royal('Q','lGr',F,400),K:royal('K','lR',F,400),A:royal('A','lP',F,400),
+  par:etile('tR','🦜',60,72),gor:etile('tK','🦍',60,72),ele:etile('tSky','🐘',62,72),tig:tile('tO',emo('🐯',70,76),6),
+  W:tile('tGr',emo('🌴',44,54)+label('WILD',88,26,F)),S:tile('tN',emo('🌕',48,56)+label('FREE',90,20,F,'#fff')),
+  JP:`<svg viewBox="0 0 100 100"><g filter="url(#ds)"><circle cx="50" cy="50" r="45" fill="url(#cG)" stroke="#6e3f03" stroke-width="3"/><circle cx="50" cy="50" r="36" fill="#a3091f" stroke="#fff3b0" stroke-width="3"/>${emo('🐯',40,58)}${label('JACKPOT',86,13,'Cinzel,serif','#fff')}</g></svg>`};
+ const SEG=['MINI','MINOR','MINI','MAJOR','MINI','MINOR','GRAND','MINI','MINOR','MINI','MAJOR','MINOR'];
+ return {id:'tiger',name:'골든 타이거',en:'GOLDEN TIGER',sub:'30라인 · 잭팟 휠 · 프리스핀 호랑이 2배',hero:'🐯',badge:'NEW JACKPOT',font:F,jp:true,
+  cols:5,rows:3,mode:'reels',lines:L30,ART,SEG,
+  draw:x=>ART[x.s],fill:(c,fs)=>cell(c,fs),
+  antic:g=>[false,false,g[0].some(x=>x.s==='JP'),false,g[0].some(x=>x.s==='JP')&&g[2].some(x=>x.s==='JP')].map((v,c)=>v||anticBy(['S'],2)(g)[c]),
+  fsInit:n=>({left:n}),
+  spin(fs){
+   const g=gen(5,3,c=>cell(c,fs));
+   const wins=linesEval(g,L30,PAY,['S','JP']).map(w=>({...w,amt:w.amt/30}));
+   let total=wins.reduce((a,w)=>a+w.amt,0),fsAward=0;const sc=count(g,'S');
+   if(sc>=3){total+=sc>=5?20:sc===4?5:2;fsAward=fs?5:SCAT[Math.min(sc,5)];wins.push({cells:cellsOf(g,'S'),amt:0,scat:true})}
+   if(fs)total*=2;
+   let jpw=null;
+   if([0,2,4].every(c=>g[c].some(x=>x.s==='JP'))){const tier=pick(JPW);const idx=SEG.map((t,i)=>[t,i]).filter(x=>x[0]===tier);jpw={tier,i:idx[Math.floor(Math.random()*idx.length)][1]};wins.push({cells:cellsOf(g,'JP'),amt:0,scat:true})}
+   return {grid:g,wins,total,fsAward,jpw,simExtra:jpw?JPS[jpw.tier]:0};
+  },
+  setPM:v=>{PM=v;PAY=scale(BASE,v)},
+  paytable:{order:['tig','ele','gor','par','A','K','Q','J','T'],get pay(){return PAY},unit:30,
+   rules:['30라인','🐯 JACKPOT 코인이 1·3·5번 릴에 모두 → 잭팟 휠 (MINI~GRAND 확정)','🌕 3/4/5개 → 프리스핀 10/15/20회, 호랑이 2배 많이 + 당첨 2배']}
+ };
+})();
+
+/* =============== 8. OCEAN (5x4, 40 lines, pearl jackpot pick) =============== */
+const OC=(()=>{
+ const WT={T:13,J:13,Q:12,K:11,A:10,cra:7,fis:6,dol:5,wha:3.5,W:[0,3,3,3,3],S:1.6,P:1.5};
+ let PM=2.6;
+ const BASE={T:P(5,10,30),J:P(5,10,30),Q:P(5,12,40),K:P(8,15,50),A:P(8,20,60),cra:P(10,30,100),fis:P(15,40,150),dol:P(20,60,200),wha:P(30,100,500,2),W:P(30,100,500,2)};
+ let PAY=scale(BASE,PM);
+ const SCAT={3:[2,8],4:[10,12],5:[50,20]};
+ const cell=(c,fs)=>{const s=wsel(fs?{...WT,W:[0,5,5,5,5]}:WT,c);return {s}};
+ const F="Lilita One,sans-serif";
+ const ART={T:royal('10','lO',F,400),J:royal('J','lB',F,400),Q:royal('Q','lGr',F,400),K:royal('K','lR',F,400),A:royal('A','lP',F,400),
+  cra:etile('tR','🦀',60,72),fis:etile('tY','🐠',62,72),dol:etile('tSky','🐬',62,72),wha:tile('tB',emo('🐋',68,74),6),
+  W:tile('tT',emo('🔱',46,54)+label('WILD',88,26,F)),S:tile('tN',emo('🪸',50,60)+label('FREE',91,20,F,'#fff')),
+  P:`<svg viewBox="0 0 100 100"><g filter="url(#ds)"><circle cx="50" cy="50" r="45" fill="url(#tPk)" stroke="url(#gG)" stroke-width="4"/>${emo('🦪',54,66)}${label('PEARL',91,15,F,'#fff')}</g></svg>`};
+ return {id:'ocean',name:'딥씨 트레저',en:'DEEP SEA TREASURE',sub:'40라인 · 5×4 · 진주 3개 → 잭팟 픽 · 프리스핀 3배',hero:'🐙',badge:'NEW JACKPOT',font:F,jp:true,
+  cols:5,rows:4,mode:'reels',lines:L40,ART,
+  draw:x=>ART[x.s],fill:(c,fs)=>cell(c,fs),antic:anticBy(['S','P'],2),
+  fsInit:n=>({left:n}),
+  spin(fs){
+   const g=gen(5,4,c=>cell(c,fs));
+   const wins=linesEval(g,L40,PAY,['S','P']).map(w=>({...w,amt:w.amt/40}));
+   let total=wins.reduce((a,w)=>a+w.amt,0),fsAward=0;const sc=count(g,'S');
+   if(sc>=3){const [m,f]=SCAT[Math.min(sc,5)];total+=m;fsAward=fs?5:f;wins.push({cells:cellsOf(g,'S'),amt:m,scat:true})}
+   if(fs)total*=3;
+   let pick=null;
+   if(count(g,'P')>=3){pick={tier:pick_(JPW)};wins.push({cells:cellsOf(g,'P'),amt:0,scat:true})}
+   return {grid:g,wins,total,fsAward,pick,simExtra:pick?JPS[pick.tier]:0};
+  },
+  setPM:v=>{PM=v;PAY=scale(BASE,v)},
+  paytable:{order:['wha','dol','fis','cra','A','K','Q','J','T'],get pay(){return PAY},unit:40,
+   rules:['40라인 · 5×4 릴','🦪 진주 3개 이상 어디든 → 진주 잭팟 픽 (MINI~GRAND 확정)','🪸 3/4/5개 → 프리스핀 8/12/20회, 와일드 증가 + 당첨 3배']}
+ };
+})();
+const pick_=pick;
+
+return {list:[DR,EG,TG,OC,BF,LK,PD,PG],byId:{egypt:EG,buffalo:BF,lucky:LK,panda:PD,piggy:PG,dragon:DR,tiger:TG,ocean:OC},JPS,JPW,JCOL,coinSVG,short,emo,EF};
 })();
 if(typeof module!=='undefined')module.exports=GAMES;

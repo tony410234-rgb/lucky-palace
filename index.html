@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>럭키 팰리스 슬롯</title>
+<title>태율랜드</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Bungee&family=Cinzel:wght@700;900&family=Lilita+One&family=Rye&display=swap" rel="stylesheet">
 <style>
@@ -16,6 +16,9 @@
 body[data-g=buffalo]{--b1:#ff8a3a;--b2:#8a2a10;--b3:#1a0804;--fr:linear-gradient(160deg,#ffd9a0,#b5651d 25%,#5a2a0a 50%,#d08a3a 70%,#6a3008);--reel:linear-gradient(#3a1a0a,#1e0c04 50%,#3a1a0a);--box:#1a0a03;--tfont:Rye,serif}
 body[data-g=lucky]{--b1:#e0203a;--b2:#5a0014;--b3:#120005;--fr:linear-gradient(160deg,#ffffff,#9aa4b5 20%,#4a5262 45%,#e8ecf2 60%,#6a7282 85%,#fff);--reel:linear-gradient(#e9e2d2,#fffdf6 50%,#e9e2d2);--box:#1a1a22;--tfont:Bungee,sans-serif}
 body[data-g=panda]{--b1:#ff8fc7;--b2:#8a3fd0;--b3:#24104a;--fr:linear-gradient(160deg,#fff0fa,#ff8fc7 25%,#b03a8a 50%,#ffc2e4 70%,#9a2a7a);--reel:linear-gradient(#ffe6f4,#ffd0ea);--box:#5a1a6a;--tfont:"Lilita One",sans-serif}
+body[data-g=dragon]{--b1:#ff3a2a;--b2:#8a0a14;--b3:#2a0306;--fr:linear-gradient(160deg,#fff3b0,#ffcc33 20%,#a8220a 45%,#ffd34d 62%,#8a1408 85%,#ffe9a0);--reel:linear-gradient(#5a0a14,#2a0408 50%,#5a0a14);--box:#1a0204;--tfont:"Lilita One",sans-serif}
+body[data-g=tiger]{--b1:#3fa04a;--b2:#0f4a1a;--b3:#041a08;--fr:linear-gradient(160deg,#fff3b0,#e0a52a 20%,#6a3a08 45%,#f7d66a 60%,#3a5a10 85%,#ffe9a0);--reel:linear-gradient(#1a3a14,#0a1f0a 50%,#1a3a14);--box:#061206;--tfont:Rye,serif}
+body[data-g=ocean]{--b1:#3ad0ff;--b2:#0a4a9a;--b3:#021230;--fr:linear-gradient(160deg,#e0fbff,#5ad8ff 25%,#0a5aa0 50%,#9af0ff 70%,#063a7a);--reel:linear-gradient(#0a3a6a,#04203f 50%,#0a3a6a);--box:#021226;--tfont:"Lilita One",sans-serif}
 body[data-g=piggy]{--b1:#8fdcff;--b2:#2f9a4a;--b3:#0c3414;--fr:linear-gradient(160deg,#f2c28a,#9a5a24 25%,#5a3010 50%,#c8884a 70%,#6a3a14);--reel:linear-gradient(#cfeeff,#eaf8ff 50%,#cfeeff);--box:#3a2010;--tfont:"Lilita One",sans-serif}
 *{box-sizing:border-box;min-width:0;-webkit-user-select:none;user-select:none}
 html,body{margin:0;min-height:100%}
@@ -43,8 +46,20 @@ button:focus-visible{outline:3px solid #7fd0ff;outline-offset:2px}
 .hud .ibs{display:flex;gap:6px}
 /* lobby */
 .logo{text-align:center;margin:6px 0 0}
-.logo b{display:block;font:400 clamp(34px,10vw,54px)/1 Bungee,sans-serif;background:linear-gradient(#fff9d0,#ffd34d 45%,#c26a00 70%,#ffe9a0);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 0 #5a1a00) drop-shadow(0 0 16px #ff9d0088)}
-.logo span{font-size:14px;color:#d9c8ff}
+.logo b{display:block;font:400 clamp(40px,12vw,60px)/1.05 'Black Han Sans',sans-serif;background:linear-gradient(#fff9d0,#ffd34d 45%,#c26a00 70%,#ffe9a0);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 0 #5a1a00) drop-shadow(0 0 16px #ff9d0088)}
+.logo span{font-size:15px;color:#ffd0ea}
+.logo i{font-style:normal;-webkit-text-fill-color:initial;color:initial;display:inline-block;margin-left:6px;font-size:.8em;animation:beat 1s ease-in-out infinite;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;vertical-align:middle}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.25)}30%{transform:scale(1)}45%{transform:scale(1.15)}}
+.love{border-radius:16px;padding:10px 14px;background:linear-gradient(135deg,#ff7ab8,#b04bff);border:2px solid #fff8;box-shadow:0 6px 0 #0006;text-align:left}
+.love b{display:flex;justify-content:space-between;font-size:14px;color:#fff}.love em{font-style:normal;color:#ffe066}
+.love p{margin:4px 0 0;font-size:17px;color:#fff;text-shadow:0 2px 0 #0004}
+.card.wel{background:linear-gradient(160deg,#ffb0da,#ff5aa8 45%,#9a2aff);border-color:#fff}
+.wel h3{word-break:keep-all;color:#fff!important;text-shadow:0 3px 0 #a3107a!important;font-size:clamp(28px,8.5vw,40px)!important}
+.wel .sig{font-size:16px;color:#fff;margin-top:12px;opacity:.95}
+.wel .go{background:linear-gradient(#fff,#ffd0ea)!important;color:#c0106a!important}
+.wel .hb{font-size:64px;animation:beat 1s ease-in-out infinite;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif}
+.hrain{position:fixed;inset:0;pointer-events:none;z-index:21;overflow:hidden}
+.hrain span{position:absolute;top:-10vh;animation:fall linear forwards;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif}
 .ticker{display:flex;justify-content:space-between;align-items:center;gap:8px;border-radius:14px;padding:6px 14px;background:linear-gradient(#1a0b2e,#05010d);border:2px solid var(--gold);box-shadow:0 0 14px #ffd34d44}
 .ticker b{font-family:Cinzel,serif;font-weight:900;color:#ff5252;font-size:14px}
 .ticker .num{font-size:clamp(20px,6vw,28px);color:var(--gold);text-shadow:0 0 10px #ffb300}
@@ -65,14 +80,59 @@ button:focus-visible{outline:3px solid #7fd0ff;outline-offset:2px}
 .c-buffalo{background:radial-gradient(circle at 50% 30%,#ffb35a,#b2401a 55%,#3a0c04)}
 .c-lucky{background:radial-gradient(circle at 50% 30%,#ff6a7a,#a3091f 55%,#2a0006)}
 .c-panda{background:radial-gradient(circle at 50% 30%,#ffc2e4,#c04aa0 55%,#3a1060)}
+.c-dragon{background:radial-gradient(circle at 50% 30%,#ffb03a,#c8102e 50%,#3a0306)}
+.c-tiger{background:radial-gradient(circle at 50% 30%,#ffd36a,#2f8a3a 50%,#062a0c)}
+.c-ocean{background:radial-gradient(circle at 50% 30%,#9af0ff,#1a7ad0 50%,#031a40)}
 .c-piggy{background:radial-gradient(circle at 50% 30%,#bff0ff,#3aa0d0 45%,#1f7a2a 75%,#0c3414)}
 .foot{font-size:11px;color:#d0c0ef;text-align:center;opacity:.8}
 /* game */
 .ghead{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center}
 .back{min-height:44px;padding:0 12px;border-radius:14px;background:#0007;border:2px solid #fff4;font-size:15px}
-.gtitle{text-align:center;font:400 clamp(24px,7vw,36px)/1 var(--tfont);font-weight:900;background:linear-gradient(#fff9d0,#ffd34d 45%,#c26a00 70%,#ffe9a0);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 #0009);margin:2px 0 -2px}
+.gtitle{display:flex;align-items:center;justify-content:center;gap:8px;margin:2px 0 -2px;cursor:default}
+.gtitle .gt{font:400 clamp(22px,6.6vw,36px)/1 var(--tfont);font-weight:900;background:linear-gradient(#fff9d0,#ffd34d 45%,#c26a00 70%,#ffe9a0);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 #0009);white-space:nowrap}
+.gtitle .ge{font-size:clamp(26px,8vw,40px);font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;animation:bob2 2s ease-in-out infinite;filter:drop-shadow(0 3px 3px #0008)}
+.gtitle .ge:last-child{animation-delay:1s;transform:scaleX(-1)}
+@keyframes bob2{50%{translate:0 -5px}}
+/* scene */
+.scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.scene>svg{position:absolute;inset:0;width:100%;height:100%}
+.screen{position:relative;z-index:1}
+#game{min-height:100vh;min-height:100svh}
+.pfx span{position:absolute;top:0;left:var(--x);font-size:var(--s);opacity:.85;animation:var(--a) var(--d) linear var(--dl) infinite;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif}
+@keyframes fall{from{transform:translateY(-8vh) rotate(0)}to{transform:translateY(108vh) rotate(540deg)}}
+@keyframes rise{from{transform:translateY(105vh) translateX(0)}50%{transform:translateY(50vh) translateX(18px)}to{transform:translateY(-8vh) translateX(-10px)}}
+@keyframes twk{0%,100%{opacity:.15;transform:translateY(var(--y)) scale(.6)}50%{opacity:1;transform:translateY(var(--y)) scale(1.2)}}
+@keyframes flyx{from{transform:translate(-15vw,var(--y))}to{transform:translate(115vw,calc(var(--y) - 30px))}}
+.sway{animation:sway 4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0}
+.sway2{animation:sway 5s ease-in-out infinite reverse;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes sway{50%{transform:rotate(6deg)}}
+.beam{animation:beam 6s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes beam{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+.drift{animation:drift 40s linear infinite}
+@keyframes drift{from{transform:translateX(-120px)}to{transform:translateX(520px)}}
+/* stage ornaments */
+.orn{position:absolute;top:-22px;z-index:8;font-size:clamp(30px,9vw,44px);font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;filter:drop-shadow(0 4px 3px #0009);animation:sway 3s ease-in-out infinite;transform-origin:50% 0;pointer-events:none}
+.orn.l{left:-8px}.orn.r{right:-8px;animation-delay:1.5s}
+/* mascot */
+body[data-rows="4"] .masc{font-size:clamp(72px,22vw,110px)}body[data-rows="4"] .mzone{min-height:140px;padding-top:34px}
+.mzone{position:relative;flex:1;min-height:180px;display:flex;align-items:flex-end;justify-content:center;gap:2vw;padding:40px 0 6px}
+.mzone .ground{position:absolute;left:50%;bottom:4px;width:170px;height:22px;margin-left:-85px;border-radius:50%;background:radial-gradient(#0009,transparent 70%)}
+.masc{position:relative;font-size:clamp(96px,30vw,150px);line-height:1;cursor:pointer;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;filter:drop-shadow(0 10px 8px #0008);animation:breathe 2.6s ease-in-out infinite;transform-origin:50% 100%;-webkit-tap-highlight-color:transparent}
+@keyframes breathe{50%{transform:scale(1.04,.97)}}
+.masc.jump{animation:mjump .7s ease-out}
+@keyframes mjump{0%{transform:scale(1.1,.85)}35%{transform:translateY(-50px) scale(.95,1.08)}70%{transform:translateY(0) scale(1.08,.9)}100%{transform:none}}
+.masc.dance{animation:mdance .45s ease-in-out 6}
+@keyframes mdance{25%{transform:translateY(-30px) rotate(-14deg)}50%{transform:translateY(0) rotate(0)}75%{transform:translateY(-30px) rotate(14deg)}}
+.masc.sad{animation:msad 1.2s ease-in-out}
+@keyframes msad{30%,70%{transform:rotate(-8deg) translateY(6px) scale(.96)}}
+.props{display:flex;gap:2px;align-items:flex-end;font-size:clamp(32px,10vw,52px);font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;filter:drop-shadow(0 6px 4px #0008)}
+.props span{display:inline-block;animation:bob2 2.4s ease-in-out infinite}
+.props span:nth-child(2){animation-delay:.6s;font-size:.75em}.props span:nth-child(3){animation-delay:1.2s;font-size:.85em}
+.bub{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%) scale(0);transform-origin:50% 100%;background:#fff;color:#3a0b52;border-radius:18px;padding:8px 16px;font-size:clamp(16px,5vw,20px);white-space:nowrap;box-shadow:0 6px 16px #0007;transition:transform .2s cubic-bezier(.3,1.6,.5,1);z-index:3}
+.bub::after{content:"";position:absolute;left:50%;bottom:-10px;margin-left:-10px;border:10px solid transparent;border-top-color:#fff;border-bottom:0}
+.bub.on{transform:translateX(-50%) scale(1)}
 .jp{display:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-body[data-g=egypt] .jp{display:grid}
+body.jpon .jp{display:grid}
 .plq{border-radius:12px;padding:3px 8px 4px;text-align:center;background:linear-gradient(#1a0b2e,#05010d);border:2px solid var(--gold2);box-shadow:inset 0 0 12px #000;position:relative;overflow:hidden}
 .plq b{display:block;font-family:Cinzel,serif;font-weight:900;font-size:11px}
 .plq .num{font-size:clamp(12px,3.4vw,17px);color:#fff}
@@ -103,7 +163,7 @@ body.fs .banner{display:block}
 .tc.pop{transition:transform .28s ease-in,opacity .28s!important;opacity:0!important}
 .col{filter:brightness(1.5) drop-shadow(0 0 12px #ffd34d);animation:land .4s ease-out}
 #lines{position:absolute;inset:5px;width:calc(100% - 10px);height:calc(100% - 10px);pointer-events:none;z-index:3}
-#hs{position:absolute;inset:5px;display:none;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:repeat(3,var(--c,70px));grid-auto-flow:column;gap:0 4px;z-index:5;background:var(--box);border-radius:10px}
+#hs{position:absolute;inset:5px;display:none;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:repeat(var(--rows,3),var(--c,70px));grid-auto-flow:column;gap:0 4px;z-index:5;background:var(--box);border-radius:10px}
 #hs.on{display:grid}
 .hc{border-radius:8px;margin:2px;background:radial-gradient(#3a1670,#160629);display:grid;place-items:center;padding:6%;box-shadow:inset 0 0 10px #000}
 .hc.roll{animation:hroll .18s infinite alternate}
@@ -215,6 +275,7 @@ body.fs .banner{display:block}
 </style>
 </head>
 <body data-g="lobby">
+<div class="scene" id="scene"></div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="gG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff8c8"/><stop offset=".4" stop-color="#ffd34d"/><stop offset=".75" stop-color="#c8840f"/><stop offset="1" stop-color="#6e3f03"/></linearGradient>
 <linearGradient id="tR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5a6a"/><stop offset="1" stop-color="#6a0716"/></linearGradient>
@@ -235,6 +296,7 @@ body.fs .banner{display:block}
 <linearGradient id="lP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ecc8ff"/><stop offset=".5" stop-color="#a64bff"/><stop offset="1" stop-color="#3a0b72"/></linearGradient>
 <linearGradient id="lO" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset=".5" stop-color="#ff9a1f"/><stop offset="1" stop-color="#7a3000"/></linearGradient>
 <radialGradient id="cG" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#fffbe0"/><stop offset=".35" stop-color="#ffd34d"/><stop offset=".8" stop-color="#c07a08"/><stop offset="1" stop-color="#7a4503"/></radialGradient>
+<radialGradient id="fG" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#fff6c0"/><stop offset=".35" stop-color="#ff9a1f"/><stop offset=".8" stop-color="#d0201a"/><stop offset="1" stop-color="#6a0606"/></radialGradient>
 <filter id="ds" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="1.5" flood-color="#000" flood-opacity=".6"/></filter>
 </defs></svg>
 
@@ -245,11 +307,12 @@ body.fs .banner{display:block}
     <button class="charge" id="charge">무료충전<small id="chargeT">받기</small></button>
     <div class="ibs"><button class="ib bgmB" aria-label="배경음악">🎵</button></div>
   </div>
-  <div class="logo"><b>LUCKY PALACE</b><span>오늘의 기계를 골라 앉으세요</span></div>
+  <div class="logo"><b>태율랜드<i>❤️</i></b><span id="vip">VIP 소현님 전용 카지노</span></div>
+  <div class="love" id="love"><b>💌 주인장의 한마디 <em id="dday"></em></b><p id="note"></p></div>
   <div class="ticker"><b>GRAND JACKPOT</b><span class="num" id="tick">0</span></div>
   <button class="lwheel" id="lwheel"><div><b>행운의 휠</b><small id="lwT">4시간마다 무료 · 최대 1억</small></div><span>🎡</span></button>
   <div class="cards" id="cards"></div>
-  <div class="foot">실제 돈이 오가지 않는 무료 게임 코인입니다 · 기록은 이 기기에만 저장돼요<br><span id="ver">v1.0 · 2026.11.26</span></div>
+  <div class="foot">실제 돈이 오가지 않는 무료 게임 코인입니다 · 기록은 이 기기에만 저장돼요</div>
 </section>
 
 <section class="screen" id="game">
@@ -258,7 +321,7 @@ body.fs .banner{display:block}
     <div class="pill"><svg class="cicon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="url(#cG)" stroke="#6e3f03" stroke-width="4"/><text x="50" y="66" text-anchor="middle" font-family="Cinzel" font-weight="900" font-size="46" fill="#7a4503">G</text></svg><span class="num balv">0</span></div>
     <div class="ibs" style="display:flex;gap:6px"><button class="ib bgmB" aria-label="배경음악">🎵</button><button class="ib sfxB" aria-label="효과음">🔊</button></div>
   </div>
-  <div class="gtitle" id="gtitle"></div>
+  <div class="gtitle" id="gtitle"><span class="ge" id="ge1"></span><span class="gt" id="gtt"></span><span class="ge" id="ge2"></span></div>
   <div class="jp" id="jp">
     <div class="plq g" data-t="GRAND"><b>GRAND</b><span class="num">0</span></div>
     <div class="plq ma" data-t="MAJOR"><b>MAJOR</b><span class="num">0</span></div>
@@ -267,6 +330,7 @@ body.fs .banner{display:block}
   </div>
   <div class="stage">
     <div class="banner" id="banner">FREE SPINS</div>
+    <span class="orn l" id="ornL"></span><span class="orn r" id="ornR"></span>
     <div class="bulbs top"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="bulbs bot"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="win-box" id="box"></div>
@@ -285,6 +349,7 @@ body.fs .banner{display:block}
     </div>
     <button id="spin">SPIN<small>길게: 오토</small></button>
   </div>
+  <div class="mzone"><div class="ground"></div><div class="props" id="propL"></div><div class="masc" id="masc"><div class="bub" id="bub"></div><span id="mascE"></span></div><div class="props" id="propR"></div></div>
 </section>
 
 <div id="pop"></div>
@@ -293,6 +358,8 @@ body.fs .banner{display:block}
 <canvas id="fx"></canvas>
 <script src="games.js"></script>
 <script src="audio.js"></script>
+<script src="decor.js"></script>
+<script src="love.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
