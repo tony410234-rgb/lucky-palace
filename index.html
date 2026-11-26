@@ -346,7 +346,7 @@ body[data-g=dragon]{--aura:#ff6a2a99}body[data-g=ocean]{--aura:#6ae0ff99}body[da
  #game .mzone{order:0;height:100%;min-height:0;padding:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto minmax(0,1fr) auto;align-items:end;justify-items:center}
  #game .mtitle{display:block;grid-column:1/-1;grid-row:1;align-self:start;text-align:center;font:900 clamp(14px,2.4vw,22px)/1.1 var(--tfont);color:#ffd34d;text-shadow:0 2px 0 #000,0 0 10px #000}
  #game .mtitle em{display:block;font-style:normal;font-size:1.8em;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif}
- #game .masc{grid-column:1/-1;grid-row:2;align-self:end;font-size:clamp(64px,24vh,120px)}
+ #game .masc{grid-column:1/-1;grid-row:2/4;align-self:end;font-size:clamp(64px,24vh,120px)}
  #game #propL{grid-row:3;grid-column:1;font-size:clamp(22px,6vh,34px)}#game #propR{grid-row:3;grid-column:2;font-size:clamp(22px,6vh,34px)}
  #game .mzone .ground{bottom:30px}
  #game .bub{font-size:14px;padding:6px 10px}
@@ -378,6 +378,83 @@ body[data-g=dragon]{--aura:#ff6a2a99}body[data-g=ocean]{--aura:#6ae0ff99}body[da
  .mreel,.mreel .ms span{width:clamp(64px,17vh,86px);height:clamp(64px,17vh,86px)}
  .mreel .ms span{font-size:clamp(36px,11vh,52px)}
  .wheelwrap{width:min(300px,62vh)}
+}
+
+/* ===== v2.1 per-game skins ===== */
+:root{--con1:#2a1a5a;--con2:#0c0624;--btnA:#5a2fd0;--btnB:#2a0f7a;--btnE:#8a6bff;--spA:#8dff7a;--spB:#1fb83a;--spC:#0a6a1a;--spE:#d9ffd0;--spS:#064a10;--spR:50%;--spT:#fff}
+body[data-g=egypt]{--con1:#3a1a6a;--con2:#12052a;--btnA:#7a4cff;--btnB:#3a138a;--btnE:#ffd34d;--spA:#fff3b0;--spB:#e0a52a;--spC:#7a4a05;--spE:#fff8d8;--spS:#4a2a00;--spT:#4a1a00}
+body[data-g=buffalo]{--con1:#5a2a10;--con2:#1e0a03;--btnA:#a0582a;--btnB:#5a2a0a;--btnE:#ffcf8a;--spA:#ffb070;--spB:#d0501a;--spC:#6a1a04;--spE:#ffe0c0;--spS:#3a0c00}
+body[data-g=lucky]{--con1:#3a0a14;--con2:#0e0204;--btnA:#2a2a32;--btnB:#0a0a10;--btnE:#c0c8d8;--spA:#ff8a8a;--spB:#e0102a;--spC:#6a0010;--spE:#ffd34d;--spS:#3a0008;--spR:18px}
+body[data-g=panda]{--con1:#7a2a8a;--con2:#2a0a3a;--btnA:#ff6ab8;--btnB:#a0186a;--btnE:#ffd0ea;--spA:#ffe0f0;--spB:#ff6ab8;--spC:#8a0a5a;--spE:#fff;--spS:#5a0040}
+body[data-g=piggy]{--con1:#2a7a3a;--con2:#0a2a10;--btnA:#ff8ac0;--btnB:#c03a7a;--btnE:#ffe0f0;--spA:#ffd0e4;--spB:#ff7ab0;--spC:#b02a6a;--spE:#fff;--spS:#6a0a3a}
+body[data-g=dragon]{--con1:#6a0a10;--con2:#200204;--btnA:#c8102e;--btnB:#6a0010;--btnE:#ffd34d;--spA:#ffe066;--spB:#ff3a1a;--spC:#7a0606;--spE:#ffd34d;--spS:#3a0000}
+body[data-g=tiger]{--con1:#1f5a24;--con2:#061a08;--btnA:#e07a1a;--btnB:#7a3a04;--btnE:#ffd34d;--spA:#ffd080;--spB:#ff8a1a;--spC:#7a3200;--spE:#ffe9a0;--spS:#3a1800}
+body[data-g=ocean]{--con1:#0a4a8a;--con2:#021230;--btnA:#1a8ad0;--btnB:#06306a;--btnE:#9af0ff;--spA:#d0fbff;--spB:#2ad0ff;--spC:#0a4a9a;--spE:#fff;--spS:#022a5a}
+#game .ctl{background:linear-gradient(var(--con1),var(--con2) 65%,var(--con1))}
+#game .betbox button,#game .sm{background:linear-gradient(var(--btnA),var(--btnB));border-color:var(--btnE)}
+#game .sm.on{background:linear-gradient(#ffe066,#e08a00);color:#3a1500}
+#game .betbox{border-color:var(--btnE)}
+#spin{border-radius:var(--spR);background:radial-gradient(circle at 40% 28%,var(--spA),var(--spB) 48%,var(--spC));border:4px solid var(--spE);box-shadow:0 7px 0 var(--spS),0 10px 18px #000a,inset 0 4px 0 #fff8,inset 0 -6px 10px #0006;color:var(--spT);text-shadow:0 2px 0 #0006;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+#spin::before{content:"";position:absolute;left:12%;right:12%;top:6%;height:38%;border-radius:50% 50% 40% 40%;background:linear-gradient(#fffb,#fff0);pointer-events:none}
+#spin .spi{font-style:normal;font-size:.95em;line-height:1;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;filter:drop-shadow(0 2px 2px #0007)}
+#spin .spt{font:900 1em/1 'Lilita One','Arial Black',sans-serif;letter-spacing:1px}
+#spin.stop .spt{color:#fff}
+body[data-g=lucky] #spin{width:clamp(120px,34vw,150px);height:clamp(78px,22vw,96px)}
+body[data-g=lucky] #spin .spi{font:900 .55em/1 'Lilita One',sans-serif;color:#ffd34d;letter-spacing:4px;filter:none;text-shadow:0 0 8px #ff0}
+.lever{display:none;position:absolute;right:-26px;top:18%;width:28px;height:62%;z-index:9;cursor:pointer;border:0;background:none;padding:0}
+
+.lever::before{content:"";position:absolute;left:10px;top:22px;width:9px;bottom:10px;border-radius:5px;background:linear-gradient(90deg,#666,#fff,#888);transform-origin:50% 100%;transition:transform .25s}
+.lever::after{content:"";position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff9a9a,#e0102a 55%,#6a0010);box-shadow:0 4px 6px #0008;transition:transform .25s}
+.lever.pull::before{transform:scaleY(.3)}.lever.pull::after{transform:translateY(calc(var(--c,70px)*2))}
+.lever i{position:absolute;left:4px;bottom:0;width:22px;height:20px;border-radius:6px;background:linear-gradient(#ffe58a,#8a5408)}
+/* bigger mascot + pedestal */
+.masc{font-size:clamp(130px,42vw,210px)!important}
+.mzone{min-height:260px}
+.mzone{--pw:min(62vw,250px);--pb:0px}
+.pedestal{position:absolute;left:50%;bottom:var(--pb);width:var(--pw);transform:translateX(-50%);z-index:0;pointer-events:none}
+.mzone[data-ped=pot] .masc{margin-bottom:calc(var(--pb) + var(--pw)*.3)}
+.mzone[data-ped=pile] .masc{margin-bottom:calc(var(--pb) + var(--pw)*.17)}
+.mzone .props{margin-bottom:var(--pb)}
+.mzone>.props,.mzone>.masc{z-index:1}
+.masc .m3d{position:relative;top:-.12em}
+/* lobby jackpot labels */
+.cjp{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:2;text-align:center;font:900 12px/1 'Lilita One',sans-serif;color:#ffe066;text-shadow:0 2px 0 #7a3b00;white-space:nowrap}
+.cjp b{display:block;margin-top:3px;padding:3px 10px;border-radius:999px;background:#0009;border:1px solid #ffd34d88;color:#fff;font:900 12px/1.2 Cinzel,serif}
+.gcard .bdg{top:auto;bottom:auto;top:44px}
+/* ===== 3D big win ===== */
+.bw{width:min(760px,100%)!important;overflow:visible!important}
+.bw::before{background:repeating-conic-gradient(var(--rc,#ffb02a55) 0 7deg,transparent 7deg 14deg)!important;mask:radial-gradient(#000 15%,transparent 62%)!important;-webkit-mask:radial-gradient(#000 15%,transparent 62%)!important}
+.bw::after{content:"";position:absolute;left:50%;top:45%;width:120vmin;height:120vmin;margin:-60vmin 0 0 -60vmin;border-radius:50%;background:radial-gradient(var(--rg,#ffb02a99),transparent 60%);z-index:-1;animation:aurap 1s ease-in-out infinite}
+.t3{position:relative;display:inline-block;font:400 clamp(58px,min(18vw,30vh),150px)/.92 'Lilita One','Arial Black',sans-serif;letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
+.t3 .ex{display:block;color:var(--t3d,#c2410c);-webkit-text-stroke:.07em var(--t3s,#5a1404);text-shadow:0 1px 0 var(--t3d,#c2410c),0 2px 0 var(--t3d,#c2410c),0 3px 0 var(--t3m,#a8320a),0 4px 0 var(--t3m,#a8320a),0 5px 0 var(--t3m,#a8320a),0 6px 0 var(--t3s,#6a1a04),0 7px 0 var(--t3s,#6a1a04),0 8px 0 var(--t3s,#6a1a04),0 9px 0 var(--t3s,#5a1404),0 10px 0 var(--t3s,#5a1404),0 18px 26px #000c}
+.t3 .fr{position:absolute;left:0;top:0;right:0;background:linear-gradient(var(--t1,#fffbe0) 8%,var(--t2,#ffe066) 38%,var(--t3,#ffb020) 62%,var(--t4,#ff8a00));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:.025em #fff8}
+.t3.sm{font-size:clamp(34px,min(10vw,15vh),78px)}
+.bw .t3{display:block;margin:0 auto}
+.bw .bwn{margin-top:6px}
+.bw .bwn .t3{font-size:clamp(40px,min(12vw,16vh),90px);--t3d:#8a4a00;--t3m:#6a3a00;--t3s:#3a1a00;--t1:#fff;--t2:#fff3a0;--t3:#ffd34d;--t4:#ffb020}
+.bw.tier-mega{--t3d:#a0107a;--t3m:#7a0a5a;--t3s:#3a0030;--t1:#fff0ff;--t2:#ffb0f0;--t3:#ff5ad0;--t4:#c020b0;--rc:#ff5ad055;--rg:#ff5ad099}
+.bw.tier-super{--t3d:#1050c0;--t3m:#0a3a90;--t3s:#041a4a;--t1:#f0fbff;--t2:#a0e8ff;--t3:#40b0ff;--t4:#1a6ad0;--rc:#40b0ff55;--rg:#40b0ff99}
+.bw.tier-epic{--t3d:#c2410c;--t3m:#a8320a;--t3s:#5a1404;--rc:#ff6a2a66;--rg:#ff5a1a99}
+.bw.tier-legend{--t3d:#7a1ad0;--t3m:#5a0aa0;--t3s:#2a0050;--t1:#fff;--t2:#ffe066;--t3:#ff6ad0;--t4:#6ad0ff;--rc:#ffffff44;--rg:#ff6ad099}
+.bw .t3.pop{animation:t3in .55s cubic-bezier(.3,1.6,.5,1)}
+@keyframes t3in{0%{transform:scale(0) rotate(-12deg)}100%{transform:none}}
+.bw .t3.wob{animation:t3wob 1.2s ease-in-out infinite}
+@keyframes t3wob{50%{transform:scale(1.05) rotate(-1.5deg)}}
+.jpc{background:radial-gradient(#3a0a5a,#12021e)!important;border:4px solid #ffd34d!important;box-shadow:0 0 0 4px #7a3b00,0 0 50px #ffd34d88!important;position:relative;overflow:visible!important}
+.jpc .bl{position:absolute;inset:-12px;border-radius:30px;pointer-events:none;background:radial-gradient(circle,#fff6c0 0 4px,transparent 5px) 0 0/22px 22px;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;padding:6px;animation:blk .5s steps(2) infinite}
+@keyframes blk{50%{opacity:.35}}
+.jpc.t-GRAND{--t3d:#a00a1a;--t3m:#7a0010;--t3s:#3a0008;--t1:#fff;--t2:#ffd0d0;--t3:#ff4a5a;--t4:#c0001a}
+.jpc.t-MAJOR{--t3d:#7a1ad0;--t3m:#5a0aa0;--t3s:#2a0050;--t1:#fff;--t2:#f0c0ff;--t3:#c060ff;--t4:#7a1ad0}
+.jpc.t-MINOR{--t3d:#1050c0;--t3m:#0a3a90;--t3s:#041a4a;--t1:#fff;--t2:#c0e8ff;--t3:#40a0ff;--t4:#1a5ad0}
+.jpc.t-MINI{--t3d:#0a8a3a;--t3m:#066a2a;--t3s:#023a14;--t1:#fff;--t2:#c0ffd0;--t3:#3ad06a;--t4:#0a8a3a}
+.star{position:fixed;z-index:31;pointer-events:none;width:26px;height:26px;margin:-13px 0 0 -13px;background:radial-gradient(#fff 15%,#ffe066 30%,transparent 60%);clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);will-change:transform,opacity}
+@media (orientation:landscape) and (max-height:600px){
+ #game .masc{font-size:clamp(100px,40vh,180px)!important}
+ #game .mzone{--pw:min(19vw,200px);--pb:26px}
+ body[data-g=lucky] #game .lever{display:block}
+ #game .gmain{grid-template-columns:minmax(0,21vw) minmax(0,1fr) minmax(0,20vw)}
+ body[data-g=lucky] #game #spin{width:clamp(96px,16vw,130px);height:clamp(62px,15vh,80px)}
+ #lobby .cjp{top:6px}
 }
 @media (prefers-reduced-motion:reduce){.gcard .hero,.gcard .rays,.bw h3,.hit,.antic{animation:none!important}}
 </style>
@@ -445,6 +522,7 @@ body[data-g=dragon]{--aura:#ff6a2a99}body[data-g=ocean]{--aura:#6ae0ff99}body[da
     <div class="bulbs top"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="bulbs bot"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="pil l"><b>20</b></div><div class="pil r"><b>20</b></div>
+    <button class="lever" id="lever" aria-label="레버"><i></i></button>
     <div class="win-box" id="box"></div>
   </div>
   <div class="ctl">
@@ -460,9 +538,9 @@ body[data-g=dragon]{--aura:#ff6a2a99}body[data-g=ocean]{--aura:#6ae0ff99}body[da
       <button class="sm" id="turbo">터보</button>
       <button class="sm" id="lvlBtn"><span class="lvT">LV 1</span></button>
     </div>
-    <button id="spin">SPIN<small>길게: 오토</small></button>
+    <button id="spin"><i class="spi"></i><b class="spt">SPIN</b><small>길게: 오토</small></button>
   </div>
-  <div class="mzone"><div class="mtitle" id="mtitle"></div><div class="ground"></div><div class="props" id="propL"></div><div class="masc" id="masc"><div class="bub" id="bub"></div><div class="aura"></div><span id="mascE" class="m3d"></span></div><div class="props" id="propR"></div></div>
+  <div class="mzone"><div class="mtitle" id="mtitle"></div><img class="pedestal" id="ped" alt=""><div class="ground"></div><div class="props" id="propL"></div><div class="masc" id="masc"><div class="bub" id="bub"></div><div class="aura"></div><span id="mascE" class="m3d"></span></div><div class="props" id="propR"></div></div>
  </div>
 </section>
 
