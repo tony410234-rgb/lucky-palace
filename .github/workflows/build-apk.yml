@@ -4,6 +4,9 @@ on:
   push:
     paths:
       - '.github/workflows/build-apk.yml'
+      - 'strings.xml'
+      - 'ic_launcher.png'
+      - 'MainActivity.java'
 permissions:
   contents: write
 jobs:
@@ -18,12 +21,7 @@ jobs:
           distribution: temurin
           java-version: '17'
       - name: 3 Check files
-        run: |
-          ls -la
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          for f in AndroidManifest.xml MainActivity.java strings.xml ic_launcher.png index.html games.js audio.js app.js gradlew gradle-wrapper.jar gradle-wrapper.properties; do
-            if [ -f "$f" ]; then echo "OK  $f"; else echo "MISSING  $f"; fi
-          done
+        run: ls -la
       - name: 4 Make Android project
         run: |
           set -ex
@@ -33,7 +31,7 @@ jobs:
           cp AndroidManifest.xml $M/
           cp MainActivity.java $M/java/com/taeyul/luckypalace/
           cp strings.xml $M/res/values/
-          cp index.html games.js audio.js app.js $M/assets/www/
+          cp index.html *.js $M/assets/www/
           cp gradlew $A/ && chmod +x $A/gradlew
           cp gradle-wrapper.jar gradle-wrapper.properties $A/gradle/wrapper/
           OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
@@ -42,7 +40,7 @@ jobs:
           cat > $A/settings.gradle <<'EOF'
           pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
           dependencyResolutionManagement { repositories { google(); mavenCentral() } }
-          rootProject.name = "LuckyPalace"
+          rootProject.name = "TaeyulLand"
           include ':app'
           EOF
           echo "plugins { id 'com.android.application' version '8.5.2' apply false }" > $A/build.gradle
@@ -56,8 +54,8 @@ jobs:
                   applicationId "com.taeyul.luckypalace"
                   minSdk 24
                   targetSdk 34
-                  versionCode 1
-                  versionName "1.0"
+                  versionCode 2
+                  versionName "2.0"
               }
               compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
           }
@@ -67,12 +65,12 @@ jobs:
         working-directory: apkbuild
         run: ./gradlew assembleDebug --no-daemon --stacktrace
       - name: 6 Copy APK
-        run: cp apkbuild/app/build/outputs/apk/debug/app-debug.apk LuckyPalace.apk
+        run: cp apkbuild/app/build/outputs/apk/debug/app-debug.apk TaeyulLand.apk
       - name: 7 Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
-          name: 럭키 팰리스 APK
-          body: 한 번만 설치하면 돼요. 게임 업데이트는 index.html, games.js, audio.js, app.js만 바꾸면 앱에 자동 반영돼요.
-          files: LuckyPalace.apk
+          name: 태율랜드 APK
+          body: 소현이 전용 앱 💕 한 번만 설치하면 돼요. 게임 업데이트는 html·js 파일만 바꾸면 자동 반영돼요.
+          files: TaeyulLand.apk
           make_latest: true
