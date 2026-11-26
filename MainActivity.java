@@ -23,6 +23,8 @@ public class MainActivity extends Activity {
     private static final String LOCAL = "file:///android_asset/www/index.html";
     private WebView web;
     private boolean fellBack = false;
+    private long pausedAt = 0;
+    private String remote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +40,8 @@ public class MainActivity extends Activity {
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setAllowFileAccess(true);
         s.setTextZoom(100);
-        boolean online = isOnline();
-        s.setCacheMode(online ? WebSettings.LOAD_NO_CACHE : WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        s.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        web.clearCache(true);
         web.setWebChromeClient(new WebChromeClient());
         web.setWebViewClient(new WebViewClient() {
             @Override
@@ -49,8 +51,12 @@ public class MainActivity extends Activity {
         });
         setContentView(web);
         hideBars();
-        String remote = readUrl();
-        if (online && remote != null && remote.startsWith("https://")) web.loadUrl(remote + "?t=" + System.currentTimeMillis());
+        remote = readUrl();
+        loadRemote();
+    }
+
+    private void loadRemote() {
+        if (remote != null && remote.startsWith("https://")) { fellBack = false; web.loadUrl(remote + "?t=" + System.currentTimeMillis()); }
         else web.loadUrl(LOCAL);
     }
 
@@ -93,10 +99,15 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onPause() { super.onPause(); web.onPause(); web.pauseTimers(); }
+    protected void onPause() { super.onPause(); pausedAt = System.currentTimeMillis(); web.onPause(); web.pauseTimers(); }
 
     @Override
-    protected void onResume() { super.onResume(); web.onResume(); web.resumeTimers(); hideBars(); }
+    protected void onResume() {
+        super.onResume(); web.onResume(); web.resumeTimers(); hideBars();
+        long away = pausedAt == 0 ? 0 : System.currentTimeMillis() - pausedAt;
+        // 오프라인 화면이었거나 20분 넘게 나갔다 오면 최신 버전으로 새로 불러오기
+        if ((fellBack && isOnline()) || away > 20 * 60 * 1000L) { web.clearCache(true); loadRemote(); }
+    }
 
     @Override
     protected void onDestroy() { web.destroy(); super.onDestroy(); }

@@ -809,6 +809,7 @@ function loveCard(){const L=window.LOVE||{};const notes=L.notes&&L.notes.length?
  if(L.since){const d=Math.floor((Date.now()-new Date(L.since+'T00:00:00+09:00'))/864e5)+1;$('dday').textContent=d>0?`우리 D+${d}`:''}
  if(L.her)$('vip').textContent=`VIP ${L.her}님 전용 카지노`}
 loveCard();
+(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v3.4'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
 (async()=>{const L=window.LOVE||{};heartRain(46);
  await popup(`<div class="hb">💝</div><h3>${(L.welcome||'웰컴 자기야 오늘도 사랑해🥰')}</h3><div class="sig">- ${L.owner||'태율랜드 주인장'} -</div><button class="go">나도 사랑해 💕</button>`,{cls:'wel'});
  AUDIO.init();[784,988,1175,1568].forEach((f,i)=>AUDIO.tone(f,.3,i*.12,'sine',.08));heartRain(24);})();
