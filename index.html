@@ -509,6 +509,79 @@ body[data-g=olympus]{--con1:#5a4ab0;--con2:#1a1050;--btnA:#8a6aff;--btnB:#3a1aa0
 .wood .opt{border:3px solid #ffe08a;border-radius:14px;padding:10px 6px;color:#fff;font:900 15px/1.3 Jua,sans-serif;background:linear-gradient(#8a5ad0,#4a1a9a);box-shadow:0 4px 0 #2a0a5a}
 .wood .opt.sup{background:linear-gradient(#ff6ab8,#a0186a);box-shadow:0 4px 0 #5a0040}
 .wood .opt b{display:block;color:#ffe08a;font-size:19px;margin-top:4px}
+
+/* ===== 황금 두꺼비 88 ===== */
+.c-toad{background:radial-gradient(circle at 50% 28%,#ffe58a,#e0201a 45%,#1a3a9a)}
+body[data-g=toad]{--b1:#3a9af0;--b2:#1a5ad8;--b3:#0a2a8a}
+body[data-g=toad] #game .gtitle,body[data-g=toad] #game .jp,body[data-g=toad] #game .mzone,body[data-g=toad] #game .bulbs,body[data-g=toad] #game .pil,body[data-g=toad] #game .lever,body[data-g=toad] #game .orn,body[data-g=toad] #game #max,body[data-g=toad] #game #lvlBtn,body[data-g=toad] #game #buy,body[data-g=toad] #game .clines,body[data-g=toad] #game .gtop::after{display:none!important}
+body[data-g=toad] #game.screen.on{display:flex!important;flex-direction:column;max-width:none;height:100vh;height:100svh;padding:0!important;gap:0!important;overflow:hidden}
+body[data-g=toad] #game .gtop{display:flex!important;align-items:center;gap:10px;flex:none;padding:3px 12px;background:linear-gradient(#e8281e,#a80a0a);box-shadow:0 2px 0 #ffcc3366,0 4px 10px #0006;z-index:3}
+body[data-g=toad] #game .ghead{display:contents}
+body[data-g=toad] #game .back{order:1;min-height:32px;background:none;border:0;box-shadow:none;font-size:15px}
+body[data-g=toad] #game .ghead .pill{order:2;margin:0 auto;min-height:32px;min-width:min(260px,34vw);background:linear-gradient(#8a0606,#c01414);border:2px solid #5a0202;box-shadow:inset 0 2px 4px #0006}
+body[data-g=toad] #game .ghead .ibs{order:3}
+body[data-g=toad] #game .ib{width:34px;height:34px}
+body[data-g=toad] #game .gmain{display:flex!important;flex-direction:column;align-items:center;flex:1;min-height:0;gap:0!important;padding:0;grid-template-columns:none!important}
+body[data-g=toad] #game .stage{position:relative;flex:none;margin:auto;padding:0!important;border-radius:0;background:none!important;box-shadow:none!important;align-self:center;justify-self:center}
+body[data-g=toad] #game .stage::before,body[data-g=toad] #game .stage::after{display:none}
+.tbg{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+body[data-g=toad] #game .win-box{position:absolute;left:19.3%;top:36.4%;width:61.4%;height:60.6%;padding:5px 6px;column-gap:5px;background:#2a0202;border-radius:4px;box-shadow:inset 0 0 12px #000;z-index:1;align-content:center}
+body[data-g=toad] #game .win-box::after{content:"";position:absolute;left:6px;right:6px;top:50%;height:2px;margin-top:-1px;background:#0005;z-index:3;pointer-events:none}
+body[data-g=toad] .reel{height:calc(var(--c)*2.4)!important;border-radius:2px;background:linear-gradient(#a8a8a8,#f4f4f4 18%,#fff 50%,#f4f4f4 82%,#a8a8a8)}
+body[data-g=toad] .reel::before{background:linear-gradient(#0005,transparent)}body[data-g=toad] .reel::after{background:linear-gradient(transparent,#0005)}
+body[data-g=toad] .reel .strip{top:calc(var(--c)*-.3)}
+body[data-g=toad] .reel.half .strip{top:calc(var(--c)*.2)}
+body[data-g=toad] .reel:nth-child(4){margin-left:10px;background:repeating-linear-gradient(135deg,#ff9a2a 0 7px,#f07a12 7px 14px);box-shadow:0 0 0 3px #ffcc33,0 0 0 5px #8a3a02}
+body[data-g=toad] .reel:nth-child(4)::before,body[data-g=toad] .reel:nth-child(4)::after{background:none}
+body[data-g=toad] .cell{padding:2px 4%}
+body[data-g=toad] .reel:nth-child(4) .cell{padding:2% 6%}
+body[data-g=toad] .reel.spin .strip{filter:none}
+.tarw{position:absolute;top:50%;width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;margin-top:-7px;z-index:4;pointer-events:none}
+.tarw.l{right:calc(21.6% - 2px);border-left:9px solid #ffcc33}.tarw.r{right:2px;border-right:9px solid #ffcc33}
+.cell.tglow{z-index:3}.cell.tglow img{animation:tglow .5s ease-in-out infinite alternate}
+.cell.tglow::after{content:"";position:absolute;inset:4% 7%;border-radius:10px;box-shadow:0 0 0 4px #7af8ff,0 0 22px 8px #3ae0ff;animation:tglow2 .5s ease-in-out infinite alternate}
+@keyframes tglow{to{transform:scale(1.07)}}@keyframes tglow2{from{opacity:.6}to{opacity:1}}
+.ttoad{position:absolute;left:41.6%;top:-1%;width:17%;z-index:2;transform-origin:50% 90%;pointer-events:none}
+.ttoad.tpulse{animation:tpulse .45s ease-out}@keyframes tpulse{0%{transform:scale(1)}35%{transform:scale(1.08,1.04)}100%{transform:scale(1)}}
+.tglowd{position:absolute;left:36%;top:-12%;width:28%;height:42%;z-index:1;opacity:0;pointer-events:none;background:radial-gradient(closest-side,#fff8c0,#ffd34d99 45%,#ffd34d00)}
+.tcoin{position:fixed;left:0;top:0;width:30px;height:30px;margin:-15px 0 0 -15px;z-index:40;pointer-events:none;will-change:transform}
+.tjp{position:absolute;left:64.9%;top:10.4%;width:18%;height:15.8%;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(#c81414,#7a0404);border:3px solid #ffcc33;border-radius:10px;box-shadow:0 0 0 2px #7a3a02,0 4px 8px #0008;line-height:1}
+.tjp b{font:italic 900 clamp(9px,1.5vw,15px) 'Arial Black',sans-serif;color:#ffe04a;letter-spacing:1px;text-shadow:0 2px 0 #6a0000;background:#5a0202;padding:1px 10px;border-radius:6px;margin-top:-1.4em;border:2px solid #ffcc33}
+.tjp .num{font:900 clamp(13px,2.4vw,24px) 'Arial Black',sans-serif;color:#fff6c0;text-shadow:0 2px 0 #6a0000;margin-top:.15em}
+.tmeter{position:absolute;left:21.5%;top:12%;width:14%;height:6.5%;z-index:2;border-radius:99px;background:#3a0202;border:2px solid #ffcc33;overflow:hidden;box-shadow:0 2px 6px #0008}
+.tmeter i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(#fff3a0,#ffc22a 50%,#c07a04);transition:width .5s}
+.tmeter span{position:relative;display:block;text-align:center;font:900 clamp(7px,1.1vw,11px)/1 Jua,sans-serif;color:#fff;text-shadow:0 1px 2px #000;top:50%;transform:translateY(-50%)}
+.tbst,.tbuy{position:absolute;top:68.5%;width:7.8%;height:28.5%;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;padding:3px;border-radius:6px;border:3px solid #ffcc33;box-shadow:0 0 0 2px #6a3a02,0 4px 8px #0008;font-family:Jua,sans-serif;color:#fff;line-height:1.15}
+.tbst{left:10.6%;background:linear-gradient(#2a50c0,#10288a)}
+.tbuy{left:81.6%;background:linear-gradient(#e01a14,#8a0404)}
+.tbst b{font-size:clamp(7px,1.05vw,12px);color:#fff3b0;white-space:nowrap}.tbst small{font-size:clamp(7px,.95vw,11px)}
+.tbst .sw{width:80%;height:22%;border-radius:99px;background:#0a1a5a;border:2px solid #ffcc33;position:relative}
+.tbst .sw em{position:absolute;left:3%;top:10%;width:46%;height:80%;border-radius:99px;background:linear-gradient(#7ac8ff,#1a6ae0);transition:left .2s}
+.tbst.on{box-shadow:0 0 0 2px #6a3a02,0 0 16px 4px #7ad8ff}.tbst.on .sw em{left:51%;background:linear-gradient(#b8ff9a,#2ac02a)}
+.tbuy b{font-size:clamp(9px,1.35vw,15px);color:#fff3b0}.tbuy span{font:900 clamp(9px,1.3vw,15px) Jua,sans-serif;color:#fff}
+body[data-g=toad].fs .tbuy,body[data-g=toad].fs .tbst{opacity:.45;pointer-events:none}
+body[data-g=toad] #game .banner{top:29.5%;z-index:5}
+/* 아래 빨간 바 */
+body[data-g=toad] #game .ctl{order:2;display:flex!important;flex-direction:row!important;align-items:center;gap:10px;width:100%;flex:none;height:54px;max-height:none;margin:0!important;padding:4px max(14px,3vw)!important;border-radius:0!important;background:linear-gradient(#d81c16,#8a0606)!important;box-shadow:0 -2px 0 #ffcc3388,0 -4px 10px #0006!important}
+body[data-g=toad] #game .ctl::before{display:none}
+body[data-g=toad] #game .ctl .row,body[data-g=toad] #game .btns{display:contents!important}
+body[data-g=toad] #game #info{order:1;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff8e8,#f4d8b0);border:2px solid #8a3a02;color:#a0301a;font:900 22px Georgia,serif;box-shadow:0 3px 0 #5a1a02}
+body[data-g=toad] #game .betbox{order:2;flex:none;width:min(230px,28vw);min-height:42px;grid-template-columns:42px minmax(0,1fr) 42px;background:linear-gradient(#7a0606,#a81010);border:0;border-radius:99px;overflow:visible;box-shadow:inset 0 2px 4px #0008}
+body[data-g=toad] #game .betbox button{min-height:42px;height:42px;width:42px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff8e8,#f4d8b0)!important;border:2px solid #8a3a02;color:#c0301a;font-size:26px;box-shadow:0 3px 0 #5a1a02}
+body[data-g=toad] #game .betbox .num{color:#fff;font-family:'Arial Black',sans-serif;font-size:16px}
+body[data-g=toad] #game .betbox small{color:#ffb0a0;font-size:9px}
+body[data-g=toad] #game .winm{order:3;flex:1;background:none;border:0;min-height:42px}
+body[data-g=toad] #game .winm .num{color:#fff;font-family:'Arial Black',sans-serif;font-size:22px;text-shadow:0 2px 0 #5a0000}
+body[data-g=toad] #game .winm small{color:#ffb0a0}
+body[data-g=toad] #game #turbo{order:4;width:46px;height:46px;min-height:0;padding:0;border-radius:50%;font-size:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23ffb020' stroke='%237a3a00' stroke-width='4' stroke-linejoin='round'%3E%3Cpath d='M44 12L24 54H40L32 88L60 42H44Z'/%3E%3Cpath d='M70 12L50 54H66L58 88L86 42H70Z'/%3E%3C/g%3E%3C/svg%3E") center/70% no-repeat,radial-gradient(circle at 40% 35%,#fff8e8,#f4d8b0)!important;border:2px solid #8a3a02;box-shadow:0 3px 0 #5a1a02}
+body[data-g=toad] #game #turbo.on{box-shadow:0 3px 0 #5a1a02,0 0 12px 4px #ffd34d}
+body[data-g=toad] #game #auto{order:5;width:74px;height:46px;min-height:0;padding:0;border-radius:99px;font:900 0/1 'Arial Black',sans-serif;background:radial-gradient(circle at 40% 35%,#fff8e8,#f4d8b0)!important;border:2px solid #8a3a02;box-shadow:0 3px 0 #5a1a02;color:#c0301a}
+body[data-g=toad] #game #auto::before{content:"AUTO\A PLAY";white-space:pre;font-size:12px;line-height:1.05}
+body[data-g=toad] #game #auto.on{background:radial-gradient(circle at 40% 35%,#fff3a0,#ffc22a)!important}
+body[data-g=toad] #game #spin{order:6;width:min(150px,18vw)!important;height:50px!important;border-radius:16px!important;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23fff' stroke-width='13' stroke-linecap='round'%3E%3Cpath d='M78 40A30 30 0 0 0 24 34'/%3E%3Cpath d='M22 60A30 30 0 0 0 76 66'/%3E%3C/g%3E%3Cpath d='M14 18L14 46L40 40Z' fill='%23fff'/%3E%3Cpath d='M86 82L86 54L60 60Z' fill='%23fff'/%3E%3C/svg%3E") center/36px no-repeat,linear-gradient(#8aff5a,#2ac81a 50%,#108a0a)!important;border:3px solid #d8ffc8!important;box-shadow:0 4px 0 #0a5a06,0 6px 12px #0008,inset 0 3px 0 #fff8!important;margin:-14px 0 0}
+body[data-g=toad] #game #spin>*{display:none!important}
+body[data-g=toad] #game #spin.auto{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23fff' stroke-width='13' stroke-linecap='round'%3E%3Cpath d='M78 40A30 30 0 0 0 24 34'/%3E%3Cpath d='M22 60A30 30 0 0 0 76 66'/%3E%3C/g%3E%3Cpath d='M14 18L14 46L40 40Z' fill='%23fff'/%3E%3Cpath d='M86 82L86 54L60 60Z' fill='%23fff'/%3E%3C/svg%3E") center/36px no-repeat,linear-gradient(#ffe08a,#ffb020 50%,#c07a04)!important}
+body[data-g=toad] #game #dbl{top:-30px}
 </style>
 </head>
 <body data-g="lobby">
@@ -605,7 +678,7 @@ body[data-g=olympus]{--con1:#5a4ab0;--con2:#1a1050;--btnA:#8a6aff;--btnB:#3a1aa0
 <script src="art.js"></script>
 <script src="games.js"></script><script src="faces.js"></script><script src="olympus.js"></script>
 <script src="audio.js"></script>
-<script src="decor.js"></script>
+<script src="decor.js"></script><script src="toad.js"></script>
 <script src="love.js"></script>
 <script src="app.js"></script>
 </body>

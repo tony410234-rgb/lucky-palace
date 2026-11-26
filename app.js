@@ -135,6 +135,7 @@ function showScreen(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id===
 /* ---------- game screen ---------- */
 const box=$('box');let reels=[],strips=[],tcols=[],tEls=[],C=70;
 function openGame(id){
+ document.querySelectorAll('.tx').forEach(e=>e.remove());
  G=GAMES.byId[id];document.body.dataset.g=id;
  $('gtt').textContent=G.en;$('mtitle').innerHTML=G.en;$('ge1').textContent=$('ge2').textContent=G.hero;
  document.body.classList.toggle('jpon',!!G.jp);document.body.classList.toggle('nobuy',id==='lucky');
@@ -151,12 +152,13 @@ function openGame(id){
   reels=[...box.querySelectorAll('.reel')];strips=reels.map(r=>r.firstElementChild);tcols=[];
  }
  cur=Array.from({length:G.cols},(_,c)=>Array.from({length:G.rows},()=>G.fill(c,false)));
- showScreen('game');size();drawStatic();renderBet();setWin(0);
+ showScreen('game');if(G.mount)G.mount(API);size();drawStatic();renderBet();setWin(0);
  AUDIO.play(id);
 }
-$('back').onclick=()=>{if(busy||fs){toast('진행 중이에요',900);return}auto=false;renderBtns();sfx.click();document.body.dataset.g='lobby';document.body.classList.remove('jpon');$('scene').innerHTML='';showScreen('lobby');AUDIO.play('lobby')};
+$('back').onclick=()=>{if(busy||fs){toast('진행 중이에요',900);return}document.querySelectorAll('.tx').forEach(e=>e.remove());auto=false;renderBtns();sfx.click();document.body.dataset.g='lobby';document.body.classList.remove('jpon');$('scene').innerHTML='';showScreen('lobby');AUDIO.play('lobby')};
 const LAND=()=>matchMedia('(orientation:landscape) and (max-height:600px)').matches;
 function size(){
+ if(G&&G.size){const v=G.size(API);if(v){C=v;document.documentElement.style.setProperty('--c',C+'px')}return}
  if(!G)return;
  if(LAND()){
   const gm=document.querySelector('.gmain');const cols=getComputedStyle(gm).gridTemplateColumns.split(' ').map(parseFloat);const mid=cols[1]||gm.clientWidth*.6;
@@ -178,7 +180,7 @@ function drawStatic(){
 }
 function mkTc(col,x,y){const d=document.createElement('div');d.className='tc';d.innerHTML=IMG(G.draw(x,x.b||bet()));d.style.transform=`translateY(${y}px)`;col.appendChild(d);return d}
 const ro=new ResizeObserver(()=>{if(!G||document.body.dataset.g==='lobby')return;const old=C;size();if(!busy&&!reelsMoving)drawStatic();else if(old!==C&&G.mode==='tumble'){}});ro.observe(box);
-function renderBet(){$('bet').textContent=short(fs?fs.bet:bet());renderJP()}
+function renderBet(){$('bet').textContent=short(fs?fs.bet:bet());renderJP();if(G&&G.onBet)G.onBet(API)}
 
 /* reels */
 let rs=[];
@@ -344,9 +346,9 @@ async function jpWheelUI(w,b){
  return v;
 }
 /* ---------- free game cinematic ---------- */
-const TOPS={olympus:'cro',buffalo:'buf',dragon:'drg',tiger:'tig',ocean:'wha',egypt:'msk',panda:'pan',piggy:'P',lucky:'r7'};
-const CMODE={olympus:'fly',dragon:'fly',ocean:'rise'};
-const CDUST={olympus:'✨',buffalo:'💨',tiger:'🐾',piggy:'🪙',panda:'🌸',egypt:'✨',dragon:'🔥',ocean:'🫧',lucky:'🍀'};
+const TOPS={toad:'r88',olympus:'cro',buffalo:'buf',dragon:'drg',tiger:'tig',ocean:'wha',egypt:'msk',panda:'pan',piggy:'P',lucky:'r7'};
+const CMODE={toad:'rise',olympus:'fly',dragon:'fly',ocean:'rise'};
+const CDUST={toad:'🪙',olympus:'✨',buffalo:'💨',tiger:'🐾',piggy:'🪙',panda:'🌸',egypt:'✨',dragon:'🔥',ocean:'🫧',lucky:'🍀'};
 let buying=false,superNext=false;
 async function cinematic(n,o={}){
  const id=G.id,stage=document.querySelector('.stage');
@@ -421,8 +423,9 @@ async function spin(){
  const free=!!fs,b=free?fs.bet:bet();
  if(!free&&buying){buying=false}
  else if(!free){
-  if(S.bal<b){auto=false;renderBtns();toast('코인 부족!');buzz(80);$('charge').animate&&showScreenHint();return}
-  S.bal-=b;renderBal(false);
+  const cost=Math.round(b*(G.costMul?G.costMul():1));
+  if(S.bal<cost){auto=false;renderBtns();toast('코인 부족!');buzz(80);$('charge').animate&&showScreenHint();return}
+  S.bal-=cost;renderBal(false);
   if(G.jp){const p=pool();for(const t in p)p[t]+=b*({GRAND:.004,MAJOR:.003,MINOR:.002,MINI:.001})[t]}
   S.xp+=b;
  }else{fs.left--;fs.n++;banner()}
@@ -454,10 +457,12 @@ async function spin(){
   if(o.scWin){win+=o.scWin*b;showWinsT([{cells:o.scCells}])}
   cur=o.grid;
  }else{
+  if(G.preReels)G.preReels(o,API);
   await spinReels(o.grid,free);
   cur=o.grid;reelsMoving=false;spinBtnIdle();
   win=o.total*b;
   showWins(o.wins);
+  if(G.post)await G.post(o,b,API);
  }
  if(win>0){
   if(free)fs.total+=win;else S.bal+=win;
@@ -538,7 +543,7 @@ async function gamble(amount){
  renderBal(true);save();busy=false;
 }
 /* ---------- mystery pick ---------- */
-const PICKE={olympus:'🏺',egypt:'🏺',buffalo:'💰',lucky:'🎁',panda:'🥠',piggy:'🥚',dragon:'🧧',tiger:'🥥',ocean:'🐚'};
+const PICKE={toad:'🪙',olympus:'🏺',egypt:'🏺',buffalo:'💰',lucky:'🎁',panda:'🥠',piggy:'🥚',dragon:'🧧',tiger:'🥥',ocean:'🐚'};
 const PT=[['MINI',10,60],['MINOR',30,28],['MAJOR',100,10.5],['GRAND',1000,1.5]];
 async function pickBonus(b,opt={}){const PE=opt.emoji||PICKE[G.id];
  AUDIO.setIntense(true);sfx.jp();flash();shake();burst(40);
@@ -591,7 +596,7 @@ function mascot(kind){const m=$('masc'),dc=DECOR.get(G.id),L=[...(dc[kind]||dc.i
  const talk=kind==='big'||kind==='idle'||(kind==='win'&&Math.random()<.2)||(kind==='lose'&&Math.random()<.35);const b=$('bub');if(talk){b.textContent=L[Math.floor(Math.random()*L.length)];b.classList.add('on')}clearTimeout(mbT);mbT=setTimeout(()=>b.classList.remove('on'),kind==='big'?2800:1700);
  setTimeout(()=>m.classList.remove('jump','dance','sad','spin3d','big'),kind==='big'?2800:1300)}
 $('masc').onclick=()=>{mascot('idle');const m=$('masc');m.classList.add('spin3d');setTimeout(()=>m.classList.remove('spin3d'),1100);AUDIO.voice(SIG[G.id].v)};
-const SIG={olympus:{e:['⚡','✨','💎','✨'],m:'burst',v:'aria'},egypt:{e:['🪲','✨','🪙','✨'],m:'swirl',v:'growl'},buffalo:{e:['💨','🪶','🪙','💨'],m:'quake',v:'moo'},lucky:{e:['🍀','7️⃣','💎','🎲','🪙'],m:'burst',v:'squeak'},
+const SIG={toad:{e:['🪙','✨','🪙','✨'],m:'jump',v:'croak'},olympus:{e:['⚡','✨','💎','✨'],m:'burst',v:'aria'},egypt:{e:['🪲','✨','🪙','✨'],m:'swirl',v:'growl'},buffalo:{e:['💨','🪶','🪙','💨'],m:'quake',v:'moo'},lucky:{e:['🍀','7️⃣','💎','🎲','🪙'],m:'burst',v:'squeak'},
  panda:{e:['🥟','🍡','🌸','🥟'],m:'throw',v:'boing'},piggy:{e:['🪙','🪙','💰','🪙'],m:'fountain',v:'oink'},dragon:{e:['🔥','🔥','🧧','✨'],m:'breath',v:'roar'},
  tiger:{e:['🐾','✨','🍌','🐾'],m:'roar',v:'growl'},ocean:{e:['🫧','💎','🐚','🫧'],m:'bubbles',v:'bloop'}};
 function sigFX(level){
@@ -688,15 +693,16 @@ async function heartBonus(b){
 }
 /* ---------- admin ---------- */
 const FORCE={fs:['프리스핀',o=>o.fsAward>0],big:['빅윈',o=>o.total>=15&&!o.fsAward],hs:['홀드앤스핀',o=>!!o.hs],grand:['GRAND 잭팟',o=>o.hs&&o.hs.full],wheel:['보너스 휠',o=>!!o.wheel],mega:['휠 MEGA 500배',o=>o.wheel&&o.wheel.v>=500],collect:['돼지 수집',o=>o.collect&&o.collect.amt>=5],jpw:['잭팟 휠',o=>!!o.jpw],jgrand:['휠 GRAND',o=>o.jpw&&o.jpw.tier==='GRAND'],pick:['진주 잭팟',o=>!!o.pick],pgrand:['진주 GRAND',o=>o.pick&&o.pick.tier==='GRAND'],mystery:['미스터리 보너스',null],bonus:['보너스 게임',null],heart:['소현 하트 💖',null]};
-const GF={olympus:['fs','big'],egypt:['fs','hs','grand','big'],buffalo:['fs','big'],lucky:['wheel','mega','big'],panda:['fs','big'],piggy:['fs','collect','big'],dragon:['fs','hs','grand','big'],tiger:['fs','jpw','jgrand','big'],ocean:['fs','pick','pgrand','big']};
+const GF={toad:['fs','big'],olympus:['fs','big'],egypt:['fs','hs','grand','big'],buffalo:['fs','big'],lucky:['wheel','mega','big'],panda:['fs','big'],piggy:['fs','collect','big'],dragon:['fs','hs','grand','big'],tiger:['fs','jpw','jgrand','big'],ocean:['fs','pick','pgrand','big']};
 let force=null;
 const featured=o=>o.fsAward||o.hs||o.wheel||o.jpw||o.pick||(o.collect&&o.collect.amt>=3)||o.total>=10;
-const BM={olympus:'wheelup',egypt:'ladder',ocean:'ladder',tiger:'ladder',buffalo:'wheelup',dragon:'wheelup',panda:'mini',piggy:'mini'};
+const BM={toad:'wheelup',olympus:'wheelup',egypt:'ladder',ocean:'ladder',tiger:'ladder',buffalo:'wheelup',dragon:'wheelup',panda:'mini',piggy:'mini'};
 function rollOutcome(){const o=rollBase();const L=Math.min(5,Math.max(1,S.luck||1));
  if(BM[G.id]&&!o.bonus&&Math.random()<L/300)o.bonus=BM[G.id];
  if(!o.heart&&Math.random()<L/500)o.heart=true;
  return o}
 function rollBase(){
+ if(G.custom&&force==='fs'){force=null;const o=G.spin(false);o.fsAward=G.fsN||10;return o}
  if(force==='bonus'||force==='heart'){const k=force;force=null;const o=G.spin(false);if(k==='bonus')o.bonus=BM[G.id]||'wheelup';else o.heart=true;return o}
  if(force&&FORCE[force][1]){const k=force,f=FORCE[k][1];force=null;if(k!=='grand')for(let i=0;i<60000;i++){const o=G.spin(false);if(f(o))return o}
   if(k==='grand'){for(let i=0;i<60000;i++){const o=G.spin(false);if(o.hs){const add=[];o.hs.board.forEach((x,j)=>{if(!x){o.hs.board[j]={s:'C',v:1};add.push([j,o.hs.board[j]])}});const st=o.hs.steps;if(st.length&&!st[st.length-1].length)st[st.length-1]=add;else st.push(add);o.hs.full=true;return o}}}}
@@ -770,6 +776,9 @@ addEventListener('resize',()=>{if(G&&!busy&&document.body.dataset.g!=='lobby'){s
 
 renderBal(false);renderLvl();renderBtns();renderCharge();renderJP();renderLW();
 
+/* ---------- 커스텀 게임용 API ---------- */
+const API={U,IMG,AUDIO,sleep,T,get S(){return S},save,toast,flash,burst,fmt,short,bet,buyFS,box,banner,renderBal,
+ get C(){return C},get free(){return !!fs},get fs(){return fs},get busy(){return busy},get reels(){return reels},spin:()=>spin(),sfx:k=>AUDIO.sfx[k]&&AUDIO.sfx[k](),LAND};
 /* ---------- 주인장 리모컨 (원격 선물·설정) ---------- */
 const RAPI='https://api.github.com/repos/tony410234-rgb/lucky-palace/contents/remote.json';
 let rBusy=false;
@@ -816,7 +825,7 @@ function loveCard(){const L=window.LOVE||{};const notes=L.notes&&L.notes.length?
  if(L.since){const d=Math.floor((Date.now()-new Date(L.since+'T00:00:00+09:00'))/864e5)+1;$('dday').textContent=d>0?`우리 D+${d}`:''}
  if(L.her)$('vip').textContent=`VIP ${L.her}님 전용 카지노`}
 loveCard();
-(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v3.5'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
+(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v3.6'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
 (async()=>{const L=window.LOVE||{};heartRain(46);
  await popup(`<div class="hb">💝</div><h3>${(L.welcome||'웰컴 자기야 오늘도 사랑해🥰')}</h3><div class="sig">- ${L.owner||'태율랜드 주인장'} -</div><button class="go">나도 사랑해 💕</button>`,{cls:'wel'});
  AUDIO.init();[784,988,1175,1568].forEach((f,i)=>AUDIO.tone(f,.3,i*.12,'sine',.08));heartRain(24);})();
