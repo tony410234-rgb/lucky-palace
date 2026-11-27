@@ -289,7 +289,7 @@ PF.play=async(A,r,b,feats)=>{
  const firstUps=r.steps[0]?r.steps[0].ups:[];
  for(let c=0;c<5;c++)for(let rr=0;rr<rows;rr++){const x=first[c][rr];if(x&&!firstLand.has(c*10+rr)){let v=x.v;for(const u of firstUps)if(u.to[0]===c&&u.to[1]===rr)v=null;put(c,rr,v===null?x.v:v)}}
  let filled=0;const count=()=>ov.querySelectorAll('.pc.on').length;filled=count();paintLock(filled);
- A.AUDIO.setIntense&&A.AUDIO.setIntense(true);
+ A.AUDIO.play&&A.AUDIO.play('pandaR');
  const left=ov.querySelector('.pleft i');await A.sleep(1200);
  for(const s of r.steps){
   /* 셔플 */
@@ -305,7 +305,7 @@ PF.play=async(A,r,b,feats)=>{
   left.textContent=s.left;ov.querySelector('.pleft').classList.toggle('hot',s.land.length>0);
   await A.sleep(A.T(500,260));
  }
- A.AUDIO.setIntense&&A.AUDIO.setIntense(false);
+ A.AUDIO.play&&A.AUDIO.play('panda');
  /* 집계 */
  let tot=0;const box=document.createElement('div');box.className='ptot';box.innerHTML=`<small>TOTAL WIN</small><b>0</b>`;ov.appendChild(box);const bt=box.querySelector('b');
  for(let rr=rows-1;rr>=0;rr--)for(let c=0;c<5;c++){const x=r.final[c][rr];if(!x)continue;const d=C[c][rr];d.classList.add('col');
