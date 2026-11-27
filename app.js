@@ -78,10 +78,10 @@ function boom(n=1){if(RM)return;const cx0=innerWidth/2,cy0=innerHeight*.42;
  burst(90)}
 /* ---------- 아나운서 (음성 + 큰 글자) ---------- */
 /* 음성: 캐릭터별 목소리(성별·톤·속도) — 앱(v4.1 APK)에서는 고품질 한국어 음성 자동 선택 */
-const VOX={ann:{g:'f',v:0,p:1.04,r:1.13},dealer:{g:'m',v:0,p:.97,r:1.13},her:{g:'f',v:1,p:1.12,r:1.16},ai0:{g:'m',v:1,p:.86,r:1.25},ai1:{g:'f',v:2,p:1.1,r:1.1},ai2:{g:'m',v:2,p:.78,r:1.04},ai3:{g:'m',v:0,p:1.06,r:1.32}};
+const VOX={ann:{g:'f',v:0,p:1.04,r:1.13},dealer:{g:'m',v:0,p:.97,r:1.13},her:{g:'f',v:1,p:1.12,r:1.16},ai0:{g:'m',v:1,p:.92,r:1.18},ai1:{g:'f',v:2,p:1.22,r:1.16},ai2:{g:'m',v:2,p:.8,r:1.06},ai3:{g:'f',v:0,p:1.05,r:1.06}};
 let WV=null;function webVoices(){if(WV&&WV.length)return WV;try{WV=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang))}catch(e){WV=[]}return WV}
 try{speechSynthesis.onvoiceschanged=()=>{WV=null}}catch(e){}
-function cleanTTS(t){return String(t).replace(/~+(?=\s*\S)/g,', ').replace(/~+/g,'').replace(/[.…]{2,}/g,', ').replace(/[♪♥❤★☆♡·•]/g,' ').replace(/[ㅋㅎ]{2,}/g,'').replace(/!{2,}/g,'!').replace(/,\s*([!?.])/g,'$1').replace(/\s+/g,' ').replace(/,$/,'').trim().replace(/[,\s]+$/,'')}
+function cleanTTS(t){return String(t).replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,' ').replace(/~+(?=\s*\S)/g,', ').replace(/~+/g,'').replace(/[.…]{2,}/g,', ').replace(/[♪♥❤★☆♡·•]/g,' ').replace(/[ㅋㅎ]{2,}/g,'').replace(/!{2,}/g,'!').replace(/,\s*([!?.])/g,'$1').replace(/\s+/g,' ').replace(/,$/,'').trim().replace(/[,\s]+$/,'')}
 function speak(t,who='ann'){try{if(!AUDIO.st.sfx||!t)return;t=cleanTTS(t);if(!t)return;const o=VOX[who]||VOX.ann;
  if(window.TLApp){if(TLApp.say){TLApp.say(t,o.g,o.v,o.p,o.r);return}if(TLApp.speak){TLApp.speak(t);return}}
  if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';
@@ -91,7 +91,7 @@ function speak(t,who='ann'){try{if(!AUDIO.st.sfx||!t)return;t=cleanTTS(t);if(!t)
 function announce(t,sub='',cls=''){const e=document.createElement('div');e.className='ann '+cls;e.innerHTML=`<span class="t3 pop"><span class="ex">${t}</span><span class="fr">${t}</span></span>${sub?`<small>${sub}</small>`:''}`;document.body.appendChild(e);setTimeout(()=>e.remove(),cls.includes('small')?1300:2000)}
 function bigWin(amount,b){
  return new Promise(res=>{
-  const tiers=TIERS.filter(t=>amount/b>=t[0]);speak({0:'와~ 빅윈이에요!',1:'대박, 메가윈!',2:'우와~ 슈퍼 메가윈이에요!',3:'세상에, 에픽윈이에요!'}[tiers.length-1]||'와~ 빅윈이에요!');
+  const tiers=TIERS.filter(t=>amount/b>=t[0]);speak({0:'와~ 빅윈이에요!',1:'대박, 메가윈!',2:'우와~ 슈퍼 메가윈이에요!',3:'세상에, 에픽윈이에요!'}[tiers.length-1]||'와~ 빅윈이에요!');if(tiers.length>=2)praise(1800);
   const d=(1600+tiers.length*1500)*(S.turbo?.6:1);
   pop.innerHTML=`<div class="card bw ${TCLS[tiers[0][1]]}" id="bwC"><div id="bwT">${T3(tiers[0][1])}</div><div class="bwn"><span class="t3" id="bwNt"><span class="ex" id="bwN1">0</span><span class="fr" id="bwN">0</span></span></div><p style="font-size:18px;color:#ffd0ea;margin-top:10px">${['소현이 대박! 💕','역시 소현이 💖','소현 부자 됐다 🥰','오늘의 승자 소현 👑'][Math.floor(Math.random()*4)].replace(/소현/g,HER)}</p><p>화면을 누르면 건너뛰기</p></div>`;pop.classList.add('on');
   setTimeout(()=>$$('#bwT .t3').forEach(e=>e.classList.add('wob')),560);
@@ -298,7 +298,7 @@ function clearWins(){const s=$('lines');if(s)s.innerHTML='';box.classList.remove
 
 /* ---------- features ---------- */
 async function holdSpinUI(hs,b){
- const hsEl=$('hs'),bar=$('hsbar');speak('홀드 앤 스핀, 시작할게요~');
+ const hsEl=$('hs'),bar=$('hsbar');speak('홀드 앤 스핀, 시작할게요~');praise();
  AUDIO.setIntense(true);
  await cinematic(0,{big:'HOLD',line:'&amp; SPIN BONUS',sub:`코인 ${hs.init.filter(Boolean).length}개 고정! 리스핀 3회 · 새 코인이 나오면 3회로 초기화<br>${hs.init.length}칸을 모두 채우면 <b style="color:#ff5252">GRAND JACKPOT</b>`});
  const board=hs.init.slice();
@@ -326,7 +326,7 @@ async function holdSpinUI(hs,b){
  return total;
 }
 async function jackpot(t,v){
- speak('축하해요~ '+({GRAND:'그랜드',MAJOR:'메이저',MINOR:'마이너',MINI:'미니',MEGA:'메가'})[t]+' 잭팟이에요!');
+ speak('축하해요~ '+({GRAND:'그랜드',MAJOR:'메이저',MINOR:'마이너',MINI:'미니',MEGA:'메가'})[t]+' 잭팟이에요!');praise(1900);
  const p=document.querySelector(`.plq[data-t="${t}"]`);p&&p.classList.add('hitjp');sfx.jp();buzz([100,50,100,50,300]);boom(t==='GRAND'?3:2);flash();shake();if(t==='GRAND'||t==='MAJOR')shower(true);
  await popup(`<div class="bl"></div><div>${T3(t)}</div><div>${T3('JACKPOT').replace(/t3 pop/,'t3 t3s pop')}</div><div class="num big" style="margin-top:8px">${fmt(v)}</div><button class="go">받기</button>`,{autoMs:auto?2600:0,cls:'jpc t-'+t});
  shower(false);
@@ -378,7 +378,7 @@ const CDUST={vault:'🪙',toad:'🪙',olympus:'✨',buffalo:'💨',tiger:'🐾',
 let buying=false,superNext=false;
 async function cinematic(n,o={}){
  const id=G.id,stage=document.querySelector('.stage');
- {const isFS=!o.big||/FREE/.test(o.line||'');announce(isFS?'FREE GAMES!':'BONUS GAME!',isFS?'프리 게임':'보너스 게임');speak(isFS?'축하해요~ 프리게임이에요!':'와~ 보너스 게임이에요!')}
+ {const isFS=!o.big||/FREE/.test(o.line||'');announce(isFS?'FREE GAMES!':'BONUS GAME!',isFS?'프리 게임':'보너스 게임');speak(isFS?'축하해요~ 프리게임이에요!':'와~ 보너스 게임이에요!');praise()}
  AUDIO.setIntense(true);AUDIO.duck(true);sfx.whoosh();
  if(RM){await fsSign(n,o);AUDIO.duck(false);return}
  const up=stage.animate([{transform:'translateY(0)'},{transform:'translateY(-150vh)'}],{duration:650,easing:'cubic-bezier(.5,0,.8,.4)',fill:'forwards'});
@@ -519,7 +519,7 @@ async function spin(){
  if(o.lvlUp&&free){sfx.lvl();burst(50);await popup(`<h3>LEVEL UP!</h3><p>돼지 ${fs.st.pigs}마리 수집!</p><div class="big num">x${o.lvlUp}</div><p>코인 배수 x${o.lvlUp} · 프리스핀 +10회</p><button class="go">계속</button>`,{autoMs:auto?2200:0})}
  if(o.fsAward){
   await sleep(500);mascot('big');
-  if(free){fs.left+=o.fsAward;sfx.scat();announce(`+${o.fsAward} FREE GAMES!`,'추가 프리 게임');speak('프리게임이 더 생겼어요!');banner();await sleep(1500)}
+  if(free){fs.left+=o.fsAward;sfx.scat();announce(`+${o.fsAward} FREE GAMES!`,'추가 프리 게임');speak('프리게임이 더 생겼어요!');praise(1500);banner();await sleep(1500)}
   else{
    await cinematic(o.fsAward,superNext?{line:'SUPER FREE GAMES'}:{});
    fs={left:o.fsAward,total:0,bet:b,n:0,st:G.fsInit(o.fsAward,superNext)};superNext=false;document.body.classList.add('fs');AUDIO.setIntense(true);banner();
@@ -620,13 +620,16 @@ function PED(kind){
  if(kind==='pot')return `<svg viewBox="0 0 300 170"><ellipse cx="150" cy="160" rx="120" ry="10" fill="#000" opacity=".45"/><path d="M40 70h220c0 60-30 92-110 92S40 130 40 70z" fill="url(#tR)"/><path d="M40 70h220c0 60-30 92-110 92S40 130 40 70z" fill="url(#vig)"/><rect x="34" y="66" width="232" height="16" rx="8" fill="url(#gF)"/><path d="M60 110q90 20 180 0" stroke="url(#gF)" stroke-width="8" fill="none"/><circle cx="150" cy="126" r="16" fill="url(#cG)" stroke="#6e3f03" stroke-width="2"/>${coins}<ellipse cx="150" cy="40" rx="70" ry="14" fill="#fff6c0" opacity=".25"/></svg>`;
  return `<svg viewBox="0 0 300 130"><ellipse cx="150" cy="120" rx="130" ry="10" fill="#000" opacity=".45"/>${coins}</svg>`}
 let mbT=0;
+const PRAISE=[`역시 ${HER}이 대단해~`,`우와, ${HER}이 최고야!`,`${HER}이 손은 진짜 금손이다!`,`역시 내 여자친구!`,`오늘 ${HER}이 운 대박인데?`,`${HER}아 멋지다~`,`우리 ${HER}이 천재 아니야?`,`역시 ${HER}이! 사랑해~`];
+function praise(d=1700){setTimeout(()=>speak(PRAISE[Math.floor(Math.random()*PRAISE.length)],'dealer'),d)}
+const LOVETAP=[`${HER} 사랑해!`,`${HER}아 오늘도 사랑해~`,`세상에서 ${HER}이가 제일 예뻐`,`${HER}이 보고 싶다…`,`${HER}이 웃는 게 제일 좋아`,`${HER}아 오늘 하루도 수고했어`,`${HER}이는 내 잭팟이야`,`${HER}이 옆에 있으면 행복해`,`${HER}아 밥은 먹었어?`,`우리 ${HER}이 최고야!`,`${HER}이 손잡고 싶다`,`${HER}아 평생 같이 있자`,`${HER}이 생각만 해도 웃음 나`,`힘든 일 있으면 나한테 말해줘`,`${HER}이는 세상에서 제일 소중해`,`${HER}아 꼭 안아줄게`,`오늘도 ${HER}이 덕분에 행복해`,`${HER}이 귀여워 죽겠어`,`${HER}아 내 마음 다 가져가`,`${HER}이랑 데이트하고 싶다`,`${HER}아 많이 많이 사랑해`,`${HER}이 없으면 안 돼`,`오늘 ${HER}이 더 예쁘다`,`${HER}아 고마워, 늘 곁에 있어줘서`];
 const LOVEL={win:[`${HER}이 최고!`,`역시 ${HER}!`],big:[`${HER} 부자 됐다!!`,`${HER}이 잭팟 여신!!`],lose:[`${HER}아 힘내!`],idle:[`${HER}이 안녕!`,`${HER} 사랑해 💕`,'주인장이 보고 싶대']};
 let loseN=0;
 function mascot(kind,shagF){const m=$('masc'),dc=DECOR.get(G.id),L=[...(dc[kind]||dc.idle),...(LOVEL[kind]||[])];m.classList.remove('jump','dance','sad','spin3d','big');void m.offsetWidth;m.classList.add(kind==='big'?'dance':kind==='lose'?'sad':'jump');
  if(kind==='big'||kind==='win'){m.classList.add('spin3d');if(kind==='big')m.classList.add('big');sigFX(kind==='big'?2:1)}
  const shag=kind==='lose'&&!!shagF;const Lx=L.filter(x=>x!=='샤갈!');const talk=shag||kind==='big'||kind==='idle'||(kind==='win'&&Math.random()<.2)||(kind==='lose'&&Math.random()<.5);const b=$('bub');if(talk){const txt=shag?'샤갈!':Lx[Math.floor(Math.random()*Lx.length)]||'';b.textContent=txt;b.classList.add('on');if(G.say)G.say(txt,kind);if(shag)speak('샤갈!')}clearTimeout(mbT);mbT=setTimeout(()=>b.classList.remove('on'),kind==='big'?2800:1700);
  setTimeout(()=>m.classList.remove('jump','dance','sad','spin3d','big'),kind==='big'?2800:1300)}
-$('masc').onclick=()=>{mascot('idle');const m=$('masc');m.classList.add('spin3d');setTimeout(()=>m.classList.remove('spin3d'),1100);AUDIO.voice(SIG[G.id].v)};
+$('masc').onclick=()=>{if(Math.random()<.75){const m=$('masc'),b=$('bub'),t=LOVETAP[Math.floor(Math.random()*LOVETAP.length)];m.classList.remove('jump');void m.offsetWidth;m.classList.add('jump');b.textContent=t+' 💕';b.classList.add('on');clearTimeout(mbT);mbT=setTimeout(()=>b.classList.remove('on'),2400);setTimeout(()=>m.classList.remove('jump'),1300);speak(t,'dealer');heartRain(12)}else{mascot('idle');const m=$('masc');m.classList.add('spin3d');setTimeout(()=>m.classList.remove('spin3d'),1100);AUDIO.voice(SIG[G.id].v)}};
 const SIG={vault:{e:['🪙','✨','🪙','✨'],m:'jump',v:'roar'},toad:{e:['🪙','✨','🪙','✨'],m:'jump',v:'croak'},olympus:{e:['⚡','✨','💎','✨'],m:'burst',v:'aria'},egypt:{e:['🪲','✨','🪙','✨'],m:'swirl',v:'growl'},buffalo:{e:['💨','🪶','🪙','💨'],m:'quake',v:'moo'},lucky:{e:['🍀','7️⃣','💎','🎲','🪙'],m:'burst',v:'squeak'},
  panda:{e:['🥟','🍡','🌸','🥟'],m:'throw',v:'boing'},piggy:{e:['🪙','🪙','💰','🪙'],m:'fountain',v:'oink'},dragon:{e:['🔥','🔥','🧧','✨'],m:'breath',v:'roar'},
  tiger:{e:['🐾','✨','🍌','🐾'],m:'roar',v:'growl'},ocean:{e:['🫧','💎','🐚','🫧'],m:'bubbles',v:'bloop'}};
@@ -809,7 +812,7 @@ addEventListener('resize',()=>{if(G&&!busy&&document.body.dataset.g!=='lobby'){s
 renderBal(false);renderLvl();renderBtns();renderCharge();renderJP();renderLW();
 
 /* ---------- 커스텀 게임용 API ---------- */
-const API={U,IMG,AUDIO,sleep,T,speak,announce,popup,cinematic,jpVal,pool,shake,heartRain,showerOn:on=>shower(on),get auto(){return auto},buySpin:cost=>{S.bal-=cost;renderBal(true);S.xp+=cost;buying=true;sfx.chaching();save();spin()},get S(){return S},save,toast,flash,burst,fmt,short,bet,buyFS,box,banner,renderBal,
+const API={praise,U,IMG,AUDIO,sleep,T,speak,announce,popup,cinematic,jpVal,pool,shake,heartRain,showerOn:on=>shower(on),get auto(){return auto},buySpin:cost=>{S.bal-=cost;renderBal(true);S.xp+=cost;buying=true;sfx.chaching();save();spin()},get S(){return S},save,toast,flash,burst,fmt,short,bet,buyFS,box,banner,renderBal,
  get C(){return C},get free(){return !!fs},get fs(){return fs},get busy(){return busy},get reels(){return reels},spin:()=>spin(),sfx:(k,...a)=>AUDIO.sfx[k]&&AUDIO.sfx[k](...a),LAND};
 window.TL_API=API;
 /* ---------- 주인장 리모컨 (원격 선물·설정) ---------- */
@@ -858,7 +861,7 @@ function loveCard(){const L=window.LOVE||{};const notes=L.notes&&L.notes.length?
  if(L.since){const d=Math.floor((Date.now()-new Date(L.since+'T00:00:00+09:00'))/864e5)+1;$('dday').textContent=d>0?`우리 D+${d}`:''}
  if(L.her)$('vip').textContent=`VIP ${L.her}님 전용 카지노`}
 loveCard();
-(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.1.1'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
+(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.2'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
 (async()=>{const L=window.LOVE||{};heartRain(46);
  await popup(`<div class="hb">💝</div><h3>${(L.welcome||'웰컴 자기야 오늘도 사랑해🥰')}</h3><div class="sig">- ${L.owner||'태율랜드 주인장'} -</div><button class="go">나도 사랑해 💕</button>`,{cls:'wel'});
  AUDIO.init();[784,988,1175,1568].forEach((f,i)=>AUDIO.tone(f,.3,i*.12,'sine',.08));heartRain(24);})();

@@ -68,11 +68,11 @@ function equity(hole,board,nOpp,it=300){if(nOpp<1)return 1;const known=new Set([
 
 /* ================= 데이터 ================= */
 const TABLES=[{id:'n',name:'일반 테이블',sb:1000,bb:2000,buy:100000,col:'#2a5ae0'},{id:'v',name:'VIP 하이롤러',sb:5000,bb:10000,buy:1000000,col:'#c08a10'}];
-const AIP=()=>{const AV=K().AV;return [
- {name:'강남불주먹',av:AV('#f4c8a0','#2a1a10','#2a5ae0','cap'),tight:.35,aggr:.75,bluff:.35,chat:{raise:['가즈아!','받아라!'],fold:['에잇'],win:['역시 나야','쉽네~'],allin:['올인 간다!!']}},
- {name:'달빛여우',av:AV('#ffe0c8','#c03a6a','#9a4ae0','girl'),tight:.55,aggr:.5,bluff:.2,chat:{raise:['조금 올릴게요~'],fold:['패스할게요'],win:['후훗♪','감사합니다~'],allin:['다 걸어볼게요!']}},
- {name:'배팅장인',av:AV('#e8c0a0','#3a2a20','#2a2a3a','bald'),tight:.7,aggr:.35,bluff:.08,chat:{raise:['레이즈.'],fold:['폴드.'],win:['계산대로군'],allin:['올인.']}},
- {name:'오늘만산다',av:AV('#ffd8b8','#e0a020','#e0602a','boy'),tight:.2,aggr:.6,bluff:.5,chat:{raise:['오늘만 산다!','콜 해봐~'],fold:['아 쫄았다'],win:['개꿀!!','이게 되네ㅋㅋ'],allin:['인생 한방!!']}}]};
+const AIP=()=>{const N=K().ANI;return [
+ {name:'개굴이',tag:'개굴',av:N.frog,tight:.35,aggr:.75,bluff:.35,chat:{win:['역시 나야!','쉽네~']}},
+ {name:'삐죽이',tag:'삐죽',av:N.dolphin,tight:.55,aggr:.5,bluff:.2,chat:{win:['헤헤 이겼다!','고마워~']}},
+ {name:'펭돌이',tag:'펭돌',av:N.penguin,tight:.7,aggr:.35,bluff:.08,chat:{win:['계산대로야.','당연하지.']}},
+ {name:'몽실이',tag:'몽실',av:N.sheep,tight:.2,aggr:.6,bluff:.5,chat:{win:['와~ 이겼어!','오예~']}}]};
 const SEAT=[[50,78],[9,56],[19,24],[81,24],[91,56]],CEN=[50,44];
 const toward=(i,f)=>[SEAT[i][0]+(CEN[0]-SEAT[i][0])*f,SEAT[i][1]+(CEN[1]-SEAT[i][1])*f];
 
@@ -281,11 +281,11 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];
 function say(p,t){act(p,t,'')}
 function allinFx(p){try{api().sfx('drum')}catch(e){}voice(p,'allin')}
 const VL={her:{check:['체크!'],call:['콜!'],fold:['다이~'],raise:['레이즈!'],half:['하프!'],allin:['올인!']},
- ai0:{check:['체크'],call:['콜!','받아줄게'],fold:['에잇, 다이!','다이'],raise:['레이즈 간다!','받아라!'],half:['하프!'],allin:['올인 간다!!']},
- ai1:{check:['체크할게요~'],call:['콜이요~','받을게요~'],fold:['다이할게요~'],raise:['조금 올릴게요~'],half:['하프 갈게요~'],allin:['다 걸어볼게요!']},
+ ai0:{check:['체크!'],call:['콜!','받아줄게!'],fold:['에잇, 다이!','다이!'],raise:['레이즈 간다!','받아라!'],half:['하프!'],allin:['올인 간다!!']},
+ ai1:{check:['체크할게~'],call:['콜!','받을게~'],fold:['다이할래~'],raise:['조금 올릴게~'],half:['하프~'],allin:['다 걸어볼게!']},
  ai2:{check:['체크.'],call:['콜.'],fold:['다이.'],raise:['레이즈.'],half:['하프.'],allin:['올인.']},
- ai3:{check:['체크체크~'],call:['콜콜!','콜이지~'],fold:['아 다이...'],raise:['따당!','오늘만 산다!'],half:['하프 가즈아!'],allin:['인생 한방, 올인!!']}};
-function voice(p,k){const vx=p.i?'ai'+(p.i-1):'her';const t=pick(VL[vx][k]||['']);if(p.i&&k!=='check'&&k!=='call')say(p,t);try{api().speak(t,vx)}catch(e){}}
+ ai3:{check:['체크~'],call:['콜이야~','받아볼게~'],fold:['다이할게~'],raise:['올려볼게~','레이즈~'],half:['하프 갈게~'],allin:['몽땅 올인!']}};
+function voice(p,k){const vx=p.i?'ai'+(p.i-1):'her';let t=pick(VL[vx][k]||['']);if(p.ai)t=K().tagL(t,p.ai.tag);if(p.i&&k!=='check'&&k!=='call')say(p,t);try{api().speak(t,vx)}catch(e){}}
 function chipS(a){sfx2('chip',Math.max(1,Math.min(6,Math.round(Math.log2(1+a/T.bb)))))}
 const sfx2=(k,...x)=>{try{api().sfx(k,...x)}catch(e){}};
 
@@ -349,7 +349,7 @@ async function award(list,W,sd){let meWon=0,best=null;
  if(meWon){const e=P[0].ev;const L=window.LOVE||{};const her=L.her||'소현';
   if(e&&e.cat>=6){api().announce(e.cat===9?'ROYAL FLUSH':e.cat===8?'STRAIGHT FLUSH':e.cat===7?'FOUR OF A KIND':'FULL HOUSE',`+${fmt(meWon)}`,'gold');setTimeout(()=>DL.say(e.cat===9?'세상에, 로열 플러시예요!!':e.cat===8?'와~ 스트레이트 플러시!':e.cat===7?'포카드! 대박이다~':'풀하우스! 멋지다 소현아~'),900);try{api().heartRain&&api().heartRain()}catch(x){}}
   sfx('jjr')}
- else if(best&&best.ai&&Math.random()<.5)setTimeout(()=>{const t=pick(best.ai.chat.win);say(best,t);try{api().speak(t,'ai'+(best.i-1))}catch(e){}},1200);
+ else if(best&&best.ai&&Math.random()<.5)setTimeout(()=>{const t=K().tagL(pick(best.ai.chat.win),best.ai.tag);say(best,t);try{api().speak(t,'ai'+(best.i-1))}catch(e){}},1200);
  if(!meWon&&P[0].inh&&!P[0].folded)try{api().sfx('lose')}catch(e){}}
 
 async function loop(){const g=gen;try{while(g===gen){

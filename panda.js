@@ -244,7 +244,7 @@ PF.post=async(o,b,A)=>{
   for(const x of sorted){const cell=strips[x.c]&&strips[x.c].children[x.r];if(cell)cell.classList.add('vland');i++;
    try{A.AUDIO.tone(523*Math.pow(1.0595,i*2),.14,0,'triangle',.07);A.AUDIO.tone(1046*Math.pow(1.0595,i*2),.1,.03,'sine',.04)}catch(e){}
    cnt.innerHTML=`<span class="t3 pop"><span class="ex">${i} COINS</span><span class="fr">${i} COINS</span></span>`;cnt.classList.remove('bump');void cnt.offsetWidth;cnt.classList.add('bump');await A.sleep(A.T(230,120))}
-  A.sfx('boom');A.flash();A.shake();A.announce&&A.announce('BONUS GAME!','포춘 리스핀');A.speak&&A.speak('와~ 보너스 게임이에요!');await A.sleep(1400);cnt.remove()}
+  A.sfx('boom');A.flash();A.shake();A.announce&&A.announce('BONUS GAME!','포춘 리스핀');A.speak&&A.speak('와~ 보너스 게임이에요!');A.praise&&A.praise();await A.sleep(1400);cnt.remove()}
  const feats={L:!!p.L,U:!!p.U,P:!!p.P},nf=feats.L+feats.U+feats.P;
  const emp=document.getElementById('pemp');if(emp){emp.classList.add('cheer')}
  /* 항아리 터짐 */
