@@ -661,12 +661,12 @@ body.wj.pt #game #auto::before{font-size:10px}
 .prow{position:absolute;left:12%;right:12%;top:.4%;height:5.8%;display:flex;justify-content:space-between;align-items:flex-end}
 .prow img{width:19%;animation:prow 1.2s ease-in-out infinite alternate;animation-delay:calc(var(--i)*.15s)}@keyframes prow{to{transform:translateY(-8%)}}
 .pgr.r{top:6.2%;left:3%;width:94%;height:4.2%;justify-content:space-between;padding:0 3%}
-.pgrid{position:absolute;left:1.5%;width:97%;top:18.2%;height:70.4%;z-index:2}
-.pgrid.r4{top:53.4%;height:35.2%}
+.prgrid{position:absolute;left:1.5%;width:97%;top:18.2%;height:70.4%;z-index:2}
+.prgrid.r4{top:53.4%;height:35.2%}
 .pcol{position:absolute;top:-1%;bottom:-1%;width:3.4%;background:linear-gradient(90deg,#8a0606,#ff3a2a,#8a0606);border:2px solid #ffcc33;border-radius:3px}
 .pcol.L{left:0}.pcol.R{right:0}
 .pcells{position:absolute;left:4%;right:4%;top:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:1fr;gap:2px;background:#2a4ab0;border:2px solid #2a4ab0}
-.pgrid.r8 .pcells{grid-template-rows:repeat(8,1fr)}.pgrid.r4 .pcells{grid-template-rows:repeat(4,1fr)}
+.prgrid.r8 .pcells{grid-template-rows:repeat(8,1fr)}.prgrid.r4 .pcells{grid-template-rows:repeat(4,1fr)}
 .pc{position:relative;background:linear-gradient(#0a1a6a,#06104a);display:grid;place-items:center;overflow:hidden}
 .pc img{width:88%;height:88%;object-fit:contain}
 .pc img.d{opacity:.32;filter:saturate(.4)}
@@ -716,7 +716,7 @@ body.wj.pt #game #auto::before{font-size:10px}
 .ptitle{position:absolute;left:0;right:0;top:44%;text-align:center;z-index:9;pointer-events:none;opacity:0}
 .ptitle .t3{font-size:clamp(26px,11cqw,60px)}
 .pfr.intro .ptitle{animation:ptitle 1.3s ease-out forwards}@keyframes ptitle{0%{opacity:0;transform:scale(2.4)}25%{opacity:1;transform:scale(.92)}35%{transform:scale(1.04)}80%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.2)}}
-.pfr.intro .pgrid{animation:pgin .7s cubic-bezier(.3,1.4,.5,1) .5s backwards}@keyframes pgin{from{transform:translateY(30%);opacity:0}}
+.pfr.intro .prgrid{animation:pgin .7s cubic-bezier(.3,1.4,.5,1) .5s backwards}@keyframes pgin{from{transform:translateY(30%);opacity:0}}
 .pfeat{position:absolute;right:1%;top:89.2%;width:26%;display:flex;z-index:4}.pfeat img{width:44%;margin-left:-14%;filter:drop-shadow(0 2px 3px #0008)}.pfeat img:first-child{margin-left:0}
 .prow.hop img{animation:phop .45s ease-out}@keyframes phop{40%{transform:translateY(-30%) rotate(-6deg)}}
 .pc{transition:background .2s}
@@ -741,8 +741,8 @@ body.wj.pt #game #auto::before{font-size:10px}
 .pleft{transition:background .3s}
 .pleft.reset{animation:preset .5s ease-out}@keyframes preset{0%{transform:translateX(-50%) scale(1)}35%{transform:translateX(-50%) scale(1.3);box-shadow:0 0 24px 6px #ffe04a}100%{transform:translateX(-50%) scale(1)}}
 .pleft.last{background:linear-gradient(#ff4a3a,#a00808);animation:plast .5s ease-in-out infinite alternate}@keyframes plast{to{box-shadow:0 0 20px 4px #ff3a2a}}
-.pfr.tense .prbg{filter:brightness(.75) saturate(1.3)}.pfr.tense .pgrid{animation:ptense .12s linear infinite}@keyframes ptense{50%{transform:translate(1px,-1px)}}
-.pgrid.near .pc:not(.on){box-shadow:inset 0 0 0 2px #ffe04a;animation:pnear .5s ease-in-out infinite alternate}@keyframes pnear{to{box-shadow:inset 0 0 0 3px #fff,inset 0 0 14px #ffe04a}}
+.pfr.tense .prbg{filter:brightness(.75) saturate(1.3)}.pfr.tense .prgrid{animation:ptense .12s linear infinite}@keyframes ptense{50%{transform:translate(1px,-1px)}}
+.prgrid.near .pc:not(.on){box-shadow:inset 0 0 0 2px #ffe04a;animation:pnear .5s ease-in-out infinite alternate}@keyframes pnear{to{box-shadow:inset 0 0 0 3px #fff,inset 0 0 14px #ffe04a}}
 .pnear{position:absolute;left:50%;top:95%;transform:translateX(-50%);z-index:6;font:900 clamp(10px,3.8cqw,18px)/1 'Arial Black',sans-serif;color:#fff36a;text-shadow:0 2px 0 #8a0000,0 0 8px #000;animation:pnear2 .4s ease-in-out infinite alternate;white-space:nowrap}@keyframes pnear2{to{transform:translateX(-50%) scale(1.1)}}
 .ptot{top:90%;transition:transform .2s}.ptot.bump{animation:vbump .2s}.ptot.final{animation:ptfin .6s cubic-bezier(.3,1.6,.5,1) forwards}@keyframes ptfin{to{transform:translate(-50%,-50%) scale(1.25);top:50%}}
 .pcnt{position:absolute;left:0;right:0;top:44%;text-align:center;z-index:9;pointer-events:none}.pcnt .t3{font-size:clamp(24px,10cqw,52px)}.pcnt.bump{animation:pcb .25s ease-out}@keyframes pcb{from{transform:scale(1.5)}}
@@ -762,6 +762,8 @@ body.wj.pt #game #auto::before{font-size:10px}
 .csay::after{content:"";position:absolute;left:50%;bottom:-8px;margin-left:-8px;border:8px solid transparent;border-top-color:#fff;border-bottom:0}
 .csay.lose{background:#ffe0e0;color:#a00010}
 @keyframes csay{0%{opacity:0;transform:scale(.4) translateY(20%)}12%{opacity:1;transform:scale(1.1)}20%{transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:translateY(-30%)}}
+#pop>.card{max-height:96vh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (orientation:landscape) and (max-height:600px){#pgrid{grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:6px!important}#pgrid button{aspect-ratio:1.3!important;min-height:0!important;height:auto!important}#pop .card h3{margin:2px 0 4px}#ptier{margin-bottom:6px}}
 </style>
 </head>
 <body data-g="lobby">

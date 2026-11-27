@@ -275,12 +275,12 @@ PF.play=async(A,r,b,feats)=>{
   <div class="pgr r" data-t="GRAND"><i></i><b>GRAND</b><span class="num">${A.fmt(jv('GRAND'))}</span><b>GRAND</b><i></i></div>
   <div class="pplq me r" data-t="MEGA" style="left:3%;top:11.4%"><b>MEGA</b><span class="num">${A.fmt(jv('MEGA'))}</span></div><div class="pplq ma r" data-t="MAJOR" style="left:51.5%;top:11.4%"><b>MAJOR</b><span class="num">${A.fmt(jv('MAJOR'))}</span></div>
   <div class="pplq mi r" data-t="MINOR" style="left:3%;top:14.6%"><b>MINOR</b><span class="num">${A.fmt(jv('MINOR'))}</span></div><div class="pplq mn r" data-t="MINI" style="left:51.5%;top:14.6%"><b>MINI</b><span class="num">${A.fmt(jv('MINI'))}</span></div>
-  <div class="pgrid r${rows}"><div class="pcol L"></div><div class="pcol R"></div><div class="pcells"></div><div class="plock"></div></div>
+  <div class="prgrid r${rows}"><div class="pcol L"></div><div class="pcol R"></div><div class="pcells"></div><div class="plock"></div></div>
   <div class="pleft"><i>${feats.L?4:3}</i><span>SPINS REMAINING</span></div>
   <div class="pfeat">${['L','U','P'].filter(k=>feats[k]).map(k=>`<img alt="" src="${A.U(POTS[k+'1'])}">`).join('')}</div>
   <div class="ptitle"><span class="t3 pop"><span class="ex">FORTUNE RESPIN</span><span class="fr">FORTUNE RESPIN</span></span></div>`;
  st.appendChild(ov);const gmEl=document.querySelector('#game .gmain');gmEl.style.background=`url(${A.U(RBG)}) center/cover`;
- const cells=ov.querySelector('.pcells'),C=[],grid=ov.querySelector('.pgrid'),prow=ov.querySelector('.prow'),badge=ov.querySelector('.pleft'),bn=badge.querySelector('i'),bt=badge.querySelector('span');
+ const cells=ov.querySelector('.pcells'),C=[],grid=ov.querySelector('.prgrid'),prow=ov.querySelector('.prow'),badge=ov.querySelector('.pleft'),bn=badge.querySelector('i'),bt=badge.querySelector('span');
  for(let rr=0;rr<rows;rr++)for(let c=0;c<5;c++){const d=document.createElement('div');d.className='pc';d.innerHTML=`<img class="d" alt="" src="${rd()}">`;d.style.gridArea=`${rr+1}/${c+1}`;cells.appendChild(d);(C[c]=C[c]||[])[rr]=d}
  const isOn=(c,rr)=>C[c][rr].classList.contains('on');
  const put=(c,rr,v,up,anim)=>{const d=C[c][rr];d.classList.add('on');d.classList.remove('spin','ant');d.innerHTML=`<img class="cn${anim?' drop':''}" alt="" src="${A.U(up?UPG:coinArt(lbl(v)))}">${anim?'<i class="ring"></i><i class="spark"></i>':''}`;if(anim)setTimeout(()=>{d.querySelectorAll('.ring,.spark').forEach(e=>e.remove())},900)};
@@ -335,7 +335,7 @@ PF.play=async(A,r,b,feats)=>{
   filled=ov.querySelectorAll('.pc.on').length;paintLock(filled);
   const reset=s.land.length>0&&s.left>prevLeft-1;setLeft(s.left,reset);prevLeft=s.left;
   /* GRAND 근접 */
-  const remain=5*open-filled;ov.querySelector('.pgrid').classList.toggle('near',remain>0&&remain<=3&&open===rows);
+  const remain=5*open-filled;ov.querySelector('.prgrid').classList.toggle('near',remain>0&&remain<=3&&open===rows);
   if(remain>0&&remain<=3&&open===rows){const e=ov.querySelector('.pnear')||Object.assign(document.createElement('div'),{className:'pnear'});e.textContent=`GRAND까지 ${remain}칸!`;ov.appendChild(e)}
   await A.sleep(T(450,220));
  }

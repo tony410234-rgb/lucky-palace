@@ -480,7 +480,7 @@ async function spin(){
   setWin(free?fs.total:win,free?'FREE SPIN WIN':'WIN');
  }
  // features
- if(win>=b*10)mascot('big');else if(win>0)mascot('win');else if(Math.random()<.08)mascot('lose');
+ if(win>=b*10)mascot('big');else if(win>0)mascot('win');else{loseN++;if(loseN%3===0)mascot('lose',true);else if(Math.random()<.06)mascot('lose')}
  let fx=0;
  if(o.hs){await sleep(500);fx=await holdSpinUI(o.hs,b)}
  if(o.collect){const add=await collectUI(o.collect,b);fx+=add;}
@@ -602,9 +602,10 @@ function PED(kind){
  return `<svg viewBox="0 0 300 130"><ellipse cx="150" cy="120" rx="130" ry="10" fill="#000" opacity=".45"/>${coins}</svg>`}
 let mbT=0;
 const LOVEL={win:[`${HER}이 최고!`,`역시 ${HER}!`],big:[`${HER} 부자 됐다!!`,`${HER}이 잭팟 여신!!`],lose:[`${HER}아 힘내!`],idle:[`${HER}이 안녕!`,`${HER} 사랑해 💕`,'주인장이 보고 싶대']};
-function mascot(kind){const m=$('masc'),dc=DECOR.get(G.id),L=[...(dc[kind]||dc.idle),...(LOVEL[kind]||[])];m.classList.remove('jump','dance','sad','spin3d','big');void m.offsetWidth;m.classList.add(kind==='big'?'dance':kind==='lose'?'sad':'jump');
+let loseN=0;
+function mascot(kind,shagF){const m=$('masc'),dc=DECOR.get(G.id),L=[...(dc[kind]||dc.idle),...(LOVEL[kind]||[])];m.classList.remove('jump','dance','sad','spin3d','big');void m.offsetWidth;m.classList.add(kind==='big'?'dance':kind==='lose'?'sad':'jump');
  if(kind==='big'||kind==='win'){m.classList.add('spin3d');if(kind==='big')m.classList.add('big');sigFX(kind==='big'?2:1)}
- const talk=kind==='big'||kind==='idle'||(kind==='win'&&Math.random()<.2)||(kind==='lose'&&Math.random()<.35);const b=$('bub');if(talk){const txt=kind==='lose'&&Math.random()<.5?'샤갈!':L[Math.floor(Math.random()*L.length)];b.textContent=txt;b.classList.add('on');if(G.say)G.say(txt,kind);if(txt==='샤갈!'&&Math.random()<.5)speak('샤갈!')}clearTimeout(mbT);mbT=setTimeout(()=>b.classList.remove('on'),kind==='big'?2800:1700);
+ const shag=kind==='lose'&&!!shagF;const Lx=L.filter(x=>x!=='샤갈!');const talk=shag||kind==='big'||kind==='idle'||(kind==='win'&&Math.random()<.2)||(kind==='lose'&&Math.random()<.5);const b=$('bub');if(talk){const txt=shag?'샤갈!':Lx[Math.floor(Math.random()*Lx.length)]||'';b.textContent=txt;b.classList.add('on');if(G.say)G.say(txt,kind);if(shag)speak('샤갈!')}clearTimeout(mbT);mbT=setTimeout(()=>b.classList.remove('on'),kind==='big'?2800:1700);
  setTimeout(()=>m.classList.remove('jump','dance','sad','spin3d','big'),kind==='big'?2800:1300)}
 $('masc').onclick=()=>{mascot('idle');const m=$('masc');m.classList.add('spin3d');setTimeout(()=>m.classList.remove('spin3d'),1100);AUDIO.voice(SIG[G.id].v)};
 const SIG={vault:{e:['🪙','✨','🪙','✨'],m:'jump',v:'roar'},toad:{e:['🪙','✨','🪙','✨'],m:'jump',v:'croak'},olympus:{e:['⚡','✨','💎','✨'],m:'burst',v:'aria'},egypt:{e:['🪲','✨','🪙','✨'],m:'swirl',v:'growl'},buffalo:{e:['💨','🪶','🪙','💨'],m:'quake',v:'moo'},lucky:{e:['🍀','7️⃣','💎','🎲','🪙'],m:'burst',v:'squeak'},
