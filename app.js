@@ -77,7 +77,7 @@ function boom(n=1){if(RM)return;const cx0=innerWidth/2,cy0=innerHeight*.42;
   s.animate([{transform:`translate(${cx0}px,${cy0}px) scale(.2) rotate(0)`,opacity:1},{transform:`translate(${cx0+Math.cos(ang)*R}px,${cy0+Math.sin(ang)*R}px) scale(${1+Math.random()*1.5}) rotate(${Math.random()*360}deg)`,opacity:0}],{duration:800+Math.random()*600,easing:'cubic-bezier(.1,.7,.3,1)'}).onfinish=()=>s.remove()}
  burst(90)}
 /* ---------- 아나운서 (음성 + 큰 글자) ---------- */
-function speak(t){try{if(!AUDIO.st.sfx||!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';u.rate=1.08;u.pitch=1.3;u.volume=1;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+function speak(t){try{if(!AUDIO.st.sfx)return;if(window.TLApp&&TLApp.speak){TLApp.speak(t);return}if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';u.rate=1.08;u.pitch=1.3;u.volume=1;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
 function announce(t,sub='',cls=''){const e=document.createElement('div');e.className='ann '+cls;e.innerHTML=`<span class="t3 pop"><span class="ex">${t}</span><span class="fr">${t}</span></span>${sub?`<small>${sub}</small>`:''}`;document.body.appendChild(e);setTimeout(()=>e.remove(),cls.includes('small')?1300:2000)}
 function bigWin(amount,b){
  return new Promise(res=>{

@@ -17,10 +17,14 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import android.speech.tts.TextToSpeech;
+import java.util.Locale;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class MainActivity extends Activity {
+    private TextToSpeech tts;
+    private boolean ttsOk = false;
     private static final String LOCAL = "file:///android_asset/www/index.html";
     private WebView web;
     private boolean fellBack = false;
@@ -52,6 +56,12 @@ public class MainActivity extends Activity {
         });
         web.addJavascriptInterface(new Object() {
             @JavascriptInterface
+            public void speak(final String text) {
+                if (tts != null && ttsOk) tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tl");
+            }
+            @JavascriptInterface
+            public boolean hasVoice() { return ttsOk; }
+            @JavascriptInterface
             public void orient(final String mode) {
                 runOnUiThread(new Runnable() { public void run() {
                     setRequestedOrientation("portrait".equals(mode) ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT : ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
@@ -59,6 +69,16 @@ public class MainActivity extends Activity {
                 }});
             }
         }, "TLApp");
+        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    int r = tts.setLanguage(Locale.KOREAN);
+                    ttsOk = r != TextToSpeech.LANG_MISSING_DATA && r != TextToSpeech.LANG_NOT_SUPPORTED;
+                    tts.setPitch(1.25f);
+                    tts.setSpeechRate(1.1f);
+                }
+            }
+        });
         setContentView(web);
         hideBars();
         remote = readUrl();
@@ -120,5 +140,5 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onDestroy() { web.destroy(); super.onDestroy(); }
+    protected void onDestroy() { if (tts != null) { tts.stop(); tts.shutdown(); } web.destroy(); super.onDestroy(); }
 }
