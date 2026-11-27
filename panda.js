@@ -172,6 +172,7 @@ PF.fmtShort=fmtShort;PF.coinArt=coinArt;PF.UPG=UPG;PF.POTS=POTS;PF.EMPEROR=EMPER
 const AR=.56;
 const PT={L:'LONGEVITY',U:'UPGRADE',P:'PROSPERITY'};
 const potState=A=>A.S.ppots||(A.S.ppots={L:0,U:0,P:0});
+PF.forceFS=()=>{PF.forceTrig=['L','U','P'].sort(()=>Math.random()-.5).slice(0,1+Math.floor(Math.random()*3))};
 PF.costMul=()=>PF.boost===1?1.5:PF.boost===2?1.25:1;
 PF.mount=A=>{
  const st=document.querySelector('#game .stage');

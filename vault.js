@@ -128,6 +128,7 @@ const MV={id:'vault',name:'머니 볼트',en:'MONEY VAULTS',sub:'50라인 · 금
 /* ---------- 금고 상태 · 폭발 확률 ---------- */
 const BRATE={g:[.016,.13],p:[.014,.10],r:[.005,.04]};MV.BRATE=BRATE;
 MV.burstCheck=(st,vl,rnd=Math.random)=>{const out=[];for(const c of ['g','p','r']){const k=vl[c].length;if(!k)continue;st[c]=Math.min(1,(st[c]||0)+.1*k);const p=BRATE[c][0]+BRATE[c][1]*st[c];if(rnd()<p){out.push(c);st[c]=0}}return out};
+MV.forceFS=()=>{MV.forceBurst='g'};
 MV.PMULT=[[3,24],[5,22],[8,16],[10,12],[15,9],[20,7],[30,5],[50,3],[88,1.2]];
 
 /* ---------- 화면 장착 ---------- */
@@ -159,11 +160,11 @@ async function fly(A,from,to,n,src){const tr=to.getBoundingClientRect(),tx=tr.le
 const COIN='<svg viewBox="0 0 100 100"><defs><radialGradient id="vcg" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fffbe0"/><stop offset=".45" stop-color="#ffd34d"/><stop offset=".85" stop-color="#c0800a"/><stop offset="1" stop-color="#6a4002"/></radialGradient></defs><circle cx="50" cy="50" r="44" fill="url(#vcg)" stroke="#7a4a02" stroke-width="4"/><text x="50" y="66" text-anchor="middle" font-family="Georgia,serif" font-weight="900" font-size="46" fill="#7a4503">$</text><path d="M22 36a30 30 0 0 1 20-16" stroke="#fff" stroke-width="5" fill="none" opacity=".7" stroke-linecap="round"/></svg>';
 MV.post=async(o,b,A)=>{
  const s=A.S.vaults||(A.S.vaults={g:0,p:0,r:0});
- const any=o.vl.g.length+o.vl.p.length+o.vl.r.length;if(!any)return;
+ const any=o.vl.g.length+o.vl.p.length+o.vl.r.length;const fb=MV.forceBurst;MV.forceBurst=null;if(!any&&!fb)return;
  const src=A.U(COIN),strips=A.reels.map(r=>r.firstElementChild);
  for(const c of ['g','p','r'])for(const [cc,rr] of o.vl[c]){const cell=strips[cc]&&strips[cc].children[rr];if(!cell)continue;cell.classList.add('vland');A.sfx('tmult');
   await A.sleep(A.T(260,140));await fly(A,cell,document.getElementById('vt'+c),5,src);cell.classList.remove('vland')}
- const burst=MV.burstCheck(s,o.vl);MV.paint(A);A.save();
+ const burst=MV.burstCheck(s,o.vl);if(fb&&!burst.includes(fb)){burst.push(fb);s[fb]=0}MV.paint(A);A.save();
  if(!burst.length)return;
  /* 폭발 연출 */
  burst.forEach(c=>document.getElementById('vt'+c).classList.add('boom'));A.sfx('boom');A.flash();A.shake();A.burst(burst.length*40);

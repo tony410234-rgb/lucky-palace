@@ -714,7 +714,7 @@ function rollOutcome(){const o=rollBase();const L=Math.min(5,Math.max(1,S.luck||
  if(!o.heart&&Math.random()<L/500)o.heart=true;
  return o}
 function rollBase(){
- if(G.custom&&force==='fs'){force=null;const o=G.spin(false);o.fsAward=G.fsN||10;return o}
+ if(G.custom&&force==='fs'){force=null;if(G.forceFS){G.forceFS();return G.spin(false)}const o=G.spin(false);o.fsAward=G.fsN||10;return o}
  if(force==='bonus'||force==='heart'){const k=force;force=null;const o=G.spin(false);if(k==='bonus')o.bonus=BM[G.id]||'wheelup';else o.heart=true;return o}
  if(force&&FORCE[force][1]){const k=force,f=FORCE[k][1];force=null;if(k!=='grand')for(let i=0;i<60000;i++){const o=G.spin(false);if(f(o))return o}
   if(k==='grand'){for(let i=0;i<60000;i++){const o=G.spin(false);if(o.hs){const add=[];o.hs.board.forEach((x,j)=>{if(!x){o.hs.board[j]={s:'C',v:1};add.push([j,o.hs.board[j]])}});const st=o.hs.steps;if(st.length&&!st[st.length-1].length)st[st.length-1]=add;else st.push(add);o.hs.full=true;return o}}}}
@@ -827,7 +827,7 @@ async function remoteApply(it){
  }else if(it.t==='luck'){S.luck=Math.max(.5,Math.min(20,+it.val||1));save();
  }else if(it.t==='setbal'){S.bal=Math.max(0,Math.min(1e12,+it.val||0));save();renderBal(true);
   if(it.msg)await popup(`<div class="hb">💰</div><h3>잔액이 새로 설정됐어요</h3><div class="note">"${esc(it.msg)}"</div><div class="prize">${fmt(S.bal)}</div><button class="go">확인</button>`,{cls:'hcard'});
- }else if(it.t==='force'){if(FORCE[it.val])force=it.val;
+ }else if(it.t==='force'){if(it.val==='respin'){const P=GAMES.byId.panda;if(P)P.forceTrig=['L','U','P']}else if(it.val==='vault'){const V=GAMES.byId.vault;if(V)V.forceBurst=['g','p','r'][Math.floor(Math.random()*3)]}else if(FORCE[it.val])force=it.val;
  }
 }
 setTimeout(remoteCheck,4000);setInterval(remoteCheck,90000);

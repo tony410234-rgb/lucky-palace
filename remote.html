@@ -79,7 +79,9 @@ ol{padding-left:20px;margin:6px 0;font-size:13px;line-height:1.7;color:#e8d8ff}
  <div class="card">
   <h2><span data-i="🎰"></span>다음 스핀 예약 (몰래)</h2>
   <select id="frc">
-   <option value="fs">프리스핀 (모든 게임)</option>
+   <option value="fs">프리스핀/보너스 (모든 게임)</option>
+   <option value="respin">트리플 포춘 리스핀 (판다 포춘)</option>
+   <option value="vault">금고 폭발 (머니 볼트)</option>
    <option value="bonus">보너스 게임 (사다리·휠·미니슬롯)</option>
    <option value="heart">소현 하트 보너스</option>
    <option value="big">빅윈</option>
@@ -149,7 +151,7 @@ async function send(item,label){
   throw new Error('잠시 후 다시 시도해 주세요');
  }catch(e){toast(e.message)}finally{btns.forEach(b=>b.disabled=false)}
 }
-const NAMES={fs:'프리스핀',bonus:'보너스 게임',heart:'하트 보너스',big:'빅윈',hs:'홀드앤스핀',grand:'GRAND 잭팟',jpw:'잭팟 휠',jgrand:'휠 GRAND',pick:'진주 잭팟',pgrand:'진주 GRAND',wheel:'보너스 휠',collect:'돼지 수집'};
+const NAMES={respin:'판다 트리플 리스핀',vault:'금고 폭발',fs:'프리스핀/보너스',bonus:'보너스 게임',heart:'하트 보너스',big:'빅윈',hs:'홀드앤스핀',grand:'GRAND 잭팟',jpw:'잭팟 휠',jgrand:'휠 GRAND',pick:'진주 잭팟',pgrand:'진주 GRAND',wheel:'보너스 휠',collect:'돼지 수집'};
 function render(d){const it=(d.items||[]).slice().reverse();
  $('log').innerHTML=it.length?it.map(x=>{const t=new Date(x.at);const ts=`${t.getMonth()+1}/${t.getDate()} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
   const w=x.t==='coins'?`코인 선물 +${fmt(x.amt)}${x.msg?` · "${x.msg}"`:''}`:x.t==='msg'?`편지 · "${x.msg}"`:x.t==='luck'?`행운 x${x.val}`:x.t==='force'?`예약 · ${NAMES[x.val]||x.val}`:x.t==='setbal'?`잔액 → ${fmt(x.val)}`:x.t;
