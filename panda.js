@@ -244,7 +244,7 @@ PF.post=async(o,b,A)=>{
   for(const x of sorted){const cell=strips[x.c]&&strips[x.c].children[x.r];if(cell)cell.classList.add('vland');i++;
    try{A.AUDIO.tone(523*Math.pow(1.0595,i*2),.14,0,'triangle',.07);A.AUDIO.tone(1046*Math.pow(1.0595,i*2),.1,.03,'sine',.04)}catch(e){}
    cnt.innerHTML=`<span class="t3 pop"><span class="ex">${i} COINS</span><span class="fr">${i} COINS</span></span>`;cnt.classList.remove('bump');void cnt.offsetWidth;cnt.classList.add('bump');await A.sleep(A.T(230,120))}
-  A.sfx('boom');A.flash();A.shake();A.announce&&A.announce('BONUS GAME!','포춘 리스핀');A.speak&&A.speak('보너스 게임!');await A.sleep(1400);cnt.remove()}
+  A.sfx('boom');A.flash();A.shake();A.announce&&A.announce('BONUS GAME!','포춘 리스핀');A.speak&&A.speak('와~ 보너스 게임이에요!');await A.sleep(1400);cnt.remove()}
  const feats={L:!!p.L,U:!!p.U,P:!!p.P},nf=feats.L+feats.U+feats.P;
  const emp=document.getElementById('pemp');if(emp){emp.classList.add('cheer')}
  /* 항아리 터짐 */
@@ -295,7 +295,7 @@ PF.play=async(A,r,b,feats)=>{
  /* 초기 코인: 하나씩 떨어지며 등장 */
  const first=r.steps[0]?r.steps[0].snap:r.final;const firstLand=new Set((r.steps[0]?r.steps[0].land:[]).map(x=>x.c*10+x.r));const upT=new Map();(r.steps[0]?r.steps[0].ups:[]).forEach(u=>upT.set(u.to[0]*10+u.to[1],1));
  A.AUDIO.play&&A.AUDIO.play('pandaR');
- ov.classList.add('intro');A.speak&&A.speak('포춘 리스핀!');await A.sleep(T(1300,700));ov.classList.remove('intro');
+ ov.classList.add('intro');A.speak&&A.speak('포춘 리스핀, 시작해요~');await A.sleep(T(1300,700));ov.classList.remove('intro');
  let combo=0;const init=[];for(let c=0;c<5;c++)for(let rr=0;rr<rows;rr++){const x=first[c][rr];if(x&&!firstLand.has(c*10+rr))init.push([c,rr,x.v])}
  const step0=r.steps[0];
  for(const [c,rr,v] of init){let vv=v;if(step0&&typeof v==='number')for(const u of step0.ups)if(u.to[0]===c&&u.to[1]===rr)vv-=u.add;put(c,rr,vv,0,1);tone(660+combo*60,.12,0,'triangle',.05);combo++;await A.sleep(T(170,90))}

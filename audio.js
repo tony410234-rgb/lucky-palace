@@ -24,6 +24,11 @@ function noise(dest,{t,d,v=.1,type='highpass',f=6000,q=1}){
  const g=ac.createGain();g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl).connect(g).connect(dest);s.start(t);s.stop(t+d+.02);
 }
 /* ---------- SFX ---------- */
+/* 진짜 클레이 카지노 칩 소리: 짧은 '탁' 충격음 + 칩 몸체 공명 3~4개 */
+function chipAt(t,v=.5){const k=.9+Math.random()*.2;
+ noise(sfxG,{t,d:.010,v:v*.6,type:'bandpass',f:4300*k,q:1.1});
+ noise(sfxG,{t,d:.028,v:v*.28,type:'bandpass',f:2400*k,q:5});
+ [[3150,.055,.11],[4720,.038,.075],[6380,.024,.05],[1750,.022,.06]].forEach(([f,d,m])=>osc(sfxG,{f:f*k,t,d,type:'sine',v:v*m,a:.0006}))}
 function clinkAt(t,base,v=.05){[1,2.76,5.4,8.93].forEach((p,k)=>osc(sfxG,{f:base*p,t,d:.04+.2/(k+1),type:'sine',v:v/(k+1),a:.001}));noise(sfxG,{t,d:.015,v:v*.8,type:'highpass',f:7000})}
 function tone(f,d,dl=0,type='square',v=.05,f2){if(!st.sfx||!init())return;try{osc(sfxG,{f,f2,t:ac.currentTime+dl,d,type,v:v*1.5,a:.003})}catch(e){}}
 function nz(d,dl=0,v=.1,f=3000,type='bandpass'){if(!st.sfx||!init())return;try{noise(sfxG,{t:ac.currentTime+dl,d,v,type,f})}catch(e){}}
@@ -73,6 +78,9 @@ const sfx={
  jjr:(big=0)=>{if(!st.sfx||!init())return;try{const t=ac.currentTime,N=[1047,1319,1568,2093,2637,3136,4186];N.forEach((f,i)=>{fm(f,.28+i*.02,i*.045,.075,3.5,f*.9);clinkAt(t+i*.045+.01,2200+i*300,.05)});noise(sfxG,{t,d:.35,v:.08,type:'highpass',f:6000});osc(sfxG,{f:2093,t:t+.32,d:.6,type:'triangle',v:.08});osc(sfxG,{f:2637,t:t+.32,d:.6,type:'triangle',v:.06});osc(sfxG,{f:3136,t:t+.32,d:.6,type:'triangle',v:.05});if(big)for(let k=0;k<10;k++)clinkAt(t+.4+k*.06,1800+Math.random()*2400,.06)}catch(e){}},
  tcoin:()=>{tone(1900,.09,0,'sine',.06);tone(5600,.06,.01,'sine',.03);tone(95,.12,0,'sine',.12,60)},
  tmult:()=>{[1568,1975,2349,3136,3951].forEach((f,i)=>tone(f,.18,i*.045,'sine',.05));nz(.4,0,.05,7000,'highpass')},
+ chip:(n=1,gap=.045)=>{if(!st.sfx||!init())return;try{const t=ac.currentTime;for(let i=0;i<n;i++)chipAt(t+i*gap*(1-i*.05)+Math.random()*.008,.55*(1-i*.06))}catch(e){}},
+ chipStack:()=>{if(!st.sfx||!init())return;try{const t=ac.currentTime;let x=0;for(let i=0;i<7;i++){x+=.06*(1-i*.08);chipAt(t+x,.5*(1-i*.05))}chipAt(t+x+.03,.18);chipAt(t+x+.05,.1)}catch(e){}},
+ chipSlide:()=>{if(!st.sfx||!init())return;try{const t=ac.currentTime;noise(sfxG,{t,d:.28,v:.06,type:'bandpass',f:1800,q:.8});for(let i=0;i<5;i++)chipAt(t+.08+i*.04+Math.random()*.02,.35)}catch(e){}},
  clink:(n=1,spread=.25,v=.05)=>{if(!st.sfx||!init())return;try{const t=ac.currentTime;for(let i=0;i<n;i++)clinkAt(t+Math.random()*spread,1700+Math.random()*2200,v)}catch(e){}},
  chaching:()=>{if(!st.sfx||!init())return;try{const t=ac.currentTime;noise(sfxG,{t,d:.09,v:.18,type:'bandpass',f:2400});clinkAt(t+.03,2600,.09);clinkAt(t+.1,3500,.08);osc(sfxG,{f:2093,t:t+.14,d:.7,type:'triangle',v:.09});osc(sfxG,{f:2637,t:t+.14,d:.7,type:'triangle',v:.07});osc(sfxG,{f:3136,t:t+.2,d:.6,type:'sine',v:.05});for(let i=0;i<8;i++)clinkAt(t+.2+Math.random()*.5,1800+Math.random()*2000,.04)}catch(e){}},
  pile:()=>{if(!st.sfx||!init())return;try{const t=ac.currentTime;for(let i=0;i<30;i++)clinkAt(t+i*.035+Math.random()*.03,1500+Math.random()*2600,.045*(1-i/40))}catch(e){}},

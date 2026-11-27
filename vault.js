@@ -168,7 +168,7 @@ MV.post=async(o,b,A)=>{
  if(!burst.length)return;
  /* 폭발 연출 */
  burst.forEach(c=>document.getElementById('vt'+c).classList.add('boom'));A.sfx('boom');A.flash();A.shake();A.burst(burst.length*40);
- A.AUDIO.voice&&A.AUDIO.voice('roar');A.speak&&A.speak(burst.length>1?'더블 금고 폭발!':'금고 폭발!');A.announce&&A.announce('VAULT BONUS!',burst.length===3?'트리플 금고 폭발!!':burst.length===2?'더블 금고 폭발!!':'금고 폭발!');
+ A.AUDIO.voice&&A.AUDIO.voice('roar');A.speak&&A.speak(burst.length>1?'와, 금고가 동시에 터졌어요!':'금고가 터졌어요!');A.announce&&A.announce('VAULT BONUS!',burst.length===3?'트리플 금고 폭발!!':burst.length===2?'더블 금고 폭발!!':'금고 폭발!');
  await A.sleep(1300);
  burst.forEach(c=>document.getElementById('vt'+c).classList.remove('boom'));MV.paint(A);
  for(const c of burst){
