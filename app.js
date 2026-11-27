@@ -81,7 +81,8 @@ function boom(n=1){if(RM)return;const cx0=innerWidth/2,cy0=innerHeight*.42;
 const VOX={ann:{g:'f',v:0,p:1.04,r:.96},dealer:{g:'m',v:0,p:.97,r:.96},her:{g:'f',v:1,p:1.12,r:.98},ai0:{g:'m',v:1,p:.86,r:1.06},ai1:{g:'f',v:2,p:1.1,r:.93},ai2:{g:'m',v:2,p:.78,r:.88},ai3:{g:'m',v:0,p:1.06,r:1.12}};
 let WV=null;function webVoices(){if(WV&&WV.length)return WV;try{WV=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang))}catch(e){WV=[]}return WV}
 try{speechSynthesis.onvoiceschanged=()=>{WV=null}}catch(e){}
-function speak(t,who='ann'){try{if(!AUDIO.st.sfx||!t)return;const o=VOX[who]||VOX.ann;
+function cleanTTS(t){return String(t).replace(/~+(?=\s*\S)/g,', ').replace(/~+/g,'').replace(/[.…]{2,}/g,', ').replace(/[♪♥❤★☆♡·•]/g,' ').replace(/[ㅋㅎ]{2,}/g,'').replace(/!{2,}/g,'!').replace(/,\s*([!?.])/g,'$1').replace(/\s+/g,' ').replace(/,$/,'').trim().replace(/[,\s]+$/,'')}
+function speak(t,who='ann'){try{if(!AUDIO.st.sfx||!t)return;t=cleanTTS(t);if(!t)return;const o=VOX[who]||VOX.ann;
  if(window.TLApp){if(TLApp.say){TLApp.say(t,o.g,o.v,o.p,o.r);return}if(TLApp.speak){TLApp.speak(t);return}}
  if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';
  const vs=webVoices();if(vs.length){const male=v=>/male|남|injoon|jun|minho|hyunsu|bong/i.test(v.name)&&!/female|여/i.test(v.name);const pool=vs.filter(v=>o.g==='m'?male(v):!male(v));const list=(pool.length?pool:vs).slice().sort((x,y)=>(/natural|online|neural|google/i.test(y.name)?1:0)-(/natural|online|neural|google/i.test(x.name)?1:0));u.voice=list[o.v%list.length]||list[0];
@@ -857,7 +858,7 @@ function loveCard(){const L=window.LOVE||{};const notes=L.notes&&L.notes.length?
  if(L.since){const d=Math.floor((Date.now()-new Date(L.since+'T00:00:00+09:00'))/864e5)+1;$('dday').textContent=d>0?`우리 D+${d}`:''}
  if(L.her)$('vip').textContent=`VIP ${L.her}님 전용 카지노`}
 loveCard();
-(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.1'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
+(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.1.1'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
 (async()=>{const L=window.LOVE||{};heartRain(46);
  await popup(`<div class="hb">💝</div><h3>${(L.welcome||'웰컴 자기야 오늘도 사랑해🥰')}</h3><div class="sig">- ${L.owner||'태율랜드 주인장'} -</div><button class="go">나도 사랑해 💕</button>`,{cls:'wel'});
  AUDIO.init();[784,988,1175,1568].forEach((f,i)=>AUDIO.tone(f,.3,i*.12,'sine',.08));heartRain(24);})();

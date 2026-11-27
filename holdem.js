@@ -67,7 +67,7 @@ function equity(hole,board,nOpp,it=300){if(nOpp<1)return 1;const known=new Set([
  return win/it}
 
 /* ================= 데이터 ================= */
-const TABLES=[{id:'r',name:'루키 테이블',sb:100,bb:200,buy:20000,col:'#2a8a5a'},{id:'n',name:'일반 테이블',sb:500,bb:1000,buy:100000,col:'#2a5ae0'},{id:'v',name:'VIP 하이롤러',sb:5000,bb:10000,buy:1000000,col:'#c08a10'}];
+const TABLES=[{id:'n',name:'일반 테이블',sb:1000,bb:2000,buy:100000,col:'#2a5ae0'},{id:'v',name:'VIP 하이롤러',sb:5000,bb:10000,buy:1000000,col:'#c08a10'}];
 const AIP=()=>{const AV=K().AV;return [
  {name:'강남불주먹',av:AV('#f4c8a0','#2a1a10','#2a5ae0','cap'),tight:.35,aggr:.75,bluff:.35,chat:{raise:['가즈아!','받아라!'],fold:['에잇'],win:['역시 나야','쉽네~'],allin:['올인 간다!!']}},
  {name:'달빛여우',av:AV('#ffe0c8','#c03a6a','#9a4ae0','girl'),tight:.55,aggr:.5,bluff:.2,chat:{raise:['조금 올릴게요~'],fold:['패스할게요'],win:['후훗♪','감사합니다~'],allin:['다 걸어볼게요!']}},
@@ -76,7 +76,7 @@ const AIP=()=>{const AV=K().AV;return [
 const SEAT=[[50,78],[9,56],[19,24],[81,24],[91,56]],CEN=[50,44];
 const toward=(i,f)=>[SEAT[i][0]+(CEN[0]-SEAT[i][0])*f,SEAT[i][1]+(CEN[1]-SEAT[i][1])*f];
 
-let DL=null,ui=null,P=[],T=TABLES[1],board=[],pot=0,cur=0,minR=0,btn=0,gen=0,inHand=false,meWait=null,handNo=0,stage='';
+let DL=null,ui=null,P=[],T=TABLES[0],board=[],pot=0,cur=0,minR=0,btn=0,gen=0,inHand=false,meWait=null,handNo=0,stage='';
 const ABORT={};
 const bal=()=>api().S.bal;
 function setBal(v){api().S.bal=v;api().save();api().renderBal&&api().renderBal();$('hebal').textContent=fmt(v)}
@@ -370,7 +370,7 @@ async function open(){A=window.TL_API;if(!A)return;if(!ui)build();ui.classList.a
  try{window.TLApp&&TLApp.orient('landscape')}catch(e){}
  $('hebal').textContent=fmt(bal());$('hesnd').textContent=A.AUDIO.st.sfx?'소리':'무음';gen++;
  if(!P.length)P=[0,1,2,3,4].map(i=>({i,stack:0,hole:[],ai:null,tight:.5,aggr:.5,bluff:.2}));
- const S=A.S;if(S.heStack>0)await seat(TABLES.find(t=>t.id===S.heTable)||TABLES[1],S.heStack);
+ const S=A.S;if(S.heStack>0)await seat(TABLES.find(t=>t.id===S.heTable)||TABLES[0],S.heStack);
  else{P[0].stack=0;P.forEach(paint);const t=await buyModal(false);if(!t){close();return}await seat(t)}
  msg('텍사스 홀덤','내 패와 족보가 왼쪽 아래에 실시간으로 떠요!');setTimeout(()=>msg(''),2200);setTimeout(()=>DL.say(`어서 와 ${(window.LOVE||{}).her||'소현'}아~ 오늘 딜러는 나야!`),500);
  [...$('heboard').children].forEach(s=>s.innerHTML='');myInfo();
