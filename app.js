@@ -761,6 +761,7 @@ let tapN=0,tapT=0;
 const secret=()=>{if(busy)return;tapN=(Date.now()-tapT<600)?tapN+1:1;tapT=Date.now();if(tapN>=5){tapN=0;askPin()}};
 document.querySelector('.logo').addEventListener('click',secret);
 $('gtitle').addEventListener('click',secret);$('mtitle').addEventListener('click',secret);
+document.addEventListener('click',e=>{if(e.target.closest('#game .pgr:not(.r),#game .tjp,#game .vplq'))secret()});
 /* ---------- controls ---------- */
 const sp=$('spin');let holdT=0,held=false;
 sp.addEventListener('pointerdown',()=>{held=false;holdT=setTimeout(()=>{held=true;if(!auto){auto=true;renderBtns();toast('AUTO SPIN',900);if(!busy)spin()}},650)});
