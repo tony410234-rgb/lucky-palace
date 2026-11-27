@@ -78,7 +78,7 @@ function boom(n=1){if(RM)return;const cx0=innerWidth/2,cy0=innerHeight*.42;
  burst(90)}
 /* ---------- 아나운서 (음성 + 큰 글자) ---------- */
 /* 음성: 캐릭터별 목소리(성별·톤·속도) — 앱(v4.1 APK)에서는 고품질 한국어 음성 자동 선택 */
-const VOX={ann:{g:'f',v:0,p:1.04,r:.96},dealer:{g:'m',v:0,p:.97,r:.96},her:{g:'f',v:1,p:1.12,r:.98},ai0:{g:'m',v:1,p:.86,r:1.06},ai1:{g:'f',v:2,p:1.1,r:.93},ai2:{g:'m',v:2,p:.78,r:.88},ai3:{g:'m',v:0,p:1.06,r:1.12}};
+const VOX={ann:{g:'f',v:0,p:1.04,r:1.13},dealer:{g:'m',v:0,p:.97,r:1.13},her:{g:'f',v:1,p:1.12,r:1.16},ai0:{g:'m',v:1,p:.86,r:1.25},ai1:{g:'f',v:2,p:1.1,r:1.1},ai2:{g:'m',v:2,p:.78,r:1.04},ai3:{g:'m',v:0,p:1.06,r:1.32}};
 let WV=null;function webVoices(){if(WV&&WV.length)return WV;try{WV=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang))}catch(e){WV=[]}return WV}
 try{speechSynthesis.onvoiceschanged=()=>{WV=null}}catch(e){}
 function cleanTTS(t){return String(t).replace(/~+(?=\s*\S)/g,', ').replace(/~+/g,'').replace(/[.…]{2,}/g,', ').replace(/[♪♥❤★☆♡·•]/g,' ').replace(/[ㅋㅎ]{2,}/g,'').replace(/!{2,}/g,'!').replace(/,\s*([!?.])/g,'$1').replace(/\s+/g,' ').replace(/,$/,'').trim().replace(/[,\s]+$/,'')}

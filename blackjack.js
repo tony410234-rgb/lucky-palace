@@ -225,7 +225,7 @@ const DCSS=`.tydl{position:absolute;left:50%;transform:translateX(-50%);z-index:
 .tysay{position:absolute;left:96%;top:12%;background:#fff;color:#3a1050;border-radius:1.2cqw 1.2cqw 1.2cqw .2cqw;padding:.25em .8em;font:900 clamp(10px,1.6cqw,16px) Jua,sans-serif;white-space:nowrap;opacity:0;transition:opacity .2s;box-shadow:0 .4cqw .8cqw #0008}
 .tysay.on{opacity:1}`;
 function dealerEl(){if(!document.getElementById('tydcss')){const s=document.createElement('style');s.id='tydcss';s.textContent=DCSS;document.head.appendChild(s)}
- const d=document.createElement('div');d.className='tydl';d.innerHTML=TAEYUL+'<b class="tyname">딜러 태율</b><div class="tysay"></div>';
+ const d=document.createElement('div');d.className='tydl';dealerEl.n=(dealerEl.n||0)+1;d.innerHTML=TAEYUL.replace(/tyd(Sk|Hr|Vs)/g,'tyd'+dealerEl.n+'$1')+'<b class="tyname">딜러 태율</b><div class="tysay"></div>';
  d.say=(t,voice=true)=>{const b=d.querySelector('.tysay');b.textContent=t;b.classList.add('on');d.classList.add('talk');clearTimeout(d._t);clearTimeout(d._m);d._m=setTimeout(()=>d.classList.remove('talk'),Math.min(2200,300+t.length*120));d._t=setTimeout(()=>b.classList.remove('on'),2400);if(voice)try{api().speak(t,'dealer')}catch(e){}};
  return d}
 
