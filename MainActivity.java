@@ -19,12 +19,52 @@ import android.webkit.WebViewClient;
 
 import android.speech.tts.TextToSpeech;
 import java.util.Locale;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import android.speech.tts.Voice;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class MainActivity extends Activity {
     private TextToSpeech tts;
     private boolean ttsOk = false;
+    private final List<Voice> femaleV = new ArrayList<>();
+    private final List<Voice> maleV = new ArrayList<>();
+    private final List<Voice> allV = new ArrayList<>();
+
+    /* 고품질 한국어 음성들을 모아서 남/여로 나눔 (Google 음성: ism·kob=여성, koc·kod·jun=남성) */
+    private void collectVoices() {
+        try {
+            for (Voice v : tts.getVoices()) {
+                Locale l = v.getLocale();
+                if (l == null || !"ko".equals(l.getLanguage())) continue;
+                if (v.getFeatures() != null && v.getFeatures().contains(TextToSpeech.Engine.KEY_FEATURE_NOT_INSTALLED)) continue;
+                allV.add(v);
+            }
+            Collections.sort(allV, (a, b) -> {
+                int s = score(b) - score(a);
+                return s != 0 ? s : a.getName().compareTo(b.getName());
+            });
+            for (Voice v : allV) {
+                String n = v.getName().toLowerCase(Locale.ROOT);
+                if (n.contains("koc") || n.contains("kod") || n.contains("jun") || n.contains("male") && !n.contains("female")) maleV.add(v);
+                else femaleV.add(v);
+            }
+        } catch (Exception e) { }
+    }
+    private int score(Voice v) {
+        int s = v.getQuality();
+        if (!v.isNetworkConnectionRequired()) s += 150;   // 반응 빠른 기기 내장 음성 우선
+        if (v.getLatency() <= Voice.LATENCY_NORMAL) s += 50;
+        return s;
+    }
+    private Voice pickVoice(String g, int idx) {
+        List<Voice> l = "m".equals(g) ? maleV : femaleV;
+        if (l.isEmpty()) l = allV;
+        if (l.isEmpty()) return null;
+        return l.get(Math.abs(idx) % l.size());
+    }
     private static final String LOCAL = "file:///android_asset/www/index.html";
     private WebView web;
     private boolean fellBack = false;
@@ -61,6 +101,22 @@ public class MainActivity extends Activity {
             }
             @JavascriptInterface
             public boolean hasVoice() { return ttsOk; }
+            /* 캐릭터별 목소리: g=성별(m/f), idx=같은 성별 내 다른 목소리, pitch/rate=톤·속도 */
+            @JavascriptInterface
+            public void say(final String text, final String g, final int idx, final float pitch, final float rate) {
+                if (tts == null || !ttsOk) return;
+                try {
+                    Voice v = pickVoice(g, idx);
+                    if (v != null) tts.setVoice(v);
+                    float p = pitch;
+                    if ("m".equals(g) && maleV.isEmpty()) p = Math.max(0.55f, pitch - 0.25f); // 남자 음성이 없으면 톤을 낮춤
+                    tts.setPitch(p);
+                    tts.setSpeechRate(rate);
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tl");
+                } catch (Exception e) { tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tl"); }
+            }
+            @JavascriptInterface
+            public int voiceCount() { return allV.size(); }
             @JavascriptInterface
             public void orient(final String mode) {
                 runOnUiThread(new Runnable() { public void run() {
@@ -74,8 +130,11 @@ public class MainActivity extends Activity {
                 if (status == TextToSpeech.SUCCESS) {
                     int r = tts.setLanguage(Locale.KOREAN);
                     ttsOk = r != TextToSpeech.LANG_MISSING_DATA && r != TextToSpeech.LANG_NOT_SUPPORTED;
-                    tts.setPitch(1.25f);
-                    tts.setSpeechRate(1.1f);
+                    collectVoices();
+                    Voice v = pickVoice("f", 0);
+                    if (v != null) tts.setVoice(v);
+                    tts.setPitch(1.04f);
+                    tts.setSpeechRate(0.97f);
                 }
             }
         });
