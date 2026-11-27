@@ -131,8 +131,17 @@ function frame(){
 }
 
 /* ---------- lobby ---------- */
-$('cards').innerHTML=GAMES.list.map(g=>`<button class="gcard c-${g.id}" data-id="${g.id}"><span class="rays"></span>${g.jp?`<span class="cjp">JACKPOT<b class="cjpv" data-g="${g.id}">0</b></span>`:''}<span class="bdg">${g.badge}</span><span class="hero">${IMG(CHARS[g.id])}</span><b class="en" style="font-family:${g.font}">${g.en}</b><span class="kn">${g.name}</span><small>${g.sub}</small></button>`).join('');
-$('cards').onclick=e=>{const c=e.target.closest('.gcard');if(c){sfx.click();openGame(c.dataset.id)}};
+const ART_SLOT=`<svg viewBox="0 0 120 120"><defs><linearGradient id="msg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5a6a"/><stop offset="1" stop-color="#a0102a"/></linearGradient><linearGradient id="msg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6c0"/><stop offset="1" stop-color="#e0a020"/></linearGradient></defs><rect x="18" y="22" width="74" height="86" rx="10" fill="url(#msg1)" stroke="#ffd76a" stroke-width="4"/><path d="M26 22Q55 0 84 22Z" fill="url(#msg2)" stroke="#a06a00" stroke-width="2"/><text x="55" y="19" text-anchor="middle" font-family="Bungee,sans-serif" font-size="9" fill="#a0102a">JACKPOT</text><rect x="26" y="40" width="58" height="32" rx="5" fill="#fff" stroke="#6a0010" stroke-width="3"/><g font-family="Bungee,Arial Black,sans-serif" font-size="20" text-anchor="middle" fill="#e0102a"><text x="36" y="64">7</text><text x="55" y="64">7</text><text x="74" y="64">7</text></g><path d="M45 42V70M65 42V70" stroke="#ccc" stroke-width="1.5"/><rect x="30" y="80" width="50" height="10" rx="4" fill="#4a0010"/><circle cx="42" cy="85" r="3" fill="#ffd76a"/><circle cx="55" cy="85" r="3" fill="#4aff8a"/><circle cx="68" cy="85" r="3" fill="#4ab0ff"/><path d="M92 50h8V30" stroke="#bbb" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="100" cy="26" r="7" fill="#ff2a44" stroke="#7a0012" stroke-width="2"/><circle cx="98" cy="24" r="2" fill="#fff9"/></svg>`;
+const ART_CARD=`<svg viewBox="0 0 120 120"><g transform="rotate(-18 60 90)"><rect x="30" y="22" width="40" height="58" rx="5" fill="#fff" stroke="#999" stroke-width="2"/><text x="36" y="38" font-family="Georgia" font-weight="700" font-size="13" fill="#141420">A</text><text x="50" y="62" text-anchor="middle" font-size="22" fill="#141420">♠</text></g><g transform="rotate(14 60 90)"><rect x="48" y="20" width="40" height="58" rx="5" fill="#fff" stroke="#999" stroke-width="2"/><text x="54" y="36" font-family="Georgia" font-weight="700" font-size="13" fill="#d81a2a">K</text><text x="68" y="60" text-anchor="middle" font-size="22" fill="#d81a2a">♥</text></g><g><ellipse cx="34" cy="100" rx="18" ry="6" fill="#0006"/><g fill="#d0202a" stroke="#fff" stroke-width="2"><ellipse cx="34" cy="96" rx="16" ry="5.5"/><ellipse cx="34" cy="91" rx="16" ry="5.5"/></g><g fill="#2a5ae0" stroke="#fff" stroke-width="2"><ellipse cx="34" cy="86" rx="16" ry="5.5"/></g></g><g><g fill="#1a1a1a" stroke="#ffd76a" stroke-width="2"><ellipse cx="88" cy="100" rx="16" ry="5.5"/><ellipse cx="88" cy="95" rx="16" ry="5.5"/></g></g></svg>`;
+let LV='menu';
+function slotCards(){return GAMES.list.map(g=>`<button class="gcard c-${g.id}" data-id="${g.id}"><span class="rays"></span>${g.jp?`<span class="cjp">JACKPOT<b class="cjpv" data-g="${g.id}">0</b></span>`:''}<span class="bdg">${g.badge}</span><span class="hero">${IMG(CHARS[g.id])}</span><b class="en" style="font-family:${g.font}">${g.en}</b><span class="kn">${g.name}</span><small>${g.sub}</small></button>`).join('')}
+function renderLobby(){const c=$('cards');c.className='cards v-'+LV;
+ if(LV==='menu')c.innerHTML=`<button class="mcard m-slot" data-v="slot"><span class="rays"></span><span class="mart">${ART_SLOT}</span><b>슬롯게임</b><small>${GAMES.list.length}가지 슬롯 · 잭팟 · 프리게임</small></button><button class="mcard m-card" data-v="card"><span class="rays"></span><span class="mart">${ART_CARD}</span><b>카드게임</b><small>블랙잭 · 텍사스 홀덤</small><span class="mnew">NEW</span></button>`;
+ else c.innerHTML=`<div class="lvbar"><button class="lvback" data-v="menu">‹ 메뉴</button><b>${LV==='slot'?'슬롯게임':'카드게임'}</b></div>`+(LV==='slot'?slotCards():(window.BJ?BJ.card:'')+(window.HE?HE.card:''));
+ try{$$('.cjpv').forEach(e=>e.textContent=fmt(JPSEED.GRAND*1e4+pool(e.dataset.g).GRAND))}catch(e){}}
+renderLobby();
+$('cards').onclick=e=>{const v=e.target.closest('[data-v]');if(v){sfx.click();LV=v.dataset.v;renderLobby();return}
+ const c=e.target.closest('.gcard');if(c){sfx.click();if(c.dataset.ext==='bj'){window.BJ&&BJ.open();return}if(c.dataset.ext==='he'){window.HE&&HE.open();return}openGame(c.dataset.id)}};
 function showScreen(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id===id));scrollTo(0,0)}
 
 /* ---------- game screen ---------- */
@@ -792,6 +801,7 @@ renderBal(false);renderLvl();renderBtns();renderCharge();renderJP();renderLW();
 /* ---------- 커스텀 게임용 API ---------- */
 const API={U,IMG,AUDIO,sleep,T,speak,announce,popup,cinematic,jpVal,pool,shake,heartRain,showerOn:on=>shower(on),get auto(){return auto},buySpin:cost=>{S.bal-=cost;renderBal(true);S.xp+=cost;buying=true;sfx.chaching();save();spin()},get S(){return S},save,toast,flash,burst,fmt,short,bet,buyFS,box,banner,renderBal,
  get C(){return C},get free(){return !!fs},get fs(){return fs},get busy(){return busy},get reels(){return reels},spin:()=>spin(),sfx:k=>AUDIO.sfx[k]&&AUDIO.sfx[k](),LAND};
+window.TL_API=API;
 /* ---------- 주인장 리모컨 (원격 선물·설정) ---------- */
 const RAPI='https://api.github.com/repos/tony410234-rgb/lucky-palace/contents/remote.json';
 let rBusy=false;
@@ -838,7 +848,7 @@ function loveCard(){const L=window.LOVE||{};const notes=L.notes&&L.notes.length?
  if(L.since){const d=Math.floor((Date.now()-new Date(L.since+'T00:00:00+09:00'))/864e5)+1;$('dday').textContent=d>0?`우리 D+${d}`:''}
  if(L.her)$('vip').textContent=`VIP ${L.her}님 전용 카지노`}
 loveCard();
-(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v3.9'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
+(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.0'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
 (async()=>{const L=window.LOVE||{};heartRain(46);
  await popup(`<div class="hb">💝</div><h3>${(L.welcome||'웰컴 자기야 오늘도 사랑해🥰')}</h3><div class="sig">- ${L.owner||'태율랜드 주인장'} -</div><button class="go">나도 사랑해 💕</button>`,{cls:'wel'});
  AUDIO.init();[784,988,1175,1568].forEach((f,i)=>AUDIO.tone(f,.3,i*.12,'sine',.08));heartRain(24);})();

@@ -85,6 +85,9 @@ const sfx={
 /* ---------- BGM ---------- */
 const MAJ=[0,2,4,5,7,9,11];
 const TH={
+ bj:{bpm:92,root:50,scale:[0,2,3,5,7,9,10],swing:.2,chords:[[2,5,9,12],[7,11,14,17],[0,4,7,11],[9,12,16,19]],
+  lead:{wave:'triangle',rh:'x..x.x....x.x...',v:.045,cut:2400,oct:12},bass:{wave:'sine',pat:'x.x.x.x.x.x.x.x.',mode:'walk',v:.24},pad:{wave:'triangle',v:.03,cut:1400},
+  dr:{k:'x.......x.......',s:'....x.......x...',h:'x.xxx.xxx.xxx.xx',hv:.012}},
  vault:{bpm:132,root:52,scale:[0,2,4,5,7,9,11],swing:.12,chords:[[0,4,7,11],[9,12,16,19],[5,9,12,16],[7,11,14,17]],
   lead:{wave:'square',rh:'x.x.x..xx.x.x.x.',v:.05,cut:3800,oct:12},bass:{wave:'sawtooth',pat:'x..xx.x.x..xx.x.',mode:'walk',v:.17,cut:700},pad:{wave:'triangle',v:.022,cut:2000},arp:true,
   dr:{k:'x...x...x...x...',s:'....x.......x...',h:'x.xxx.xxx.xxx.xx',hv:.02,wb:'......x.......x.'}},
