@@ -142,7 +142,7 @@ function respin(init,feats,rnd=Math.random){
    else if(x<RP.up*(feats.U?1:0)+RP.coin){g[c][r]={v:coinVal()};land.push({c,r,v:g[c][r].v})}}
   /* 업그레이드: 기존 코인 1~3개 값 증가 */
   for(const L of land.filter(x=>x.up)){ucount++;const pool=[];for(let c=0;c<5;c++)for(let r=0;r<rows;r++){const x=g[c][r];if(x&&typeof x.v==='number'&&!(c===L.c&&r===L.r))pool.push([c,r])}
-   const k=Math.min(pool.length,1+Math.floor(rnd()*3));for(let i=0;i<k;i++){const j=Math.floor(rnd()*pool.length);const [c,r]=pool.splice(j,1)[0];const add=pick([[.5,30],[1,30],[1.5,15],[2,12],[3,8],[5,4],[10,1]]);g[c][r].v+=add;ups.push({from:[L.c,L.r],to:[c,r],v:g[c][r].v})}}
+   const k=Math.min(pool.length,1+Math.floor(rnd()*3));for(let i=0;i<k;i++){const j=Math.floor(rnd()*pool.length);const [c,r]=pool.splice(j,1)[0];const add=pick([[.5,30],[1,30],[1.5,15],[2,12],[3,8],[5,4],[10,1]]);g[c][r].v+=add;ups.push({from:[L.c,L.r],to:[c,r],v:g[c][r].v,add})}}
   if(land.length)left=max;
   if(feats.P)while(open<8&&filled()+ucount*5>=unlockAt[open-4]){open++;unl.push(rows-open)}
   steps.push({land,ups,unl,left,open,snap:g.map(cc=>cc.map(x=>x?{...x}:null))});
@@ -169,7 +169,7 @@ const fmtShort=v=>v>=10000?(v/1000)+'K':v>=1000?(v%1000?(v/1000).toFixed(1):v/10
 PF.fmtShort=fmtShort;PF.coinArt=coinArt;PF.UPG=UPG;PF.POTS=POTS;PF.EMPEROR=EMPEROR;PF.BG=BG;PF.RBG=RBG;
 
 /* ================= 화면 · 연출 ================= */
-const AR=1080/1900;
+const AR=.56;
 const PT={L:'LONGEVITY',U:'UPGRADE',P:'PROSPERITY'};
 const potState=A=>A.S.ppots||(A.S.ppots={L:0,U:0,P:0});
 PF.costMul=()=>PF.boost===1?1.5:PF.boost===2?1.25:1;
@@ -178,7 +178,7 @@ PF.mount=A=>{
  const plq=(t,cls,pos)=>`<div class="tx pplq ${cls}" style="${pos}"><b>${t}</b><span class="num" data-t="${t}">0</span></div>`;
  st.insertAdjacentHTML('afterbegin',`<img class="tx pbg" alt="" src="${A.U(BG)}">
  <div class="tx pgr"><i></i><b>GRAND</b><span class="num" data-t="GRAND">0</span><i></i></div>
- ${plq('MEGA','me','left:10%;top:23.4%')}${plq('MAJOR','ma','left:58%;top:23.4%')}${plq('MINOR','mi','left:10%;top:27.8%')}${plq('MINI','mn','left:58%;top:27.8%')}
+ ${plq('MEGA','me','left:3%;top:7.4%')}${plq('MAJOR','ma','left:52%;top:7.4%')}${plq('MINOR','mi','left:3%;top:11.2%')}${plq('MINI','mn','left:52%;top:11.2%')}
  <img class="tx pemp" id="pemp" alt="" src="${A.U(EMPEROR)}">
  <button class="tx pbtn pbst" id="pbst"><b>부스트<br>구매</b><small id="pbstt">2가지 옵션</small><em>➜</em></button>
  <button class="tx pbtn pbuy" id="pbuy"><b>스페셜<br>리스핀<br>구매</b></button>
@@ -189,6 +189,7 @@ PF.mount=A=>{
  PF.paintBoost();PF.onBet(A);PF.paintPots(A);
  try{window.TLApp&&TLApp.orient('portrait')}catch(e){}
 };
+PF.say=(t,kind)=>{const st=document.querySelector('#game .stage'),e=document.createElement('div');e.className='tx csay'+(kind==='lose'?' lose':'');e.textContent=t;e.style.left='58%';e.style.top='12%';st.appendChild(e);setTimeout(()=>e.remove(),1900)};
 PF.unmount=()=>{try{window.TLApp&&TLApp.orient('landscape')}catch(e){}};
 PF.paintBoost=()=>{const b=document.getElementById('pbst');if(!b)return;b.classList.toggle('on',PF.boost>0);document.getElementById('pbstt').textContent=['2가지 옵션','x1.5 코인↑','x1.25 스페셜↑'][PF.boost]};
 PF.paintPots=A=>{const p=potState(A);for(const k of ['L','U','P']){const el=document.getElementById('pp'+k);if(!el)continue;el.src=A.U(POTS[k+(p[k]?'1':'')]);el.classList.toggle('lit',!!p[k])}};
@@ -198,7 +199,7 @@ PF.size=A=>{
  const H=gm.clientHeight-(ctl?ctl.offsetHeight:0)-2,W=gm.clientWidth;
  let w=Math.floor(Math.min(W,H*AR)),h=Math.floor(w/AR);st.style.width=w+'px';st.style.height=h+'px';
  A.box.style.gridTemplateColumns='repeat(5,minmax(0,1fr))';
- return Math.max(20,Math.floor((h*.27-6)/4));
+ return Math.max(20,Math.floor((h*.434-6)/4));
 };
 /* 스페셜 리스핀 구매 */
 PF.buyMenu=async A=>{const b=A.bet(),P=[30,60,100];
@@ -237,8 +238,12 @@ PF.post=async(o,b,A)=>{
  A.save();
  if(!o.trig)return;
  /* 트리거 연출 */
- for(const x of o.coins){const cell=strips[x.c]&&strips[x.c].children[x.r];if(cell)cell.classList.add('vland')}
- A.sfx('boom');A.flash();await A.sleep(900);
+ {const cnt=document.createElement('div');cnt.className='pcnt';document.querySelector('#game .stage').appendChild(cnt);let i=0;
+  const sorted=o.coins.slice().sort((p,q)=>p.c-q.c||p.r-q.r);
+  for(const x of sorted){const cell=strips[x.c]&&strips[x.c].children[x.r];if(cell)cell.classList.add('vland');i++;
+   try{A.AUDIO.tone(523*Math.pow(1.0595,i*2),.14,0,'triangle',.07);A.AUDIO.tone(1046*Math.pow(1.0595,i*2),.1,.03,'sine',.04)}catch(e){}
+   cnt.innerHTML=`<span class="t3 pop"><span class="ex">${i} COINS</span><span class="fr">${i} COINS</span></span>`;cnt.classList.remove('bump');void cnt.offsetWidth;cnt.classList.add('bump');await A.sleep(A.T(230,120))}
+  A.sfx('boom');A.flash();A.shake();A.announce&&A.announce('BONUS GAME!','포춘 리스핀');A.speak&&A.speak('보너스 게임!');await A.sleep(1400);cnt.remove()}
  const feats={L:!!p.L,U:!!p.U,P:!!p.P},nf=feats.L+feats.U+feats.P;
  const emp=document.getElementById('pemp');if(emp){emp.classList.add('cheer')}
  /* 항아리 터짐 */
@@ -261,57 +266,96 @@ PF.sign=(A,f,nf)=>new Promise(res=>{const pop=document.getElementById('pop');con
  if(A.auto)setTimeout(()=>{if(pop.onclick){pop.onclick=null;pop.classList.remove('on');res()}},2600)});
 /* 리스핀 보드 재생 */
 PF.play=async(A,r,b,feats)=>{
- const st=document.querySelector('#game .stage'),rows=r.rows;
+ const st=document.querySelector('#game .stage'),rows=r.rows,T=A.T,tone=(f,d,dl=0,t='sine',v=.06)=>{try{A.AUDIO.tone(f,d,dl,t,v)}catch(e){}};
  const lbl=v=>typeof v==='string'?v:fmtShort(v*b);
- const dim=['A','K','Q','J','X','Lo','T','F','V','R','Pe'];const dimImg=k=>A.U(ART[k]);
- const ov=document.createElement('div');ov.className='tx pfr';ov.innerHTML=`<img class="prbg" alt="" src="${A.U(RBG)}">
+ const dim=['A','K','Q','J','X','Lo','T','F','V','R','Pe'];const dimSrc=dim.map(k=>A.U(ART[k]));const rd=()=>dimSrc[Math.floor(Math.random()*dimSrc.length)];
+ const jv=t=>t==='MEGA'?b*JPX.MEGA:A.jpVal(t,b);
+ const ov=document.createElement('div');ov.className='tx pfr';ov.innerHTML=`<img class="prbg" alt="" src="${A.U(RBG)}"><div class="prays"></div>
   <div class="prow">${Array.from({length:5},(_,i)=>`<img alt="" src="${A.U(EMPEROR)}" style="--i:${i}">`).join('')}</div>
-  <div class="pgr r"><i></i><b>GRAND</b><span class="num">${A.fmt(A.jpVal('GRAND',b))}</span><b>GRAND</b><i></i></div>
-  <div class="pplq me r" style="left:4%;top:21.3%"><b>MEGA</b><span class="num">${A.fmt(b*JPX.MEGA)}</span></div><div class="pplq ma r" style="left:50.5%;top:21.3%"><b>MAJOR</b><span class="num">${A.fmt(A.jpVal('MAJOR',b))}</span></div>
-  <div class="pplq mi r" style="left:4%;top:24.6%"><b>MINOR</b><span class="num">${A.fmt(A.jpVal('MINOR',b))}</span></div><div class="pplq mn r" style="left:50.5%;top:24.6%"><b>MINI</b><span class="num">${A.fmt(A.jpVal('MINI',b))}</span></div>
+  <div class="pgr r" data-t="GRAND"><i></i><b>GRAND</b><span class="num">${A.fmt(jv('GRAND'))}</span><b>GRAND</b><i></i></div>
+  <div class="pplq me r" data-t="MEGA" style="left:3%;top:11.4%"><b>MEGA</b><span class="num">${A.fmt(jv('MEGA'))}</span></div><div class="pplq ma r" data-t="MAJOR" style="left:51.5%;top:11.4%"><b>MAJOR</b><span class="num">${A.fmt(jv('MAJOR'))}</span></div>
+  <div class="pplq mi r" data-t="MINOR" style="left:3%;top:14.6%"><b>MINOR</b><span class="num">${A.fmt(jv('MINOR'))}</span></div><div class="pplq mn r" data-t="MINI" style="left:51.5%;top:14.6%"><b>MINI</b><span class="num">${A.fmt(jv('MINI'))}</span></div>
   <div class="pgrid r${rows}"><div class="pcol L"></div><div class="pcol R"></div><div class="pcells"></div><div class="plock"></div></div>
-  <div class="pleft"><i>${feats.L?4:3}</i> SPINS REMAINING</div>`;
- st.appendChild(ov);
- const cells=ov.querySelector('.pcells');const C=[];
- for(let rr=0;rr<rows;rr++)for(let c=0;c<5;c++){const d=document.createElement('div');d.className='pc';d.innerHTML=`<img class="d" alt="" src="${dimImg(dim[(c*7+rr*3)%dim.length])}">`;d.style.gridArea=`${rr+1}/${c+1}`;cells.appendChild(d);(C[c]=C[c]||[])[rr]=d}
- const put=(c,rr,v,up)=>{const d=C[c][rr];d.classList.add('on');d.innerHTML=`<img class="cn" alt="" src="${A.U(up?UPG:coinArt(lbl(v)))}">`};
+  <div class="pleft"><i>${feats.L?4:3}</i><span>SPINS REMAINING</span></div>
+  <div class="pfeat">${['L','U','P'].filter(k=>feats[k]).map(k=>`<img alt="" src="${A.U(POTS[k+'1'])}">`).join('')}</div>
+  <div class="ptitle"><span class="t3 pop"><span class="ex">FORTUNE RESPIN</span><span class="fr">FORTUNE RESPIN</span></span></div>`;
+ st.appendChild(ov);const gmEl=document.querySelector('#game .gmain');gmEl.style.background=`url(${A.U(RBG)}) center/cover`;
+ const cells=ov.querySelector('.pcells'),C=[],grid=ov.querySelector('.pgrid'),prow=ov.querySelector('.prow'),badge=ov.querySelector('.pleft'),bn=badge.querySelector('i'),bt=badge.querySelector('span');
+ for(let rr=0;rr<rows;rr++)for(let c=0;c<5;c++){const d=document.createElement('div');d.className='pc';d.innerHTML=`<img class="d" alt="" src="${rd()}">`;d.style.gridArea=`${rr+1}/${c+1}`;cells.appendChild(d);(C[c]=C[c]||[])[rr]=d}
+ const isOn=(c,rr)=>C[c][rr].classList.contains('on');
+ const put=(c,rr,v,up,anim)=>{const d=C[c][rr];d.classList.add('on');d.classList.remove('spin','ant');d.innerHTML=`<img class="cn${anim?' drop':''}" alt="" src="${A.U(up?UPG:coinArt(lbl(v)))}">${anim?'<i class="ring"></i><i class="spark"></i>':''}`;if(anim)setTimeout(()=>{d.querySelectorAll('.ring,.spark').forEach(e=>e.remove())},900)};
+ const flashJP=t=>{const p=ov.querySelector(`[data-t="${t}"]`);if(p){p.classList.remove('jhit');void p.offsetWidth;p.classList.add('jhit')}};
+ const hop=()=>{prow.classList.remove('hop');void prow.offsetWidth;prow.classList.add('hop')};
+ const banner=(txt,cls='')=>{const e=document.createElement('div');e.className='pban '+cls;e.innerHTML=`<span class="t3 pop"><span class="ex">${txt}</span><span class="fr">${txt}</span></span>`;ov.appendChild(e);setTimeout(()=>e.remove(),1500)};
  /* 잠긴 줄 */
  const lock=ov.querySelector('.plock');let open=4;
- const paintLock=(filled)=>{if(rows<8){lock.style.display='none';return}const n=8-open;lock.style.height=`calc(${n}/8*100%)`;lock.style.display=n?'':'none';
-  const th=[9,12,15,18];lock.innerHTML=`<div class="plh">EACH <img alt="" src="${A.U(UPG)}"> BEHAVES AS 5 <img alt="" src="${A.U(coinArt(''))}"> FOR THE PURPOSES OF UNLOCKING ROWS</div>`+Array.from({length:n},(_,i)=>{const need=Math.max(0,th[open-4+ (n-1-i)]-filled);return `<div class="plr"><img alt="" src="${A.U(UPG)}"> OR <b>${need}</b> MORE <img alt="" src="${A.U(coinArt(''))}"> TO UNLOCK</div>`}).join('')};
- const snap0=r.steps.length?null:null;
- /* 초기 코인 */
- const first=r.steps[0]?r.steps[0].snap:r.final;
- const init=[];for(let c=0;c<5;c++)for(let rr=rows-4;rr<rows;rr++){}
- const g0=Array.from({length:5},()=>Array(rows).fill(null));
- /* 초기: 첫 스텝 이전 상태 = 첫 스냅에서 첫 스텝 착지 제외 */
- const firstLand=new Set((r.steps[0]?r.steps[0].land:[]).map(x=>x.c*10+x.r));
- const firstUps=r.steps[0]?r.steps[0].ups:[];
- for(let c=0;c<5;c++)for(let rr=0;rr<rows;rr++){const x=first[c][rr];if(x&&!firstLand.has(c*10+rr)){let v=x.v;for(const u of firstUps)if(u.to[0]===c&&u.to[1]===rr)v=null;put(c,rr,v===null?x.v:v)}}
- let filled=0;const count=()=>ov.querySelectorAll('.pc.on').length;filled=count();paintLock(filled);
+ const paintLock=(filled)=>{if(rows<8){lock.style.display='none';return}const n=8-open;lock.style.height=`calc(${n}/8*100% + ${n?0:0}px)`;lock.style.display=n?'':'none';
+  const th=[9,12,15,18];lock.innerHTML=`<div class="plh">EACH <img alt="" src="${A.U(UPG)}"> BEHAVES AS 5 <img alt="" src="${A.U(coinArt(''))}"> FOR THE PURPOSES OF UNLOCKING ROWS</div>`+Array.from({length:n},(_,i)=>{const need=Math.max(0,th[open-4+(n-1-i)]-filled);return `<div class="plr"><img alt="" src="${A.U(UPG)}"> OR <b>${need}</b> MORE <img alt="" src="${A.U(coinArt(''))}"> TO UNLOCK</div>`}).join('')};
+ /* 초기 코인: 하나씩 떨어지며 등장 */
+ const first=r.steps[0]?r.steps[0].snap:r.final;const firstLand=new Set((r.steps[0]?r.steps[0].land:[]).map(x=>x.c*10+x.r));const upT=new Map();(r.steps[0]?r.steps[0].ups:[]).forEach(u=>upT.set(u.to[0]*10+u.to[1],1));
  A.AUDIO.play&&A.AUDIO.play('pandaR');
- const left=ov.querySelector('.pleft i');await A.sleep(1200);
+ ov.classList.add('intro');A.speak&&A.speak('포춘 리스핀!');await A.sleep(T(1300,700));ov.classList.remove('intro');
+ let combo=0;const init=[];for(let c=0;c<5;c++)for(let rr=0;rr<rows;rr++){const x=first[c][rr];if(x&&!firstLand.has(c*10+rr))init.push([c,rr,x.v])}
+ const step0=r.steps[0];
+ for(const [c,rr,v] of init){let vv=v;if(step0&&typeof v==='number')for(const u of step0.ups)if(u.to[0]===c&&u.to[1]===rr)vv-=u.add;put(c,rr,vv,0,1);tone(660+combo*60,.12,0,'triangle',.05);combo++;await A.sleep(T(170,90))}
+ /* 업그레이드 대상이 첫 스텝에 있으면 표시 값은 업그레이드 전으로 되돌림 */
+ let filled=ov.querySelectorAll('.pc.on').length;paintLock(filled);
+ const setLeft=(n,reset)=>{bn.textContent=n;badge.classList.toggle('last',n===1);bt.textContent=n===1?'LAST SPIN!':n===0?'SPIN REMAINING':'SPINS REMAINING';if(reset){badge.classList.remove('reset');void badge.offsetWidth;badge.classList.add('reset');tone(880,.1);tone(1320,.18,.08)}};
+ await A.sleep(T(600,300));
+ let prevLeft=feats.L?4:3;
  for(const s of r.steps){
-  /* 셔플 */
-  ov.classList.add('spinning');A.sfx('tick');
-  const empt=[];for(let c=0;c<5;c++)for(let rr=0;rr<rows;rr++)if(!C[c][rr].classList.contains('on'))empt.push(C[c][rr]);
-  for(let k=0;k<4;k++){empt.forEach(d=>{const im=d.firstElementChild;if(im)im.src=dimImg(dim[Math.floor(Math.random()*dim.length)])});await A.sleep(A.T(110,60))}
-  ov.classList.remove('spinning');
-  for(const L of s.land){put(L.c,L.r,L.v,L.up);C[L.c][L.r].classList.add('pop');A.sfx(L.up?'boom':'coin');await A.sleep(A.T(160,90))}
-  for(const u of s.ups){const fe=C[u.from[0]][u.from[1]],te=C[u.to[0]][u.to[1]];await flyTo(A,fe,te,1,A.U(UPG),'boom');put(u.to[0],u.to[1],u.v);te.classList.remove('pop');void te.offsetWidth;te.classList.add('pop');A.flash()}
-  for(const L of s.land.filter(x=>x.up)){put(L.c,L.r,s.snap[L.c][L.r].v)}
-  if(s.unl.length){open=s.open;A.sfx('lvl');A.flash();A.toast('새 줄이 열렸어요!',1000)}
-  filled=count();paintLock(filled);
-  left.textContent=s.left;ov.querySelector('.pleft').classList.toggle('hot',s.land.length>0);
-  await A.sleep(A.T(500,260));
+  const lastSpin=prevLeft===1,empt=[];for(let c=0;c<5;c++)for(let rr=0;rr<rows;rr++)if(!isOn(c,rr))empt.push([c,rr]);
+  const lockedRows=8-open;
+  setLeft(prevLeft-1>=0?prevLeft-1:0);
+  /* 스핀 시작: 빈칸이 위아래로 돌아감 */
+  for(const [c,rr] of empt){if(rows===8&&rr<lockedRows)continue;const d=C[c][rr];d.classList.add('spin');d.innerHTML=`<div class="pstrip"><img alt="" src="${rd()}"><img alt="" src="${rd()}"><img alt="" src="${rd()}"><img alt="" src="${rd()}"></div>`}
+  A.sfx('start');const emptyLeft=empt.length-(rows===8?lockedRows*5:0);
+  if(lastSpin||emptyLeft<=3){ov.classList.add('tense');for(let k=0;k<3;k++){tone(55,.14,k*.42,'sine',.25);tone(55,.12,k*.42+.16,'sine',.18)}}
+  await A.sleep(T(lastSpin?650:420,220));
+  combo=0;
+  for(let c=0;c<5;c++){
+   const colLand=s.land.filter(L=>L.c===c);
+   if(lastSpin&&c>=3){for(const [cc,rr] of empt)if(cc===c&&C[cc][rr].classList.contains('spin'))C[cc][rr].classList.add('ant');await A.sleep(T(520,200))}
+   for(const [cc,rr] of empt){if(cc!==c)continue;const d=C[cc][rr];if(!d.classList.contains('spin'))continue;const L=colLand.find(x=>x.r===rr);
+    if(L){put(cc,rr,L.v,L.up,1);hop();A.flash();
+     if(L.up){A.sfx('boom');banner('UPGRADE!','up')}else if(typeof L.v==='string'){A.sfx('jp');flashJP(L.v);banner(L.v+'!','jp')}else{tone(784*Math.pow(1.0595,combo*2),.16,0,'triangle',.07);tone(1568*Math.pow(1.0595,combo*2),.12,.04,'sine',.04);A.sfx('coin')}
+     combo++}
+    else{d.classList.remove('spin','ant');d.innerHTML=`<img class="d stop" alt="" src="${rd()}">`}}
+   A.sfx('stop');await A.sleep(T(lastSpin?160:110,60));
+  }
+  ov.classList.remove('tense');
+  /* 업그레이드: 불덩이 → 대상 코인 값 롤업 */
+  for(const u of s.ups){const fe=C[u.from[0]][u.from[1]],te=C[u.to[0]][u.to[1]];fe.classList.add('upgo');await flyTo(A,fe,te,3,A.U(UPG),'boom');
+   te.classList.add('upd');const img=te.querySelector('img');const from=s.snap[u.to[0]][u.to[1]].v;A.shake();
+   put(u.to[0],u.to[1],u.v,0,1);te.classList.add('upd');tone(523,.1);tone(659,.1,.08);tone(784,.1,.16);tone(1047,.25,.24,'triangle',.08);
+   const tag=document.createElement('b');tag.className='uptag';tag.textContent='+'+lbl(u.v);te.appendChild(tag);await A.sleep(T(700,350));te.classList.remove('upd');fe.classList.remove('upgo')}
+  for(const L of s.land.filter(x=>x.up)){put(L.c,L.r,s.snap[L.c][L.r].v,0,1);tone(988,.12)}
+  /* 줄 열림 */
+  if(s.unl.length){open=s.open;lock.classList.add('shatter');A.sfx('lvl');A.flash();A.shake();banner('ROW UNLOCKED!','row');await A.sleep(T(700,350));lock.classList.remove('shatter')}
+  filled=ov.querySelectorAll('.pc.on').length;paintLock(filled);
+  const reset=s.land.length>0&&s.left>prevLeft-1;setLeft(s.left,reset);prevLeft=s.left;
+  /* GRAND 근접 */
+  const remain=5*open-filled;ov.querySelector('.pgrid').classList.toggle('near',remain>0&&remain<=3&&open===rows);
+  if(remain>0&&remain<=3&&open===rows){const e=ov.querySelector('.pnear')||Object.assign(document.createElement('div'),{className:'pnear'});e.textContent=`GRAND까지 ${remain}칸!`;ov.appendChild(e)}
+  await A.sleep(T(450,220));
  }
+ ov.querySelector('.pnear')?.remove();grid.classList.remove('near');
  A.AUDIO.play&&A.AUDIO.play('panda');
- /* 집계 */
- let tot=0;const box=document.createElement('div');box.className='ptot';box.innerHTML=`<small>TOTAL WIN</small><b>0</b>`;ov.appendChild(box);const bt=box.querySelector('b');
+ /* 집계: 코인이 하나씩 날아가 합산 */
+ badge.style.display='none';
+ let tot=0;const box=document.createElement('div');box.className='ptot';box.innerHTML=`<small>TOTAL WIN</small><b>0</b>`;ov.appendChild(box);const btot=box.querySelector('b');
+ await A.sleep(T(500,250));let k=0;
  for(let rr=rows-1;rr>=0;rr--)for(let c=0;c<5;c++){const x=r.final[c][rr];if(!x)continue;const d=C[c][rr];d.classList.add('col');
-  tot+=typeof x.v==='string'?A.jpVal(x.v,b)||b*JPX[x.v]:x.v*b;if(typeof x.v==='string'&&x.v==='MEGA')tot+=0;bt.textContent=A.fmt(tot);A.sfx('clink');await A.sleep(A.T(150,70))}
- if(r.full){A.sfx('jp');A.toast('그리드 완성! GRAND 잭팟!!',2000);tot+=A.jpVal('GRAND',b);bt.textContent=A.fmt(tot);await A.sleep(1500)}
- await A.sleep(1200);ov.remove();return tot};
+  const add=typeof x.v==='string'?jv(x.v):x.v*b;
+  if(typeof x.v==='string'){flashJP(x.v);banner(x.v+' JACKPOT!','jp');A.sfx('jp');await A.sleep(T(900,400))}
+  flyTo(A,d,box,1,A.U(coinArt('')),'clink');tot+=add;
+  const t0=tot-add;const steps=6;for(let q=1;q<=steps;q++){setTimeout(()=>{btot.textContent=A.fmt(Math.round(t0+add*q/steps))},q*25)}
+  box.classList.remove('bump');void box.offsetWidth;box.classList.add('bump');tone(523*Math.pow(1.0595,Math.min(k,24)),.1,0,'triangle',.05);k++;
+  await A.sleep(T(150,60))}
+ await A.sleep(400);btot.textContent=A.fmt(tot);
+ if(r.full){A.sfx('jp');A.flash();A.shake();flashJP('GRAND');banner('GRAND JACKPOT!!','jp grand');tot+=A.jpVal('GRAND',b);await A.sleep(1800);btot.textContent=A.fmt(tot)}
+ box.classList.add('final');tone(1047,.2);tone(1319,.2,.1);tone(1568,.4,.2,'triangle',.08);
+ await A.sleep(T(1600,900));ov.classList.add('out');await A.sleep(400);ov.remove();gmEl.style.background='';return tot};
 
 GAMES.list=GAMES.list.filter(g=>g.id!=='panda');GAMES.list.unshift(PF);GAMES.byId.panda=PF;
 window.PANDA_F=PF;

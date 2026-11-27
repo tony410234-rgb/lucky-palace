@@ -142,6 +142,7 @@ const T88={id:'toad',name:'황금 두꺼비 88',en:'GOLDEN TOAD 88',sub:'클래�
 
 /* ============ 화면 장착 · 크기 · 당첨 연출 ============ */
 const AR=1400/505;
+T88.say=(txt,kind)=>{const st=document.querySelector('#game .stage'),e=document.createElement('div');e.className='tx csay'+(kind==='lose'?' lose':'');e.textContent=txt;e.style.left='58%';e.style.top='2%';st.appendChild(e);setTimeout(()=>e.remove(),1900)};
 T88.costMul=()=>T88.boost?T88.boostX:1;
 T88.preReels=(o,A)=>{A.reels.forEach((r,c)=>r.classList.toggle('half',!!(o.half&&o.half[c])))};
 T88.mount=A=>{
