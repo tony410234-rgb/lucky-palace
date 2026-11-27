@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -49,6 +50,15 @@ public class MainActivity extends Activity {
                 if (req.isForMainFrame() && !fellBack) { fellBack = true; view.loadUrl(LOCAL); }
             }
         });
+        web.addJavascriptInterface(new Object() {
+            @JavascriptInterface
+            public void orient(final String mode) {
+                runOnUiThread(new Runnable() { public void run() {
+                    setRequestedOrientation("portrait".equals(mode) ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT : ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+                    hideBars();
+                }});
+            }
+        }, "TLApp");
         setContentView(web);
         hideBars();
         remote = readUrl();

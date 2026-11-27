@@ -136,9 +136,9 @@ function showScreen(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id===
 const box=$('box');let reels=[],strips=[],tcols=[],tEls=[],C=70;
 function openGame(id){
  if(busy||fs)return;
- document.querySelectorAll('.tx').forEach(e=>e.remove());
+ if(G&&G.unmount)G.unmount();document.querySelectorAll('.tx').forEach(e=>e.remove());
  {const stg=document.querySelector('#game .stage');stg.style.width='';stg.style.height='';box.style.gridTemplateColumns=''}
- G=GAMES.byId[id];document.body.dataset.g=id;document.body.classList.toggle('wj',!!G.custom);
+ G=GAMES.byId[id];document.body.dataset.g=id;document.body.classList.toggle('wj',!!G.custom);document.body.classList.toggle('pt',!!G.portrait);
  $('gtt').textContent=G.en;$('mtitle').innerHTML=G.en;$('ge1').textContent=$('ge2').textContent=G.hero;
  document.body.classList.toggle('jpon',!!G.jp);document.body.classList.toggle('nobuy',id==='lucky');
  $('spin').querySelector('.spi').textContent={olympus:'⚡',egypt:'🪲',buffalo:'🦬',lucky:'7 7 7',panda:'🐼',piggy:'🐷',dragon:'🐉',tiger:'🐾',ocean:'🫧'}[id]||'';
@@ -157,7 +157,7 @@ function openGame(id){
  showScreen('game');if(G.mount)G.mount(API);size();drawStatic();renderBet();setWin(0);
  AUDIO.play(id);
 }
-$('back').onclick=()=>{if(busy||fs){toast('진행 중이에요',900);return}document.querySelectorAll('.tx').forEach(e=>e.remove());auto=false;renderBtns();sfx.click();document.body.dataset.g='lobby';document.body.classList.remove('jpon','wj');$('scene').innerHTML='';showScreen('lobby');AUDIO.play('lobby')};
+$('back').onclick=()=>{if(busy||fs){toast('진행 중이에요',900);return}if(G&&G.unmount)G.unmount();document.querySelectorAll('.tx').forEach(e=>e.remove());document.body.classList.remove('pt');auto=false;renderBtns();sfx.click();document.body.dataset.g='lobby';document.body.classList.remove('jpon','wj');$('scene').innerHTML='';showScreen('lobby');AUDIO.play('lobby')};
 const LAND=()=>matchMedia('(orientation:landscape) and (max-height:600px)').matches;
 function size(){
  if(G&&G.size){const v=G.size(API);if(v){C=v;document.documentElement.style.setProperty('--c',C+'px')}return}
@@ -348,7 +348,7 @@ async function jpWheelUI(w,b){
  return v;
 }
 /* ---------- free game cinematic ---------- */
-const TOPS={vault:'W',toad:'r88',olympus:'cro',buffalo:'buf',dragon:'drg',tiger:'tig',ocean:'wha',egypt:'msk',panda:'pan',piggy:'P',lucky:'r7'};
+const TOPS={vault:'W',toad:'r88',olympus:'cro',buffalo:'buf',dragon:'drg',tiger:'tig',ocean:'wha',egypt:'msk',panda:'W',piggy:'P',lucky:'r7'};
 const CMODE={vault:'run',toad:'rise',olympus:'fly',dragon:'fly',ocean:'rise'};
 const CDUST={vault:'🪙',toad:'🪙',olympus:'✨',buffalo:'💨',tiger:'🐾',piggy:'🪙',panda:'🌸',egypt:'✨',dragon:'🔥',ocean:'🫧',lucky:'🍀'};
 let buying=false,superNext=false;
@@ -780,7 +780,7 @@ addEventListener('resize',()=>{if(G&&!busy&&document.body.dataset.g!=='lobby'){s
 renderBal(false);renderLvl();renderBtns();renderCharge();renderJP();renderLW();
 
 /* ---------- 커스텀 게임용 API ---------- */
-const API={U,IMG,AUDIO,sleep,T,popup,cinematic,jpVal,pool,shake,heartRain,get S(){return S},save,toast,flash,burst,fmt,short,bet,buyFS,box,banner,renderBal,
+const API={U,IMG,AUDIO,sleep,T,popup,cinematic,jpVal,pool,shake,heartRain,showerOn:on=>shower(on),get auto(){return auto},buySpin:cost=>{S.bal-=cost;renderBal(true);S.xp+=cost;buying=true;sfx.chaching();save();spin()},get S(){return S},save,toast,flash,burst,fmt,short,bet,buyFS,box,banner,renderBal,
  get C(){return C},get free(){return !!fs},get fs(){return fs},get busy(){return busy},get reels(){return reels},spin:()=>spin(),sfx:k=>AUDIO.sfx[k]&&AUDIO.sfx[k](),LAND};
 /* ---------- 주인장 리모컨 (원격 선물·설정) ---------- */
 const RAPI='https://api.github.com/repos/tony410234-rgb/lucky-palace/contents/remote.json';
@@ -828,7 +828,7 @@ function loveCard(){const L=window.LOVE||{};const notes=L.notes&&L.notes.length?
  if(L.since){const d=Math.floor((Date.now()-new Date(L.since+'T00:00:00+09:00'))/864e5)+1;$('dday').textContent=d>0?`우리 D+${d}`:''}
  if(L.her)$('vip').textContent=`VIP ${L.her}님 전용 카지노`}
 loveCard();
-(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v3.7'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
+(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v3.8'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
 (async()=>{const L=window.LOVE||{};heartRain(46);
  await popup(`<div class="hb">💝</div><h3>${(L.welcome||'웰컴 자기야 오늘도 사랑해🥰')}</h3><div class="sig">- ${L.owner||'태율랜드 주인장'} -</div><button class="go">나도 사랑해 💕</button>`,{cls:'wel'});
  AUDIO.init();[784,988,1175,1568].forEach((f,i)=>AUDIO.tone(f,.3,i*.12,'sine',.08));heartRain(24);})();

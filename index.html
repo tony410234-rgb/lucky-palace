@@ -610,6 +610,103 @@ body[data-g=vault] #game .banner{top:30%;z-index:5}
 .vtop.boom{animation:vboom .12s linear infinite;z-index:6}.vtop.boom .vglow{opacity:1;animation:none}.vtop.boom .vdoor{transform:translateX(-20%) scaleX(.6);transition:transform .4s}
 @keyframes vboom{0%{transform:translate(-2px,1px) scale(1.12)}50%{transform:translate(2px,-1px) scale(1.14)}100%{transform:translate(-1px,-2px) scale(1.12)}}
 .cell.vland{z-index:3}.cell.vland img{animation:vland .3s ease-in-out infinite alternate}@keyframes vland{to{transform:scale(1.12)}}
+
+/* ===== 판다 포춘 (세로) ===== */
+body.pt #game .stage{align-self:center;container-type:inline-size}
+.pbg{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;object-fit:cover}
+.pgr{position:absolute;left:23%;top:16.8%;width:54%;height:5.2%;z-index:3;display:flex;align-items:center;justify-content:center;gap:4%;background:linear-gradient(#2a0a0a,#000);border:3px solid #ffcc33;border-radius:10px;box-shadow:0 0 0 2px #7a3a02,0 3px 8px #0008}
+.pgr>b{position:absolute;top:-46%;left:50%;transform:translateX(-50%);font:italic 900 clamp(8px,2.4cqw,15px)/1 'Arial Black',sans-serif;color:#ff3a2a;-webkit-text-stroke:1px #ffe08a;letter-spacing:1px}
+.pgr .num{font:900 clamp(12px,4.2cqw,26px)/1 'Arial Black',sans-serif;color:#fff}
+.pgr i{width:6%;height:70%;background:radial-gradient(circle,#ffe58a,#c07a04);border-radius:50%}
+.pgr.r>b{position:static;transform:none;font-size:clamp(7px,2cqw,13px)}
+.pplq{position:absolute;width:32%;height:3.2%;z-index:3;display:flex;align-items:center;background:#000;border:2px solid #ffcc33;border-radius:5px;overflow:visible}
+.pplq b{position:absolute;left:3%;top:-62%;font:italic 900 clamp(8px,2.6cqw,13px)/1 'Arial Black',sans-serif;letter-spacing:.5px;-webkit-text-stroke:.6px #fff}
+.pplq .num{flex:1;text-align:center;font:900 clamp(9px,2.8cqw,16px)/1 'Arial Black',sans-serif;color:#fff}
+.pplq b{text-shadow:0 1px 0 #000,0 0 3px #000}.pplq.me b{color:#ff3a3a}.pplq.ma b{color:#d05aff}.pplq.mi b{color:#3ab0ff}.pplq.mn b{color:#4ae06a}
+.pplq.r{width:45.5%;height:2.2%}.pplq.r b{position:static;padding:0 4%;-webkit-text-stroke:0}
+.pplq.me.r{background:linear-gradient(90deg,#5a0610,#000 40%)}.pplq.ma.r{background:linear-gradient(90deg,#3a0a5a,#000 40%)}.pplq.mi.r{background:linear-gradient(90deg,#06205a,#000 40%)}.pplq.mn.r{background:linear-gradient(90deg,#063a14,#000 40%)}
+.pemp{position:absolute;left:22%;top:28.6%;width:56%;z-index:1;pointer-events:none;transform-origin:50% 100%;animation:pempi 3s ease-in-out infinite}
+@keyframes pempi{50%{transform:translateY(-1.5%) rotate(-1deg)}}
+.pemp.cheer{animation:pcheer .35s ease-in-out infinite alternate}@keyframes pcheer{to{transform:translateY(-4%) scale(1.04)}}
+.pbtn{position:absolute;top:34.5%;width:16%;height:10.8%;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3%;border-radius:8px;border:3px solid #ffcc33;background:linear-gradient(#8a3ad0,#4a0a8a);box-shadow:0 0 0 2px #5a2a02,0 4px 8px #0008;color:#fff;font-family:Jua,sans-serif;line-height:1.15;padding:2px}
+.pbtn b{font-size:clamp(7px,2.3cqw,13px);color:#fff}.pbtn small{font-size:clamp(5px,1.6cqw,9px);color:#ffe8a0}.pbtn em{font-style:normal;font-size:clamp(7px,2cqw,12px);background:#3a8aff;border-radius:99px;padding:0 18%;border:1px solid #fff}
+.pbst{left:12.3%}.pbuy{left:71.7%}.pbst.on{box-shadow:0 0 0 2px #5a2a02,0 0 16px 4px #ffd34d;background:linear-gradient(#ffb020,#c05a00)}
+.ppots{position:absolute;left:6%;top:43.6%;width:88%;height:12.8%;z-index:2;pointer-events:none}
+.ppots .pp{position:absolute;bottom:0;height:auto;transition:filter .3s}
+.ppots .pp.L{left:0;width:36%}.ppots .pp.P{right:0;width:36%}.ppots .pp.U{left:29%;width:42%;z-index:1}
+.ppots .pp.lit{filter:drop-shadow(0 0 8px #ffe58a)}
+.ppots .pp.bump{animation:vbump .3s ease-out}
+.ppots .pp.boom{animation:pboom .14s linear infinite}@keyframes pboom{0%{transform:translate(-2px,1px) scale(1.06)}50%{transform:translate(2px,-1px) scale(1.09)}100%{transform:translate(-1px,-2px) scale(1.06)}}
+.pframe{position:absolute;left:8.2%;top:55.8%;width:83.6%;height:28.6%;z-index:0;border-left:clamp(8px,3.2cqw,18px) solid #3ac04a;border-right:clamp(8px,3.2cqw,18px) solid #3ac04a;border-top:5px solid #ffcc33;border-bottom:5px solid #ffcc33;box-shadow:inset 0 0 0 2px #0a5a0a,0 4px 10px #0008;background:#2a0618;border-radius:4px}
+body[data-g=panda] #game .win-box{position:absolute;left:13%;top:56.7%;width:74%;height:27%;padding:2px;gap:2px;background:none;box-shadow:none;z-index:1;align-content:center}
+body[data-g=panda] .reel{background:linear-gradient(#3a0a2a,#200414 50%,#3a0a2a);border-radius:2px}
+body[data-g=panda] .reel::before,body[data-g=panda] .reel::after{display:none}
+body[data-g=panda] .cell{padding:1px}
+body[data-g=panda] #game .banner{top:30%;z-index:5}
+/* 세로 아래 바 */
+body.wj.pt #game .ctl{height:66px;gap:6px;padding:4px 8px!important;position:relative}
+body.wj.pt #game .winm{position:absolute;left:50%;top:-26px;transform:translateX(-50%);min-height:0;width:40%;height:26px;flex:none;display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(#a80a0a,#d81c16);border-radius:16px 16px 0 0}
+body.wj.pt #game .winm .num{font-size:16px}
+body.wj.pt #game .betbox{width:112px;grid-template-columns:30px minmax(0,1fr) 30px;min-height:34px}
+body.wj.pt #game .betbox button{width:30px;height:30px;min-height:30px;font-size:20px}
+body.wj.pt #game .betbox .num{font-size:12px}
+body.wj.pt #game #info{width:30px;height:30px;font-size:16px}
+body.wj.pt #game #spin{order:3!important;flex:1;width:auto!important;max-width:150px;height:52px!important;margin:0}
+body.wj.pt #game #turbo{order:4;width:38px;height:38px}
+body.wj.pt #game #auto{order:5;width:56px;height:38px}
+body.wj.pt #game #auto::before{font-size:10px}
+/* 포춘 리스핀 보드 */
+.pfr{position:absolute;inset:0;z-index:8;overflow:hidden}
+.prbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.prow{position:absolute;left:12%;right:12%;top:9.8%;height:6.4%;display:flex;justify-content:space-between;align-items:flex-end}
+.prow img{width:19%;animation:prow 1.2s ease-in-out infinite alternate;animation-delay:calc(var(--i)*.15s)}@keyframes prow{to{transform:translateY(-8%)}}
+.pgr.r{top:16.2%;left:4%;width:92%;height:4%;justify-content:space-between;padding:0 3%}
+.pgrid{position:absolute;left:6%;width:88%;top:28.4%;height:55%;z-index:2}
+.pgrid.r4{top:55.9%;height:27.5%}
+.pcol{position:absolute;top:-1%;bottom:-1%;width:3.4%;background:linear-gradient(90deg,#8a0606,#ff3a2a,#8a0606);border:2px solid #ffcc33;border-radius:3px}
+.pcol.L{left:0}.pcol.R{right:0}
+.pcells{position:absolute;left:4%;right:4%;top:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:1fr;gap:2px;background:#2a4ab0;border:2px solid #2a4ab0}
+.pgrid.r8 .pcells{grid-template-rows:repeat(8,1fr)}.pgrid.r4 .pcells{grid-template-rows:repeat(4,1fr)}
+.pc{position:relative;background:linear-gradient(#0a1a6a,#06104a);display:grid;place-items:center;overflow:hidden}
+.pc img{width:88%;height:88%;object-fit:contain}
+.pc img.d{opacity:.32;filter:saturate(.4)}
+.pfr.spinning .pc:not(.on) img.d{transform:translateY(6%)}
+.pc.on{background:linear-gradient(#5aff6a,#18b03a)}
+.pc.pop img{animation:ppop .45s cubic-bezier(.3,1.6,.5,1)}@keyframes ppop{from{transform:scale(.2);opacity:0}}
+.pc.col{box-shadow:inset 0 0 0 3px #fff36a}
+.plock{position:absolute;left:4%;right:4%;top:0;z-index:3;display:flex;flex-direction:column;background:linear-gradient(#2a5affcc,#1a3ad0cc);border:2px solid #7ac8ff;overflow:hidden;transition:height .6s}
+.plh{font:900 clamp(6px,1.9cqw,10px)/1.2 'Arial Black',sans-serif;color:#fff;text-align:center;padding:2% 2% 1%;display:flex;align-items:center;justify-content:center;gap:3px;flex-wrap:wrap}
+.plh img,.plr img{height:1.8em;width:auto}
+.plr{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;font:900 clamp(6px,2cqw,11px)/1 'Arial Black',sans-serif;color:#fff;border-top:1px solid #7ac8ff66}
+.plr b{display:inline-grid;place-items:center;width:2em;height:2em;border-radius:50%;background:#ffe04a;color:#7a3a00}
+.pleft{position:absolute;left:50%;transform:translateX(-50%);top:84.6%;z-index:4;padding:.4em 1.2em .4em .4em;border-radius:99px;background:linear-gradient(#b04aff,#5a0aa0);border:3px solid #ffcc33;color:#fff;font:900 clamp(8px,2.6cqw,14px)/1 'Arial Black',sans-serif;white-space:nowrap;display:flex;align-items:center;gap:.5em}
+.pleft i{font-style:normal;display:grid;place-items:center;width:1.8em;height:1.8em;border-radius:50%;background:#ffe04a;color:#5a0aa0}
+.pleft.hot{animation:vbump .4s}
+.ptot{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:9;text-align:center;padding:4% 8%;background:#000c;border:3px solid #ffcc33;border-radius:16px}
+.ptot small{display:block;color:#ffe08a;font:900 12px Jua,sans-serif}.ptot b{font:900 clamp(20px,7cqw,40px)/1.1 'Arial Black',sans-serif;color:#fff36a}
+/* 사인 / 구매 팝업 */
+.psign{display:flex;flex-direction:column;align-items:center;gap:8px;width:min(92vw,420px)}
+.pst{text-align:center;line-height:.95}.pst .t3{font-size:clamp(40px,13vw,72px)}
+.psp{width:100%;padding:14px 12px;border-radius:16px;border:4px solid #ffcc33;background:radial-gradient(circle at 50% 30%,#ffb04a,#c0200a 60%,#6a0204);box-shadow:0 0 0 3px #6a3a02,0 10px 30px #000a;text-align:center;color:#fff}
+.pspt{font:900 clamp(16px,5vw,26px)/1 'Arial Black',sans-serif;color:#fff;background:#8a0606;border:2px solid #ffcc33;border-radius:8px;padding:6px;margin-bottom:8px}
+.psg{display:flex;justify-content:center;flex-wrap:wrap}.psg img{width:44%;margin:-3% -2%}.psg img.off{filter:grayscale(1) brightness(.6)}
+.psp p{font:14px/1.4 Jua,sans-serif;margin:8px 0}
+.pstart{background:linear-gradient(#8aff5a,#2ac81a 50%,#108a0a)!important;color:#fff!important;font-family:'Arial Black',sans-serif!important}
+.pbuyc{width:min(90vw,380px);position:relative;background:linear-gradient(#3a0a4a,#1a0428)!important;text-align:center}
+.pbuyc .px{position:absolute;right:8px;top:6px;background:none;border:0;color:#ffcc33;font-size:28px}
+.pbuyc p{color:#e8d8ff;font-size:12px;margin:2px 0 8px}
+.pbo{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;width:100%;margin:8px 0;padding:8px;border-radius:12px;border:3px solid #ffcc33;color:#fff;font-family:Jua,sans-serif}
+.pbo img{width:30%;margin:0 -3%}.pbo span{width:100%;font-size:16px;margin:2px 0}.pbo b{background:linear-gradient(#8aff5a,#2ab81a);border:2px solid #fff;border-radius:99px;padding:2px 22px;font:900 18px 'Arial Black',sans-serif;color:#fff;text-shadow:0 2px 0 #0a5a0a}
+.pbo.g{background:linear-gradient(#3ad04a,#0a7a1a)}.pbo.r{background:linear-gradient(#ff3a2a,#a00808)}.pbo.p{background:linear-gradient(#b04aff,#5a0aa0)}
+.pconf{width:min(88vw,360px);background:linear-gradient(#7a2ad0,#3a0a7a)!important;border:4px solid #ffcc33!important;text-align:center;position:relative;padding-top:60px!important;margin-top:60px}
+.pconf .pch{position:absolute;left:50%;top:-70px;width:60%;transform:translateX(-50%)}
+.pconf .pcp{display:flex;justify-content:center}.pconf .pcp img{width:36%;margin:0 -4%}
+.pconf .pprice{font:900 28px 'Arial Black',sans-serif;color:#fff;margin:6px 0}
+.pconf h3{margin-top:4px}.pconf .yn{display:flex;gap:14px;justify-content:center;margin-top:8px}
+.pconf .yn button{width:96px;height:52px;border-radius:12px;border:3px solid #fff;font:900 28px 'Arial Black',sans-serif;color:#fff}
+.pconf .yn .n{background:linear-gradient(#ff5a4a,#b00a0a);box-shadow:0 4px 0 #5a0004}.pconf .yn .y{background:linear-gradient(#8aff5a,#1aa81a);box-shadow:0 4px 0 #0a5a06}
+.pconf .pch{top:-96px!important;width:56%!important}
+.psp .pstart{font-size:22px!important;padding:10px 46px!important;border-radius:14px!important;border:3px solid #fff!important;box-shadow:0 5px 0 #0a5a06!important}
 </style>
 </head>
 <body data-g="lobby">
@@ -706,7 +803,7 @@ body[data-g=vault] #game .banner{top:30%;z-index:5}
 <script src="art.js"></script>
 <script src="games.js"></script><script src="faces.js"></script><script src="olympus.js"></script>
 <script src="audio.js"></script>
-<script src="decor.js"></script><script src="toad.js"></script><script src="vault.js"></script>
+<script src="decor.js"></script><script src="toad.js"></script><script src="vault.js"></script><script src="panda.js"></script>
 <script src="love.js"></script>
 <script src="app.js"></script>
 </body>
