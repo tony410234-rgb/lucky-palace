@@ -333,18 +333,23 @@ function pots(){const ins=P.filter(p=>p.inh&&p.total>0);const lv=[...new Set(ins
  return out}
 async function reveal(p){const h=sEl(p.i).querySelector('.hehole');const ds=h.querySelectorAll('.hec');for(let k=0;k<ds.length;k++){if(ds[k].dataset.up)continue;ds[k].dataset.up=1;await flipIn(ds[k],p.hole[k])}}
 
-async function award(list,W,sd){let meWon=0,best=null;
+async function award(list,W,sd){let meWon=0,best=null;const gain=new Map(),winS=new Set();let mainWs=null;
  for(let k=0;k<list.length;k++){const pt=list[k];if(!pt.amt)continue;let ws=pt.el;
-  if(k&&ws.length===1&&P.filter(p=>p.inh&&p.total>=0).filter(p=>p.total>=ws[0].total).length===1){ws[0].stack+=pt.amt;pot-=pt.amt;paintPot();paint(ws[0]);act(ws[0],'베팅 반환 '+short(pt.amt),'c');continue}
-  if(sd&&ws.length>1){const top=Math.max(...ws.map(p=>p.ev.sc));ws=ws.filter(p=>p.ev.sc===top)}
-  const share=Math.floor(pt.amt/ws.length/1)||0;let rem=pt.amt-share*ws.length;
-  ws.forEach(w=>{w.stack+=share+(rem>0?rem:0);rem=0;sEl(w.i).classList.add('win');chipFly($('hepot'),sEl(w.i).querySelector('.hebox'),6);if(w.i===0)meWon+=share;best=w});
-  if(sd&&ws[0].ev){const all=[...ws[0].hole,...board];const u=new Set(used(all,ws[0].ev));document.querySelectorAll('#heboard .hec').forEach(el=>{el.classList.toggle('use',u.has(+el.dataset.c));el.classList.toggle('dim',!u.has(+el.dataset.c))});
-   ws.forEach(w=>sEl(w.i).querySelectorAll('.hehole .hec').forEach(el=>el.classList.toggle('use',new Set(used([...w.hole,...board],w.ev)).has(+el.dataset.c))))}
-  const nm=ws.map(w=>sEl(w.i).querySelector('b').textContent).join(', ');const hn=sd&&ws[0].ev?(ws[0].ev.cat===9?'로열 플러시':hname(ws[0].ev)):'';
-  if(k===0||ws.some(w=>!w.i))DL.say(ws.some(w=>!w.i)?pick([`${(window.LOVE||{}).her||'소현'}이 승리! 축하해~`,'와~ 소현이가 가져갑니다!','역시 우리 소현이!']):`${nm} 님 승리입니다`,true);
-  msg(`${nm} 승리!`,(list.length>1?(k?'사이드 팟 ':'메인 팟 '):'')+'+'+fmt(pt.amt)+(hn?' · '+hn:''));pot-=pt.amt;paintPot();
-  sfx(ws.some(w=>!w.i)?'chaching':'coin');ws.forEach(paint);await W(api().T(1700,900))}
+  const ret=k&&ws.length===1&&P.filter(p=>p.inh&&p.total>=ws[0].total).length===1;
+  if(!ret&&sd&&ws.length>1){const top=Math.max(...ws.map(p=>p.ev.sc));ws=ws.filter(p=>p.ev.sc===top)}
+  const share=Math.floor(pt.amt/ws.length)||0;let rem=pt.amt-share*ws.length;
+  ws.forEach(w=>{gain.set(w,(gain.get(w)||0)+share+(rem>0?rem:0));rem=0;if(!ret)winS.add(w)});if(!mainWs&&!ret)mainWs=ws}
+ const wl=[...winS];if(!wl.length)gain.forEach((v,w)=>wl.push(w));
+ gain.forEach((v,w)=>{w.stack+=v;if(w.i===0)meWon+=v;chipFly($('hepot'),sEl(w.i).querySelector('.hebox'),winS.has(w)?8:3);paint(w)});
+ wl.forEach(w=>{sEl(w.i).classList.add('win');best=w});
+ const ws=mainWs||wl;
+ if(sd&&ws[0]&&ws[0].ev){const all=[...ws[0].hole,...board];const u=new Set(used(all,ws[0].ev));document.querySelectorAll('#heboard .hec').forEach(el=>{el.classList.toggle('use',u.has(+el.dataset.c));el.classList.toggle('dim',!u.has(+el.dataset.c))});
+  ws.forEach(w=>sEl(w.i).querySelectorAll('.hehole .hec').forEach(el=>el.classList.toggle('use',new Set(used([...w.hole,...board],w.ev)).has(+el.dataset.c))))}
+ const nm=wl.map(w=>sEl(w.i).querySelector('b').textContent).join(', ');const hn=sd&&ws[0]&&ws[0].ev?(ws[0].ev.cat===9?'로열 플러시':hname(ws[0].ev)):'';
+ const tot=wl.reduce((a,w)=>a+(gain.get(w)||0),0);
+ DL.say(wl.some(w=>!w.i)?pick([`${(window.LOVE||{}).her||'소현'}이 승리! 축하해~`,'와~ 소현이가 가져갑니다!','역시 우리 소현이!']):`${nm} 님 승리입니다`,true);
+ msg(`${nm} 승리!`,'+'+fmt(tot)+(hn?' · '+hn:''));pot=0;paintPot();
+ sfx(wl.some(w=>!w.i)?'chaching':'coin');try{api().sfx('chipStack')}catch(x){}await W(api().T(1900,1000));
  pot=0;paintPot();
  if(meWon){const e=P[0].ev;const L=window.LOVE||{};const her=L.her||'소현';
   if(e&&e.cat>=6){api().announce(e.cat===9?'ROYAL FLUSH':e.cat===8?'STRAIGHT FLUSH':e.cat===7?'FOUR OF A KIND':'FULL HOUSE',`+${fmt(meWon)}`,'gold');setTimeout(()=>DL.say(e.cat===9?'세상에, 로열 플러시예요!!':e.cat===8?'와~ 스트레이트 플러시!':e.cat===7?'포카드! 대박이다~':'풀하우스! 멋지다 소현아~'),900);try{api().heartRain&&api().heartRain()}catch(x){}}

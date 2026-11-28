@@ -851,6 +851,37 @@ body.bjon .screen{visibility:hidden}
 .bjhero,.hehero{width:70%}.bjhero span svg,.hehero span svg{width:100%;height:auto;display:block}
 #bjty{top:-.5%;width:9cqw;height:9.9cqw}#bjty .tysay{left:100%;top:8%}#bjty .tyname{left:-6%;bottom:30%;transform:translateX(-100%)}
 .bjdealer .bjhand{height:8.6cqw}.bjdealer .bjc{width:6.1cqw;height:8.5cqw}
+
+/* ===== 메인(로비) 파스텔 핑크 테마 ===== */
+body.lob{background:linear-gradient(170deg,#ffe3f1 0%,#fbe0ff 48%,#e9e3ff 100%) fixed!important;color:#b02e6a}
+body.lob .scene{z-index:-1;background:linear-gradient(170deg,#ffe3f1 0%,#fbe0ff 48%,#e9e3ff 100%)!important}body.lob .scene>*{display:none}
+body.lob::before{content:'';position:fixed;inset:-240px 0 0 0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNDAiIGhlaWdodD0iMjQwIj48cGF0aCB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxOCAyMCkgc2NhbGUoMS42KSIgZD0iTTEwIDZDMTAgMiA0IDIgNCA2QzQgMTAgMTAgMTMgMTAgMTVDMTAgMTMgMTYgMTAgMTYgNkMxNiAyIDEwIDIgMTAgNloiIGZpbGw9IiNmZmIzZDEiLz48cGF0aCB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNTAgMTEwKSBzY2FsZSgxLjMpIiBkPSJNMTAgNkMxMCAyIDQgMiA0IDZDNCAxMCAxMCAxMyAxMCAxNUMxMCAxMyAxNiAxMCAxNiA2QzE2IDIgMTAgMiAxMCA2WiIgZmlsbD0iI2RjYzZmZiIvPjxwYXRoIHRyYW5zZm9ybT0idHJhbnNsYXRlKDcwIDE2NSkgc2NhbGUoMSkiIGQ9Ik0xMCA2QzEwIDIgNCAyIDQgNkM0IDEwIDEwIDEzIDEwIDE1QzEwIDEzIDE2IDEwIDE2IDZDMTYgMiAxMCAyIDEwIDZaIiBmaWxsPSIjZmZjOGUwIi8+PHBhdGggdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTkwIDE1KSBzY2FsZSgwLjgpIiBkPSJNMTAgNkMxMCAyIDQgMiA0IDZDNCAxMCAxMCAxMyAxMCAxNUMxMCAxMyAxNiAxMCAxNiA2QzE2IDIgMTAgMiAxMCA2WiIgZmlsbD0iI2ZmZDBlNiIvPjxwYXRoIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEyNSA0NSkgc2NhbGUoMS4xKSIgZD0iTTAtOFExLTEgOCAwUTEgMSAwIDhRLTEgMS04IDBRLTEtMSAwLThaIiBmaWxsPSIjZmZmIi8+PHBhdGggdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjA1IDIwMCkgc2NhbGUoMS4zKSIgZD0iTTAtOFExLTEgOCAwUTEgMSAwIDhRLTEgMS04IDBRLTEtMSAwLThaIiBmaWxsPSIjZmZmIi8+PHBhdGggdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNDAgMTE1KSBzY2FsZSgwLjkpIiBkPSJNMC04UTEtMSA4IDBRMSAxIDAgOFEtMSAxLTggMFEtMS0xIDAtOFoiIGZpbGw9IiNlNmQ2ZmYiLz48cGF0aCB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMDUgMjE1KSBzY2FsZSgwLjcpIiBkPSJNMC04UTEtMSA4IDBRMSAxIDAgOFEtMSAxLTggMFEtMS0xIDAtOFoiIGZpbGw9IiNmZmUwZWYiLz48Y2lyY2xlIGN4PSIxNzAiIGN5PSI3MCIgcj0iMi41IiBmaWxsPSIjZmZmIi8+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMDAiIHI9IjIiIGZpbGw9IiNmZmYiLz48Y2lyY2xlIGN4PSIyMjUiIGN5PSIxNDAiIHI9IjIiIGZpbGw9IiNmZmQ2ZWEiLz48L3N2Zz4=");background-size:240px 240px;opacity:.7;animation:lobdrift 50s linear infinite}
+@keyframes lobdrift{to{transform:translateY(240px)}}
+body.lob #ver{color:#c0608a!important}
+body.lob #lobby .lvl b{color:#e0508a}
+body.lob #lobby .xp{background:#fff;border-color:#ffb3d1}body.lob #lobby .xp i{background:linear-gradient(90deg,#ff9ac6,#c79bff)}
+body.lob #lobby .pill{background:#fff;border-color:#ffb3d1;box-shadow:0 3px 0 #f6b3cf,0 6px 14px #ff9ccb44}
+body.lob #lobby .pill .num{color:#d4357a}
+body.lob #lobby .charge{background:linear-gradient(#ffa6d0,#ff62a6);color:#fff;box-shadow:0 4px 0 #d8447f;text-shadow:0 1px 0 #c0306a}
+body.lob #lobby .charge:disabled,body.lob #lobby .charge[disabled]{filter:saturate(.5) brightness(1.05)}
+body.lob #lobby .ib{background:radial-gradient(circle at 35% 30%,#fff,#ffd6ea);border-color:#ff9ccb;box-shadow:0 3px 0 #f0a0c4}
+body.lob #lobby .logo b{background:linear-gradient(#ff8cc4,#f0468f 60%,#d02f78);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 #fff) drop-shadow(0 4px 0 #f7a8ca) drop-shadow(0 8px 10px #ff6aa855)}
+body.lob #lobby .logo span{color:#c84f86;font-weight:400}
+body.lob #lobby .love{background:#fffffff0;border:2px solid #ffc0dc;box-shadow:0 6px 18px #ff8cc040}
+body.lob #lobby .love b,body.lob #lobby .love p{color:#c2356f;text-shadow:none}body.lob #lobby .love em{color:#9a6af0}
+body.lob #lobby .ticker{background:linear-gradient(#fff,#fff0f7);border-color:#ff9ccb;box-shadow:0 4px 16px #ff8cc044}
+body.lob #lobby .ticker b{color:#ff5fa2}body.lob #lobby .ticker .num{color:#d4357a;text-shadow:0 0 10px #ffc2dc}
+body.lob #lobby .lwheel{background:linear-gradient(90deg,#ffb6d8,#cdaeff);border-color:#fff;box-shadow:0 6px 16px #c08ae055;color:#fff;text-shadow:0 1px 2px #c0508a}
+body.lob #lobby .mcard{border-color:#fff;box-shadow:0 6px 0 #f2aacb,0 12px 26px #d08ab855}
+body.lob #lobby .mcard b{color:#fff;text-shadow:0 3px 0 #c2357a,0 0 12px #c2357a88}body.lob #lobby .mcard small{color:#fff;text-shadow:0 1px 3px #a0306a}
+body.lob #lobby .m-slot{background:radial-gradient(circle at 50% 30%,#ffd3e6,#ff94c2 55%,#ec5f98)}
+body.lob #lobby .m-card{background:radial-gradient(circle at 50% 30%,#ece2ff,#bda4f7 55%,#8d6fe2)}
+body.lob #lobby .mcard .rays{background:repeating-conic-gradient(from 0deg,#ffffff2a 0 10deg,transparent 10deg 20deg)}
+body.lob #lobby .gcard{border-color:#fff;box-shadow:0 6px 0 #f2aacb,0 10px 22px #d08ab855}
+body.lob #lobby .lvbar b{color:#d4357a;text-shadow:0 2px 0 #fff}
+body.lob #lobby .lvback{background:#fff;border-color:#ff9ccb;color:#d4357a}
+body.lob #lobby .foot{color:#b0507a;opacity:.9}
+body.lob #pop .card{background:linear-gradient(#ff8fc2,#c070dc);border-color:#fff;box-shadow:0 0 40px #ff9ccb99}
 </style>
 </head>
 <body data-g="lobby">

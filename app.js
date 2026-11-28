@@ -78,11 +78,12 @@ function boom(n=1){if(RM)return;const cx0=innerWidth/2,cy0=innerHeight*.42;
  burst(90)}
 /* ---------- 아나운서 (음성 + 큰 글자) ---------- */
 /* 음성: 캐릭터별 목소리(성별·톤·속도) — 앱(v4.1 APK)에서는 고품질 한국어 음성 자동 선택 */
-const VOX={ann:{g:'f',v:0,p:1.04,r:1.13},dealer:{g:'m',v:0,p:.97,r:1.13},her:{g:'f',v:1,p:1.12,r:1.16},ai0:{g:'m',v:1,p:.92,r:1.18},ai1:{g:'f',v:2,p:1.22,r:1.16},ai2:{g:'m',v:2,p:.8,r:1.06},ai3:{g:'f',v:0,p:1.05,r:1.06}};
+const VOX={ann:{g:'f',v:0,p:1.04,r:1.27},dealer:{g:'m',v:0,p:.97,r:1.27},her:{g:'f',v:1,p:1.12,r:1.3},ai0:{g:'m',v:1,p:.92,r:1.32},ai1:{g:'f',v:2,p:1.22,r:1.3},ai2:{g:'m',v:2,p:.8,r:1.2},ai3:{g:'f',v:2,p:1.08,r:1.25}};
 let WV=null;function webVoices(){if(WV&&WV.length)return WV;try{WV=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang))}catch(e){WV=[]}return WV}
 try{speechSynthesis.onvoiceschanged=()=>{WV=null}}catch(e){}
 function cleanTTS(t){return String(t).replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,' ').replace(/~+(?=\s*\S)/g,', ').replace(/~+/g,'').replace(/[.…]{2,}/g,', ').replace(/[♪♥❤★☆♡·•]/g,' ').replace(/[ㅋㅎ]{2,}/g,'').replace(/!{2,}/g,'!').replace(/,\s*([!?.])/g,'$1').replace(/\s+/g,' ').replace(/,$/,'').trim().replace(/[,\s]+$/,'')}
-function speak(t,who='ann'){try{if(!AUDIO.st.sfx||!t)return;t=cleanTTS(t);if(!t)return;const o=VOX[who]||VOX.ann;
+let lastSay=null;
+function speak(t,who='ann'){try{if(!AUDIO.st.sfx||!t)return;lastSay={t,w:who,at:Date.now()};t=cleanTTS(t);if(!t)return;const o=VOX[who]||VOX.ann;
  if(window.TLApp){if(TLApp.say){TLApp.say(t,o.g,o.v,o.p,o.r);return}if(TLApp.speak){TLApp.speak(t);return}}
  if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';
  const vs=webVoices();if(vs.length){const male=v=>/male|남|injoon|jun|minho|hyunsu|bong/i.test(v.name)&&!/female|여/i.test(v.name);const pool=vs.filter(v=>o.g==='m'?male(v):!male(v));const list=(pool.length?pool:vs).slice().sort((x,y)=>(/natural|online|neural|google/i.test(y.name)?1:0)-(/natural|online|neural|google/i.test(x.name)?1:0));u.voice=list[o.v%list.length]||list[0];
@@ -152,7 +153,8 @@ function renderLobby(){const c=$('cards');c.className='cards v-'+LV;
 renderLobby();
 $('cards').onclick=e=>{const v=e.target.closest('[data-v]');if(v){sfx.click();LV=v.dataset.v;renderLobby();return}
  const c=e.target.closest('.gcard');if(c){sfx.click();if(c.dataset.ext==='bj'){window.BJ&&BJ.open();return}if(c.dataset.ext==='he'){window.HE&&HE.open();return}openGame(c.dataset.id)}};
-function showScreen(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id===id));scrollTo(0,0)}
+function showScreen(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id===id));document.body.classList.toggle('lob',id==='lobby');scrollTo(0,0)}
+document.body.classList.add('lob');
 
 /* ---------- game screen ---------- */
 const box=$('box');let reels=[],strips=[],tcols=[],tEls=[],C=70;
@@ -621,7 +623,7 @@ function PED(kind){
  return `<svg viewBox="0 0 300 130"><ellipse cx="150" cy="120" rx="130" ry="10" fill="#000" opacity=".45"/>${coins}</svg>`}
 let mbT=0;
 const PRAISE=[`역시 ${HER}이 대단해~`,`우와, ${HER}이 최고야!`,`${HER}이 손은 진짜 금손이다!`,`역시 내 여자친구!`,`오늘 ${HER}이 운 대박인데?`,`${HER}아 멋지다~`,`우리 ${HER}이 천재 아니야?`,`역시 ${HER}이! 사랑해~`];
-function praise(d=1700){setTimeout(()=>speak(PRAISE[Math.floor(Math.random()*PRAISE.length)],'dealer'),d)}
+function praise(){const p=PRAISE[Math.floor(Math.random()*PRAISE.length)];if(lastSay&&Date.now()-lastSay.at<1500)speak(lastSay.t+' '+p,lastSay.w);else speak(p,'dealer')}
 const LOVETAP=[`${HER} 사랑해!`,`${HER}아 오늘도 사랑해~`,`세상에서 ${HER}이가 제일 예뻐`,`${HER}이 보고 싶다…`,`${HER}이 웃는 게 제일 좋아`,`${HER}아 오늘 하루도 수고했어`,`${HER}이는 내 잭팟이야`,`${HER}이 옆에 있으면 행복해`,`${HER}아 밥은 먹었어?`,`우리 ${HER}이 최고야!`,`${HER}이 손잡고 싶다`,`${HER}아 평생 같이 있자`,`${HER}이 생각만 해도 웃음 나`,`힘든 일 있으면 나한테 말해줘`,`${HER}이는 세상에서 제일 소중해`,`${HER}아 꼭 안아줄게`,`오늘도 ${HER}이 덕분에 행복해`,`${HER}이 귀여워 죽겠어`,`${HER}아 내 마음 다 가져가`,`${HER}이랑 데이트하고 싶다`,`${HER}아 많이 많이 사랑해`,`${HER}이 없으면 안 돼`,`오늘 ${HER}이 더 예쁘다`,`${HER}아 고마워, 늘 곁에 있어줘서`];
 const LOVEL={win:[`${HER}이 최고!`,`역시 ${HER}!`],big:[`${HER} 부자 됐다!!`,`${HER}이 잭팟 여신!!`],lose:[`${HER}아 힘내!`],idle:[`${HER}이 안녕!`,`${HER} 사랑해 💕`,'주인장이 보고 싶대']};
 let loseN=0;
@@ -861,7 +863,7 @@ function loveCard(){const L=window.LOVE||{};const notes=L.notes&&L.notes.length?
  if(L.since){const d=Math.floor((Date.now()-new Date(L.since+'T00:00:00+09:00'))/864e5)+1;$('dday').textContent=d>0?`우리 D+${d}`:''}
  if(L.her)$('vip').textContent=`VIP ${L.her}님 전용 카지노`}
 loveCard();
-(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.2'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
+(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.3'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
 (async()=>{const L=window.LOVE||{};heartRain(46);
  await popup(`<div class="hb">💝</div><h3>${(L.welcome||'웰컴 자기야 오늘도 사랑해🥰')}</h3><div class="sig">- ${L.owner||'태율랜드 주인장'} -</div><button class="go">나도 사랑해 💕</button>`,{cls:'wel'});
  AUDIO.init();[784,988,1175,1568].forEach((f,i)=>AUDIO.tone(f,.3,i*.12,'sine',.08));heartRain(24);})();
