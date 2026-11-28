@@ -144,7 +144,7 @@ async function round(){if(running)return;running=true;phase='deal';clearTimeout(
  /* AI 베팅 */
  for(const s of seats){if(s.me)continue;s.hands=[];if(s.remote){s.el.querySelector('.bjhands').innerHTML='';s.el.querySelector('.bjres').innerHTML='';const g=MP.m.gb||{};if(MP.gone||g.for!==MP.rn){s.bet=0;s.pp=0}else{s.bet=g.bet||0;s.pp=g.pp||0}paintSeat(s);continue}s.el.querySelector('.bjhands').innerHTML='';s.el.querySelector('.bjres').innerHTML='';
   if(s.ai.bal<BMIN)s.ai.bal=s.ai.bal0||3000000;if(Math.random()<.12){s.bet=0;s.pp=0;paintSeat(s);continue}
-  const base=[10000,20000,50000,100000,200000,300000][Math.floor(Math.random()*(2+s.ai.risk*4))];s.bet=Math.min(base,s.ai.bal);s.ai.bal-=s.bet;s.pp=Math.random()<s.ai.risk*.5?Math.min(20000,s.ai.bal):0;s.ai.bal-=s.pp;paintSeat(s);api().sfx('chip',2);await sleep(A.T(150,60))}
+  const base=[10000,20000,50000,100000,200000,300000][Math.floor(Math.random()*(2+s.ai.risk*4))];s.bet=Math.min(base,s.ai.bal);s.ai.bal-=s.bet;s.pp=Math.random()<s.ai.risk*.5?Math.min(20000,s.ai.bal):0;s.ai.bal-=s.pp;paintSeat(s);api().sfx('chip',2);await sleep(A.T(320,120))}
  me.hands=[];me.el.querySelector('.bjhands').innerHTML='';me.el.querySelector('.bjres').innerHTML='';
  const act=seats.filter(s=>s.bet);act.forEach(s=>{s.hands=[{cards:[],bet:s.bet,done:false,canSplit:true}];handBox(s,0)});
  DL.say(pick2(['카드 나갑니다~','자, 딜 들어갈게요~','행운을 빌어요~']));dealer={cards:[],hole:null};$('bjdh').innerHTML='';paintTot($('bjdt').parentNode,{cards:[]});
@@ -168,7 +168,7 @@ async function round(){if(running)return;running=true;phase='deal';clearTimeout(
   for(const s of act){for(let hi=0;hi<s.hands.length;hi++){const h=s.hands[hi],box=handBox(s,hi);s.el.classList.add('turn');box.classList.add('turn');evt({t:'turn',s:s.i,hi,on:1});
     if(isBJ(h)){if(s.me)STATS.ev('bjbj');if(s.me||s.remote){DL.say(`블랙잭! 축하해 ${s.me?myName():s.nm}아~`);if(s.me)api().sfx('jp')}say(s,'블랙잭!');s.el.classList.remove('turn');box.classList.remove('turn');evt({t:'turn',s:s.i,hi,on:0});await sleep(500);continue}
     while(total(h.cards).t<21){let a;
-     if(s.me)a=await ctlPlay(h,s);else if(s.remote)a=await remoteDecide(s,h,hi);else{await sleep(A.T(650,280));a=strategy({...h,canSplit:s.hands.length<2},dealer.cards[0]);if(Math.random()<.06)a=a==='S'?'H':'S';if((a==='D'||a==='P')&&s.ai.bal<h.bet)a='H';if(a==='P'&&s.hands.length>=2)a='H';if(a==='D'&&!dblOK(h))a='H'}
+     if(s.me)a=await ctlPlay(h,s);else if(s.remote)a=await remoteDecide(s,h,hi);else{await waitTalk(1100);a=strategy({...h,canSplit:s.hands.length<2},dealer.cards[0]);if(Math.random()<.06)a=a==='S'?'H':'S';if((a==='D'||a==='P')&&s.ai.bal<h.bet)a='H';if(a==='P'&&s.hands.length>=2)a='H';if(a==='D'&&!dblOK(h))a='H'}
      if(s.me)$('bjctl').innerHTML='';if(s.remote)$('bjhint').textContent='';
      if(a==='S'){say(s,'스탠드',s.me||s.remote?`스탠드 ${HN(s)}!`:(['스탠드!','여기까지~','스탠드.','그만 받을래~'][[0,1,-1,2,3][s.i]]));break}
      if(a==='H'){if(s.me||s.remote)say(s,'히트',`한 장 더 ${HN(s)}~`);else say(s,'히트',['히트!','한 장 더~','히트.','하나 더 줘~'][[0,1,-1,2,3][s.i]]);const c=draw();h.cards.push(c);await dealTo(box.querySelector('.bjhand'),c);paintTot(box,h);continue}
@@ -178,16 +178,16 @@ async function round(){if(running)return;running=true;phase='deal';clearTimeout(
       const c=draw();h.cards.push(c);await dealTo(box.querySelector('.bjhand'),c);paintTot(box,h);const c3=draw();nh.cards.push(c3);await dealTo(nb.querySelector('.bjhand'),c3);paintTot(nb,nh);
       if(h.cards[0].r==='A')break;continue}}
     const tt=total(h.cards).t;if(tt>21){say(s,s.ai&&Math.random()<.4?'샤갈!':'버스트…');api().sfx('lose');if(s.me||s.remote)DL.say('아이고, 버스트네요')}
-    s.el.classList.remove('turn');box.classList.remove('turn');evt({t:'turn',s:s.i,hi,on:0});await sleep(A.T(250,100))}}
+    s.el.classList.remove('turn');box.classList.remove('turn');evt({t:'turn',s:s.i,hi,on:0});await waitTalk(700)}}
   $('bjhint').textContent='';
   /* 딜러 */
   phase='dealer';await reveal();
   const live=act.some(s=>s.hands.some(h=>total(h.cards).t<=21&&!isBJ(h)));
-  if(live)while((x=>x.t<17||(x.t===17&&x.soft))(total(dealer.cards))){await sleep(A.T(550,250));const c=draw();dealer.cards.push(c);await dealTo($('bjdh'),c);paintTot($('bjdt').parentNode,dealer)}
+  if(live)while((x=>x.t<17||(x.t===17&&x.soft))(total(dealer.cards))){await waitTalk(850);const c=draw();dealer.cards.push(c);await dealTo($('bjdh'),c);paintTot($('bjdt').parentNode,dealer)}
   const dt=total(dealer.cards).t;if(dt>21){msgB('딜러 BUST!');DL.say('딜러 버스트! 모두 축하드려요~')}
  }
  /* 정산 */
- await sleep(A.T(500,250));const dt=total(dealer.cards).t,dBust=dt>21;let myNet=0,myWin=false;
+ await waitTalk(800);const dt=total(dealer.cards).t,dBust=dt>21;let myNet=0,myWin=false;
  for(const s of act){let pay=0;s.hands.forEach((h,hi)=>{const t=total(h.cards).t,bj=isBJ(h);let r,cls,p=0;
    if(t>21){r='BUST';cls='lose'}else if(dBJ&&bj){r='PUSH';cls='push';p=h.bet}else if(dBJ){r='LOSE';cls='lose'}else if(bj){r='BLACKJACK';cls='bj';p=h.bet*2.2}
    else if(dBust||t>dt){r='WIN';cls='win';p=h.bet*2}else if(t===dt){r='PUSH';cls='push';p=h.bet}else{r='LOSE';cls='lose'}
@@ -250,6 +250,7 @@ function open(){A=window.TL_API;if(!A)return;if(!ui)build();if(!open.mp)MP=null;
  try{window.TLApp&&TLApp.orient('landscape')}catch(e){}}
 function close(){if(!ui)return;const me=seats[2];if(MP&&MP.role==='guest'&&MP.inRound&&MP.locked){setBal(bal()+MP.locked);MP.locked=0}if(me.bet||me.pp){if(!(MP&&MP.role==='guest'&&MP.inRound))setBal(bal()+me.bet+me.pp);me.bet=me.pp=0}mpEnd();running=false;phase='bet';$('bjmodal').classList.remove('on');clearTimeout(timerId);ui.classList.remove('on');document.body.classList.remove('bjon');try{A.AUDIO.play('lobby')}catch(e){}A.renderBal&&A.renderBal()}
 
+const waitTalk=ms=>sleep(Math.max(A.T(ms,Math.round(ms*.5)),(api().speechLeft?api().speechLeft():0)+200));
 /* ================= 같이하기 (2인 온라인 블랙잭) ================= */
 const NM=()=>window.NET;
 const who=n=>n==='태율'?{name:'태율',av:'ty',vo:'dealer'}:{name:n||'소현',av:'her',vo:'her'};

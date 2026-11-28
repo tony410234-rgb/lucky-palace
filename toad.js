@@ -102,7 +102,7 @@ const MW=[[2,30],[3,22],[4,15],[5,11],[8,7],[10,4.5],[28,1.6],[88,.45]];
 const MWF=[[2,24],[3,22],[4,18],[5,14],[8,10],[10,7],[28,3],[88,1]];
 
 const PAY={r88:100,g88:50,b88:30,B3:25,B2:15,B1:10};
-let KM=.44;const JPX=1000;
+let KM=.42;const JPX=1000;const TM=70;
 const S88=['r88','g88','b88'],SBAR=['B1','B2','B3'];
 const stopOf=(st,i)=>st[(i+st.length)%st.length];
 function mcol(fs){const w=fs?MWF:MW;return [{s:'M',v:pick(w)},{s:'M',v:pick(w)},{s:'M',v:pick(w)}]}
@@ -120,7 +120,7 @@ function lineVal(cs){
 }
 const T88={id:'toad',name:'황금 두꺼비 88',en:'GOLDEN TOAD 88',sub:'클래식 3릴 · 배수 릴 최대 88배 · 잭팟',hero:'🐸',badge:'NEW',font:"Bungee,sans-serif",
  cols:4,rows:3,mode:'reels',classic:true,lines:[[1,1,1,1]],ART,MART,TOAD,COIN,STAGE,BG,custom:true,
- boost:false,boostX:1.5,buyX:100,fsN:20,
+ boost:false,boostX:1.5,buyX:75,fsN:15,
  draw:x=>x.s==='M'?(x.v?MART[x.v]:EMPTY):ART[x.s],
  fill:(c,fs)=>c===3?{s:'M',v:pick(fs?MWF:MW)}:{s:pick(SYMW)},
  antic:g=>[false,false,false,!!(T88._last&&T88._last.pre>0)],
@@ -137,7 +137,7 @@ const T88={id:'toad',name:'황금 두꺼비 88',en:'GOLDEN TOAD 88',sub:'클래�
   return {grid:g,wins,total,fsAward:0,mult:m,jackpot,half,coins:total>0?(m>=8?5:m>1?2.5:1.5):0};
  },
  setK:v=>{KM=v},setFH:v=>{FSHALF=v},
- paytable:{rules:['가운데 줄 1라인 · 오른쪽 배수 릴이 당첨금에 곱해져요 (최대 88배)','빨강 88 x3 = 100배 · 초록 88 x3 = 50배 · 파랑 88 x3 = 30배','아무 88 3개 = 8배 · BAR3 x3 = 25 · BAR2 x3 = 15 · BAR1 x3 = 10 · 아무 BAR = 4 · 아무 심볼 3개 = 1.5','WILD는 잭팟을 뺀 모든 심볼 대체 · WILD x3 = 200배','JACKPOT x3 = 잭팟!','당첨될 때마다 동전이 황금 두꺼비에게 날아가요. 두꺼비 게이지가 100%가 되면 프리게임 20회 (배수 릴이 항상 멈춰요)','부스트: 베팅 1.5배로 배수 릴 빈칸이 사라져요']}
+ paytable:{rules:['가운데 줄 1라인 · 오른쪽 배수 릴이 당첨금에 곱해져요 (최대 88배)','빨강 88 x3 = 100배 · 초록 88 x3 = 50배 · 파랑 88 x3 = 30배','아무 88 3개 = 8배 · BAR3 x3 = 25 · BAR2 x3 = 15 · BAR1 x3 = 10 · 아무 BAR = 4 · 아무 심볼 3개 = 1.5','WILD는 잭팟을 뺀 모든 심볼 대체 · WILD x3 = 200배','JACKPOT x3 = 잭팟!','당첨될 때마다 동전이 황금 두꺼비에게 날아가요. 두꺼비 게이지가 100%가 되면 프리게임 15회 (배수 릴이 항상 멈춰요)','부스트: 베팅 1.5배로 배수 릴 빈칸이 사라져요']}
 };
 
 /* ============ 화면 장착 · 크기 · 당첨 연출 ============ */
@@ -160,7 +160,7 @@ T88.mount=A=>{
  T88.onBet(A);T88.meter(A);
 };
 T88.onBet=A=>{const b=A.bet(),v=document.getElementById('tjpv'),p=document.getElementById('tbuyv');if(v)v.textContent=A.fmt(b*JPX);if(p)p.textContent=A.short(b*T88.buyX)};
-T88.meter=A=>{const m=document.getElementById('tmeter');if(!m)return;const v=Math.min(100,Math.round(A.S.toadM||0));m.firstElementChild.style.width=v+'%';m.lastElementChild.textContent=`황금 두꺼비 ${v}%`};
+T88.meter=A=>{const m=document.getElementById('tmeter');if(!m)return;const v=Math.min(100,Math.round((A.S.toadM||0)/TM*100));m.firstElementChild.style.width=v+'%';m.lastElementChild.textContent=`황금 두꺼비 ${v}%`};
 T88.size=A=>{
  const gm=document.querySelector('#game .gmain'),ctl=document.querySelector('#game .ctl'),st=document.querySelector('#game .stage');
  const H=gm.clientHeight-(ctl?ctl.offsetHeight:0)-2,W=gm.clientWidth;
@@ -187,7 +187,7 @@ T88.post=async(o,b,A)=>{
  A.AUDIO.voice&&A.AUDIO.voice('croak');
  if(mc)setTimeout(()=>mc.classList.remove('tglow'),900);
  if(!A.free){A.S.toadM=(A.S.toadM||0)+o.coins;T88.meter(A);
-  if(A.S.toadM>=100){A.S.toadM=0;o.fsAward=20;A.save();setTimeout(()=>T88.meter(A),400)}}
+  if(A.S.toadM>=TM){A.S.toadM=0;o.fsAward=15;A.save();setTimeout(()=>T88.meter(A),400)}}
 };
 GAMES.list.unshift(T88);GAMES.byId.toad=T88;
 if(typeof CHARS!=='undefined'){CHARS.toad=`<svg viewBox="0 -18 200 240"><g transform="translate(-20 50) scale(1)">${TOAD.replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'')}</g></svg>`;if(CHARS.__hero)CHARS.__hero.toad=1}

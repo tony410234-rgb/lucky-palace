@@ -113,7 +113,7 @@ const WT=[['R',3],['V',3.4],['F',3.8],['T',4.2],['Lo',5.5],['Pe',5.8],['A',7.5],
 const PAY={W:[25,100,400],R:[20,60,250],V:[15,50,150],F:[12,40,120],T:[10,30,100],Lo:[6,20,60],Pe:[6,20,60],A:[4,10,40],K:[4,10,40],Q:[3,8,25],J:[3,8,25],X:[2,6,20]};
 const LINES=[[1,1,1,1,1],[2,2,2,2,2],[0,0,0,0,0],[3,3,3,3,3],[0,1,2,1,0],[3,2,1,2,3],[1,2,3,2,1],[2,1,0,1,2],[0,0,1,2,2],[3,3,2,1,1],[1,0,0,0,1],[2,3,3,3,2],[1,1,0,1,1],[2,2,3,2,2],[0,1,1,1,0],[3,2,2,2,3],[1,2,2,2,1],[2,1,1,1,2],[0,1,0,1,0],[3,2,3,2,3],[1,0,1,0,1],[2,3,2,3,2],[0,0,0,1,2],[3,3,3,2,1],[1,2,1,2,1]];
 const CV=[[.5,30],[1,26],[1.5,14],[2,12],[2.5,7],[3,6],[5,3.4],[10,1],['MINI',1.4],['MINOR',.4]];
-let KM=3.45,PC=.076,PS=.0042;
+let KM=3.1,PC=.088,PS=.0042;
 const JPX={MINI:10,MINOR:30,MAJOR:100,MEGA:250,GRAND:1000};
 function cell(fs,boost){const r=Math.random(),pc=PC*(boost===1?1.32:1),ps=PS*(boost===2?3:1);
  if(r<ps){const k=['L','U','P'][Math.floor(Math.random()*3)];return {s:'C',v:pick(CV.slice(0,6)),rim:k}}
@@ -125,7 +125,7 @@ function evalLines(g){const wins=[];LINES.forEach((L,li)=>{const cs=L.map((r,c)=
  if(amt>0)wins.push({li,amt:amt*KM/25,cells:L.slice(0,kk).map((r,c)=>[c,r])})});return wins}
 
 /* ---------- 포춘 리스핀 (순수 시뮬레이션) ---------- */
-const RP={coin:.048,up:.02,jp:[['MINI',3],['MINOR',1],['MAJOR',.25],['MEGA',.06]]};
+const RP={coin:.032,up:.02,jp:[['MINI',3],['MINOR',1],['MAJOR',.25],['MEGA',.06]]};
 const valOf=v=>typeof v==='number'?v:JPX[v];
 function respin(init,feats,rnd=Math.random){
  const rows=feats.P?8:4,open0=4;let open=open0;const unlockAt=[9,12,15,18];
@@ -204,7 +204,7 @@ PF.size=A=>{
  return Math.max(20,Math.floor((h*.434-6)/4));
 };
 /* 스페셜 리스핀 구매 */
-PF.buyMenu=async A=>{const b=A.bet(),P=[30,60,100];
+PF.buyMenu=async A=>{const b=A.bet(),P=[17,43,80];
  const v=await new Promise(res=>{const pop=document.getElementById('pop');
   pop.innerHTML=`<div class="card pbuyc"><button class="px" data-v="0">✕</button><h3>스페셜 리스핀 구매</h3><p>업그레이드된 리스핀으로 제공됩니다.</p>
   <button class="pbo g" data-v="1"><img alt="" src="${A.U(POTS.L1)}"><span>싱글 스페셜 리스핀</span><b>${A.short(b*P[0])}</b></button>

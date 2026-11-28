@@ -82,10 +82,10 @@ const orbCache={};
 
 /* ================= 엔진 ================= */
 const pick=ws=>{let t=0;for(const w of ws)t+=w[1];let r=Math.random()*t;for(const w of ws){if((r-=w[1])<0)return w[0]}return ws[ws.length-1][0]};
-const WT={cro:2.2,hel:3,vas:4,scr:5,rub:7,top:8,ame:9,eme:10,sap:11,S:.95};
+const WT={cro:2.2,hel:3,vas:4,scr:5,rub:7,top:8,ame:9,eme:10,sap:11,S:1.12};
 const WTL=Object.entries(WT);
 const PAY={cro:[10,25,50],hel:[2.5,10,25],vas:[2,5,15],scr:[1.5,2,12],rub:[1,1.5,10],top:[.8,1.2,8],ame:[.5,1,5],eme:[.4,.9,4],sap:[.25,.75,2]};
-let KM=.95,PB=.0055,PF=.024,PS=.05;
+let KM=.8,PB=.0055,PF=.024,PS=.05;
 const ORBS=[[2,30],[3,22],[4,16],[5,12],[6,9],[8,7],[10,5],[12,3.2],[15,2.6],[20,2],[25,1.4],[50,.6],[100,.25],[250,.06],[500,.02]];
 const cell=(fs,st)=>{const p=fs?(st&&st.sup?PS:PF):PB;if(Math.random()<p)return {s:'B',m:pick(ORBS)};return {s:pick(WTL)}};
 const cellsOf=(g,s)=>{const o=[];g.forEach((col,c)=>col.forEach((x,r)=>{if(x.s===s)o.push([c,r])}));return o};

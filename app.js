@@ -82,8 +82,8 @@ const VOX={ann:{g:'f',v:0,p:1.04,r:1.27},dealer:{g:'m',v:0,p:.97,r:1.27},her:{g:
 let WV=null;function webVoices(){if(WV&&WV.length)return WV;try{WV=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang))}catch(e){WV=[]}return WV}
 try{speechSynthesis.onvoiceschanged=()=>{WV=null}}catch(e){}
 function cleanTTS(t){return String(t).replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,' ').replace(/~+(?=\s*\S)/g,', ').replace(/~+/g,'').replace(/[.…]{2,}/g,', ').replace(/[♪♥❤★☆♡·•]/g,' ').replace(/[ㅋㅎ]{2,}/g,'').replace(/!{2,}/g,'!').replace(/,\s*([!?.])/g,'$1').replace(/\s+/g,' ').replace(/,$/,'').trim().replace(/[,\s]+$/,'')}
-let lastSay=null;
-function speak(t,who='ann'){try{if(!AUDIO.st.sfx||!t)return;lastSay={t,w:who,at:Date.now()};t=cleanTTS(t);if(!t)return;const o=VOX[who]||VOX.ann;
+let lastSay=null,speakEnd=0;
+function speak(t,who='ann'){try{if(!AUDIO.st.sfx||!t)return;lastSay={t,w:who,at:Date.now()};{const o=VOX[who]||VOX.ann;speakEnd=Date.now()+(cleanTTS(t).replace(/\s/g,'').length/6.2/o.r+.4)*1000}t=cleanTTS(t);if(!t)return;const o=VOX[who]||VOX.ann;
  if(window.TLApp){if(TLApp.say){TLApp.say(t,o.g,o.v,o.p,o.r);return}if(TLApp.speak){TLApp.speak(t);return}}
  if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';
  const vs=webVoices();if(vs.length){const male=v=>/male|남|injoon|jun|minho|hyunsu|bong/i.test(v.name)&&!/female|여/i.test(v.name);const pool=vs.filter(v=>o.g==='m'?male(v):!male(v));const list=(pool.length?pool:vs).slice().sort((x,y)=>(/natural|online|neural|google/i.test(y.name)?1:0)-(/natural|online|neural|google/i.test(x.name)?1:0));u.voice=list[o.v%list.length]||list[0];
@@ -821,7 +821,7 @@ addEventListener('resize',()=>{if(G&&!busy&&document.body.dataset.g!=='lobby'){s
 renderBal(false);renderLvl();renderBtns();renderCharge();renderJP();renderLW();
 
 /* ---------- 커스텀 게임용 API ---------- */
-const API={get gid(){return G&&G.id},save,renderBal,praise,loveTap,U,IMG,AUDIO,sleep,T,speak,announce,popup,cinematic,jpVal,pool,shake,heartRain,showerOn:on=>shower(on),get auto(){return auto},buySpin:cost=>{S.bal-=cost;STATS.bet(G.id,cost);renderBal(true);S.xp+=cost;buying=true;sfx.chaching();save();spin()},get S(){return S},save,toast,flash,burst,fmt,short,bet,buyFS,box,banner,renderBal,
+const API={speechLeft:()=>Math.max(0,speakEnd-Date.now()),get gid(){return G&&G.id},save,renderBal,praise,loveTap,U,IMG,AUDIO,sleep,T,speak,announce,popup,cinematic,jpVal,pool,shake,heartRain,showerOn:on=>shower(on),get auto(){return auto},buySpin:cost=>{S.bal-=cost;STATS.bet(G.id,cost);renderBal(true);S.xp+=cost;buying=true;sfx.chaching();save();spin()},get S(){return S},save,toast,flash,burst,fmt,short,bet,buyFS,box,banner,renderBal,
  get C(){return C},get free(){return !!fs},get fs(){return fs},get busy(){return busy},get reels(){return reels},spin:()=>spin(),sfx:(k,...a)=>AUDIO.sfx[k]&&AUDIO.sfx[k](...a),LAND};
 window.TL_API=API;
 /* ---------- 주인장 리모컨 (원격 선물·설정) ---------- */
@@ -870,7 +870,7 @@ function loveCard(){const L=window.LOVE||{};const notes=L.notes&&L.notes.length?
  if(L.since){const d=Math.floor((Date.now()-new Date(L.since+'T00:00:00+09:00'))/864e5)+1;$('dday').textContent=d>0?`우리 D+${d}`:''}
  if(L.her)$('vip').textContent=`VIP ${L.her}님 전용 카지노`;try{STATS.setTitle()}catch(e){}}
 loveCard();
-(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.8'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
+(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.8.1'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
 (async()=>{const L=window.LOVE||{};heartRain(46);
  await popup(`<div class="hb">💝</div><h3>${(L.welcome||'웰컴 자기야 오늘도 사랑해🥰')}</h3><div class="sig">- ${L.owner||'태율랜드 주인장'} -</div><button class="go">나도 사랑해 💕</button>`,{cls:'wel'});
  AUDIO.init();[784,988,1175,1568].forEach((f,i)=>AUDIO.tone(f,.3,i*.12,'sine',.08));heartRain(24);})();

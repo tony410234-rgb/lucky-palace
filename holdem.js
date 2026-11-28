@@ -255,7 +255,8 @@ const live=()=>P.filter(p=>p.inh&&!p.folded);
 const nextIdx=(i,f)=>{for(let k=1;k<=5;k++){const j=(i+k)%5;if(f(P[j]))return j}return i};
 function put(p,a){a=Math.min(a,p.stack);p.stack-=a;p.bet+=a;p.total+=a;pot+=a;if(!p.stack)p.allin=true;paint(p);paintPot()}
 
-async function decideAI(p,W){await W(api().T(450+Math.random()*550,220));
+const talkLeft=()=>{try{return api().speechLeft()}catch(e){return 0}};
+async function decideAI(p,W){await W(Math.max(api().T(1000+Math.random()*700,400),talkLeft()+250));
  const tc=cur-p.bet,lv=live().length,nOpp=lv-1;const eq=equity(p.hole,board,nOpp,board.length?220:160);const rel=eq*lv+(Math.random()-.5)*.25;
  const po=tc/(pot+tc);const r=Math.random();const raiseTo=f=>{let v=cur+Math.max(minR,Math.round((pot+tc)*f/T.sb)*T.sb);if(!board.length)v=Math.max(v,cur+(cur<=T.bb?T.bb*2:minR));return Math.min(v,p.stack+p.bet)};
  if(tc===0){if(rel>1.55-p.aggr*.3&&r<.6+p.aggr*.3)return {t:'raise',to:raiseTo(.45+Math.random()*.5)};if(rel<.9&&r<p.bluff*.22)return {t:'raise',to:raiseTo(.5)};return {t:'check'}}
@@ -296,7 +297,7 @@ const sfx2=(k,...x)=>{try{api().sfx(k,...x)}catch(e){}};
 async function betRound(first,W){let i=first,g=0;
  while(g++<300){const lv=live();if(lv.length<=1)return;const able=lv.filter(p=>!p.allin);if(!able.length)return;
   if(able.every(p=>p.acted&&p.bet===cur))return;if(able.length===1&&able[0].bet>=cur&&lv.length>1&&(able[0].acted||lv.every(q=>q.allin||q===able[0])))return;
-  const p=P[i];if(p.inh&&!p.folded&&!p.allin&&!(p.acted&&p.bet===cur)){turn(p.i);const a=p.i===0?await decideMe():p.remote?await decideRemote(p,W):await decideAI(p,W);await W(0);apply(p,a);turn(-1);await W(api().T(280,120))}
+  const p=P[i];if(p.inh&&!p.folded&&!p.allin&&!(p.acted&&p.bet===cur)){turn(p.i);const a=p.i===0?await decideMe():p.remote?await decideRemote(p,W):await decideAI(p,W);await W(0);apply(p,a);turn(-1);await W(Math.max(api().T(600,250),talkLeft()+150))}
   i=(i+1)%5}}
 
 async function collect(W){const any=P.some(p=>p.bet);if(any){evt({t:'col',bs:P.filter(p=>p.bet).map(p=>p.i)});sfx2('chipSlide');P.forEach(p=>{if(p.bet)chipFly($('heb'+p.i),$('hepot'),2)});await W(api().T(450,250))}P.forEach(p=>{p.bet=0;p.acted=false;paint(p)});cur=0;minR=T.bb}
@@ -319,7 +320,7 @@ async function hand(){const g=gen;const W=async ms=>{if(ms)await sleep(ms);if(g!
  await W(250);myInfo();
  const st=[[0,'프리플랍'],[3,'플랍'],[1,'턴'],[1,'리버']];
  for(let s=0;s<4;s++){stage=st[s][1];
-  if(s){await collect(W);if(live().length<=1)break;DL.say(['','플랍 오픈합니다~','턴 카드입니다','마지막 리버!'][s]);await W(api().T(500,250));await dealBoard(st[s][0],W);await W(api().T(250,100))}
+  if(s){await collect(W);if(live().length<=1)break;DL.say(['','플랍 오픈합니다~','턴 카드입니다','마지막 리버!'][s]);await W(Math.max(api().T(800,350),talkLeft()+100));await dealBoard(st[s][0],W);await W(api().T(250,100))}
   if(live().filter(p=>!p.allin).length>=2||(s===0)){const first=s===0?nextIdx(bb,p=>p.inh):nextIdx(btn,p=>p.inh&&!p.folded);await betRound(first,W)}
   if(live().length<=1)break}
  await collect(W);

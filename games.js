@@ -55,8 +55,8 @@ ${[['lR','#ffd0d0','#ff2a44','#a0001a'],['lB','#d8eeff','#3a8aff','#0a2a9a'],['l
 <filter id="ds2" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000" flood-opacity=".7"/></filter>`;
 /* =============== 1. EGYPT =============== */
 const EG=(()=>{
- const WT={T:13,J:13,Q:12,K:11,A:10,ank:7,eye:6,cat:5,scb:4,msk:3,W:[0,3,3,3,3],S:2.6,C:12};
- const PAY=scale({T:P(5,12,40),J:P(5,12,40),Q:P(6,15,50),K:P(8,20,75),A:P(10,25,100),ank:P(15,40,150),eye:P(20,60,200),cat:P(25,80,300),scb:P(30,120,500),msk:P(40,200,1000,2),W:P(40,200,1000,2)},3.4);
+ const WT={T:13,J:13,Q:12,K:11,A:10,ank:7,eye:6,cat:5,scb:4,msk:3,W:[0,3,3,3,3],S:3.12,C:12};
+ const PAY=scale({T:P(5,12,40),J:P(5,12,40),Q:P(6,15,50),K:P(8,20,75),A:P(10,25,100),ank:P(15,40,150),eye:P(20,60,200),cat:P(25,80,300),scb:P(30,120,500),msk:P(40,200,1000,2),W:P(40,200,1000,2)},3.1509);
  const COINS=[[0.5,30],[1,26],[2,18],[3,10],[5,7],[8,4],['MINI',3],['MINOR',1.2],['MAJOR',0.25]];
  const JP={MINI:10,MINOR:30,MAJOR:100,GRAND:1000};
  const SCAT={3:[2,8],4:[10,12],5:[50,20]};
@@ -102,8 +102,8 @@ const EG=(()=>{
 
 /* =============== 2. BUFFALO (243 ways) =============== */
 const BF=(()=>{
- const WT={T:14,J:14,Q:13,K:12,A:11,elk:7,cou:6,wolf:5,eag:4,buf:4.5,W:[0,2.5,2.5,2.5,0],S:2.4};
- const PAY=scale({T:P(5,10,25),J:P(5,10,25),Q:P(5,15,30),K:P(5,15,30),A:P(10,20,40),elk:P(15,30,75),cou:P(20,40,100),wolf:P(25,50,150),eag:P(30,75,200),buf:P(40,100,300)},1);
+ const WT={T:14,J:14,Q:13,K:12,A:11,elk:7,cou:6,wolf:5,eag:4,buf:4.5,W:[0,2.5,2.5,2.5,0],S:2.64};
+ const PAY=scale({T:P(5,10,25),J:P(5,10,25),Q:P(5,15,30),K:P(5,15,30),A:P(10,20,40),elk:P(15,30,75),cou:P(20,40,100),wolf:P(25,50,150),eag:P(30,75,200),buf:P(40,100,300)},.9);
  let D=11.5;
  const SCAT={3:[2,8],4:[10,15],5:[50,20]};
  const HI=['buf','eag','wolf','cou','elk'];
@@ -229,11 +229,11 @@ const PD=(()=>{
 
 /* =============== 5. PIGGY FARM (lines + collect) =============== */
 const PG=(()=>{
- const WT={T:13,J:13,Q:12,K:11,A:10,hor:7,roo:6,she:5,cow:4,W:[0,3,3,3,3],S:[2.8,2.8,2.8,2.8,0],C:[6,6,6,6,0],P:[0,0,0,0,7]};
- const PAY=scale({T:P(5,12,40),J:P(5,12,40),Q:P(6,15,50),K:P(8,20,75),A:P(10,25,100),hor:P(15,40,150),roo:P(20,60,200),she:P(25,80,300),cow:P(40,150,600),W:P(50,250,1000)},1);
+ const WT={T:13,J:13,Q:12,K:11,A:10,hor:7,roo:6,she:5,cow:4,W:[0,3,3,3,3],S:[3.08,3.08,3.08,3.08,0],C:[6,6,6,6,0],P:[0,0,0,0,7]};
+ const PAY=scale({T:P(5,12,40),J:P(5,12,40),Q:P(6,15,50),K:P(8,20,75),A:P(10,25,100),hor:P(15,40,150),roo:P(20,60,200),she:P(25,80,300),cow:P(40,150,600),W:P(50,250,1000)},.9);
  let K=2.6;
  const COINS=[[0.5,30],[1,26],[2,18],[3,10],[5,7],[10,3],[25,.8],[50,.2]];
- const SCAT={3:10,4:15};
+ const SCAT={3:9,4:13};
  const cell=(c,fs)=>{const w=fs?{...WT,C:[9,9,9,9,0],P:[0,0,0,0,11]}:WT;const s=wsel(w,c);return s==='C'?{s,v:pick(COINS)}:{s}};
  const F="Lilita One,sans-serif";
  const ART={T:royal('10','lO',F,400),J:royal('J','lB',F,400),Q:royal('Q','lGr',F,400),K:royal('K','lR',F,400),A:royal('A','lP',F,400),
@@ -261,7 +261,7 @@ const PG=(()=>{
   },
   setK:v=>{K=v},
   paytable:{order:['cow','she','roo','hor','A','K','Q','J','T'],pay:PAY,get unit(){return 20*3/K},
-   rules:['🐷 돼지(5번 릴)가 나오면 화면의 모든 코인 값을 수집','해바라기 3/4개 → 프리스핀 10/15회','프리스핀 중 돼지 4마리 모을 때마다 +10회, 코인 배수 x2 → x3 → x10']}
+   rules:['🐷 돼지(5번 릴)가 나오면 화면의 모든 코인 값을 수집','해바라기 3/4개 → 프리스핀 9/13회','프리스핀 중 돼지 4마리 모을 때마다 +10회, 코인 배수 x2 → x3 → x10']}
  };
 })();
 
@@ -284,8 +284,8 @@ const anticBy=(keys,th)=>g=>{const a=[];let k=0;for(let c=0;c<g.length;c++){a.pu
 
 /* =============== 6. DRAGON (5x4, 40 lines, fireball hold&spin) =============== */
 const DR=(()=>{
- const WT={T:13,J:13,Q:12,K:11,A:10,koi:7,tur:6,pea:5,drg:3.5,W:[0,3,3,3,3],S:1.6,C:7.5};
- let PM=4;
+ const WT={T:13,J:13,Q:12,K:11,A:10,koi:7,tur:6,pea:5,drg:3.5,W:[0,3,3,3,3],S:1.92,C:7.5};
+ let PM=3.7278;
  const BASE={T:P(5,10,30),J:P(5,10,30),Q:P(5,12,40),K:P(8,15,50),A:P(8,20,60),koi:P(10,30,100),tur:P(15,40,150),pea:P(20,60,200),drg:P(30,100,500,2),W:P(30,100,500,2)};
  let PAY=scale(BASE,PM);
  const COINS=[[0.5,30],[1,26],[2,18],[3,10],[5,7],[8,4],['MINI',3],['MINOR',1.2],['MAJOR',0.25]];
@@ -320,8 +320,8 @@ const DR=(()=>{
 
 /* =============== 7. TIGER (5x3, 30 lines, jackpot wheel) =============== */
 const TG=(()=>{
- const WT={T:13,J:13,Q:12,K:11,A:10,par:7,gor:6,ele:5,tig:3.5,W:[0,3,3,3,3],S:2.4,JP:[5,0,5,0,5]};
- let PM=3;
+ const WT={T:13,J:13,Q:12,K:11,A:10,par:7,gor:6,ele:5,tig:3.5,W:[0,3,3,3,3],S:2.88,JP:[5,0,5,0,5]};
+ let PM=2.7699;
  const BASE={T:P(5,10,30),J:P(5,10,30),Q:P(5,12,40),K:P(8,15,50),A:P(8,20,60),par:P(10,30,100),gor:P(15,40,150),ele:P(20,60,200),tig:P(30,100,500,2),W:P(30,100,500,2)};
  let PAY=scale(BASE,PM);
  const SCAT={3:10,4:15,5:20};
@@ -355,8 +355,8 @@ const TG=(()=>{
 
 /* =============== 8. OCEAN (5x4, 40 lines, pearl jackpot pick) =============== */
 const OC=(()=>{
- const WT={T:13,J:13,Q:12,K:11,A:10,cra:7,fis:6,dol:5,wha:3.5,W:[0,3,3,3,3],S:1.6,P:1.5};
- let PM=2.6;
+ const WT={T:13,J:13,Q:12,K:11,A:10,cra:7,fis:6,dol:5,wha:3.5,W:[0,3,3,3,3],S:1.92,P:1.5};
+ let PM=2.3053;
  const BASE={T:P(5,10,30),J:P(5,10,30),Q:P(5,12,40),K:P(8,15,50),A:P(8,20,60),cra:P(10,30,100),fis:P(15,40,150),dol:P(20,60,200),wha:P(30,100,500,2),W:P(30,100,500,2)};
  let PAY=scale(BASE,PM);
  const SCAT={3:[2,8],4:[10,12],5:[50,20]};
@@ -389,8 +389,8 @@ const pick_=pick;
 
 /* =============== 9. SWEET LOVE (핑크 · 데이트 코스 프리게임) =============== */
 const LVG=(()=>{
- const WT={T:13,J:13,Q:12,K:11,A:10,cake:7,rose:6,ring:5,bear:3.5,W:[0,3,3,3,3],S:2.4};
- let PM=2.55;
+ const WT={T:13,J:13,Q:12,K:11,A:10,cake:7,rose:6,ring:5,bear:3.5,W:[0,3,3,3,3],S:2.88};
+ let PM=1.9838;
  const BASE={T:P(5,10,30),J:P(5,10,30),Q:P(5,12,40),K:P(8,15,50),A:P(8,20,60),cake:P(10,30,100),rose:P(15,40,150),ring:P(20,60,200),bear:P(30,100,500,2),W:P(30,100,500,2)};
  let PAY=scale(BASE,PM);
  const SCAT={3:10,4:12,5:15};
@@ -401,7 +401,7 @@ const LVG=(()=>{
   cake:etile('tSky','🍰',62,72),rose:etile('tR','🌹',62,74),ring:etile('tP','💍',62,72),bear:tile('tPk',emo('🧸',70,76),6),
   W:tile('tPk',emo('💖',50,56)+label('WILD',88,26,F)),S:tile('tN',emo('💌',50,58)+label('FREE',91,20,F,'#fff'))};
  return {id:'love',name:'스위트 러브',en:'SWEET LOVE',sub:'20라인 · 💌 3개 → 데이트 코스 프리게임 · 최대 x10',hero:'🧸',badge:'NEW ♥',font:F,
-  cols:5,rows:3,mode:'reels',lines:L20,ART,COURSE,
+  cols:5,rows:3,mode:'reels',lines:L20,ART,COURSE,buyX:40,
   draw:x=>ART[x.s],fill:(c,fs)=>cell(c,fs),antic:anticBy(['S'],2),
   fsInit:n=>({step:0,mult:1}),
   spin(fs,st){
