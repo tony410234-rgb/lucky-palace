@@ -265,7 +265,7 @@ PF.sign=(A,f,nf)=>new Promise(res=>{const pop=document.getElementById('pop');con
   <div class="psp"><div class="pspt">FORTUNE RESPIN</div><div class="psg">${(pots.length?pots:['L','U','P']).map(k=>`<img class="${f[k]?'on':'off'}" alt="" src="${A.U(POTS[k+'1'])}">`).join('')}</div>
   <p>${pots.length?pots.map(k=>({L:'LONGEVITY: 리스핀 4회',U:'UPGRADE: 업그레이드 코인 등장',P:'PROSPERITY: 8×5 릴로 확장'})[k]).join('<br>'):'코인을 모아 잭팟을 노려요!'}</p><button class="go pstart">START</button></div></div>`;
  pop.classList.add('on');A.sfx('sign');pop.onclick=e=>{if(e.target.closest('.go')){pop.onclick=null;pop.classList.remove('on');A.sfx('start');res()}};
- if(A.auto)setTimeout(()=>{if(pop.onclick){pop.onclick=null;pop.classList.remove('on');res()}},2600)});
+});
 /* 리스핀 보드 재생 */
 PF.play=async(A,r,b,feats)=>{
  const st=document.querySelector('#game .stage'),rows=r.rows,T=A.T,tone=(f,d,dl=0,t='sine',v=.06)=>{try{A.AUDIO.tone(f,d,dl,t,v)}catch(e){}};

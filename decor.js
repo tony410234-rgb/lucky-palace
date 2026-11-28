@@ -53,7 +53,7 @@ const SC={
 const PW=(inner,defs='')=>`<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs>${defs}</defs>${inner}</svg>`;
 const sky=(id,a,b,c)=>`<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset=".55" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></linearGradient>`;
 const ground=(a,b)=>`<path d="M0 500H1600V900H0z" fill="url(#gr)"/><path d="M700 500L560 900H1040L900 500z" fill="${b}" opacity=".35"/>`;
-const PANO={
+const PC={};const PANO={
  love:()=>PW(`<rect width="1600" height="900" fill="url(#sk)"/>${Array.from({length:60},()=>{const x=R(0,1600),y=R(0,700),s=R(.4,1.2);return `<path transform="translate(${x.toFixed(0)} ${y.toFixed(0)}) scale(${s.toFixed(2)})" d="M0 10C-10 3-13-2-10-7c3-4 8-3 10 1c2-4 7-5 10-1c3 5 0 10-10 17z" fill="${['#ff9ccb','#ffffff','#e6c8ff','#ffc2dc'][Math.floor(R(0,4))]}" opacity="${R(.35,.85).toFixed(2)}"/>`}).join('')}${cloud(200,200,3,'#fff',.85)}${cloud(1350,160,2.6,'#fff',.8)}${cloud(800,320,3.2,'#ffeef7',.6)}
   <circle cx="800" cy="260" r="110" fill="#fff6fb" opacity=".85"/><circle cx="800" cy="260" r="200" fill="#fff" opacity=".18"/>
   <path d="M0 700Q400 640 800 690T1600 680V900H0z" fill="#ffd6ea"/><path d="M0 780Q400 740 800 770T1600 760V900H0z" fill="#ffc2dc"/>${em('🌹',200,860,110)}${em('🧸',1400,860,130)}${em('🌸',600,880,90)}${em('🎁',1050,880,90)}`,sky('sk','#ffe0f0','#ffb8d8','#c8a8ff')),
@@ -112,7 +112,7 @@ function fx([ch,mode,n,col]){
 }
 return {
  svg:id=>SC[id]?SC[id]():'<svg viewBox="0 0 10 10"></svg>',
- pano:id=>(PANO[id]||PANO.lucky)(),
+ pano:id=>(PC[id]||(PC[id]=(PANO[id]||PANO.lucky)())),
  fx:id=>{const f=D[id].fx.slice();f[2]=Math.max(3,Math.round(f[2]*.7));return fx(f)},
  get:id=>D[id]
 };

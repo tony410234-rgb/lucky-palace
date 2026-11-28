@@ -290,7 +290,7 @@ const VL={her:{check:['체크!'],call:['콜!'],fold:['다이~'],raise:['레이�
  ai1:{check:['체크할게~'],call:['콜!','받을게~'],fold:['다이할래~'],raise:['조금 올릴게~'],half:['하프~'],allin:['다 걸어볼게!']},
  ai2:{check:['체크.'],call:['콜.'],fold:['다이.'],raise:['레이즈.'],half:['하프.'],allin:['올인.']},
  ai3:{check:['체크~'],call:['콜이야~','받아볼게~'],fold:['다이할게~'],raise:['올려볼게~','레이즈~'],half:['하프 갈게~'],allin:['몽땅 올인!']}};
-function voice(p,k){const vl=p.ai?'ai'+(p.i-1):'her';const vo=p.ai?vl:(p.vo||'her');let t=pick(VL[vl][k]||['']);if(p.ai)t=K().tagL(t,p.ai.tag);const sb=p.i&&k!=='check'&&k!=='call';if(sb)say(p,t);evt({t:'vo',s:p.i,txt:t,vo,sb});try{api().speak(t,vo)}catch(e){}}
+function voice(p,k){const vl=p.ai?'ai'+(p.i-1):'her';const vo=p.ai?vl:(p.vo||'her');let t=pick(VL[vl][k]||['']);t=K().tagL(t,p.ai?p.ai.tag:(p.i===0?myName():p.nm));const sb=p.i&&k!=='check'&&k!=='call';if(sb)say(p,t);evt({t:'vo',s:p.i,txt:t,vo,sb});try{api().speak(t,vo)}catch(e){}}
 function chipS(a){sfx2('chip',Math.max(1,Math.min(6,Math.round(Math.log2(1+a/T.bb)))))}
 const sfx2=(k,...x)=>{try{api().sfx(k,...x)}catch(e){}};
 

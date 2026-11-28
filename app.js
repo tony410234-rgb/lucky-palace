@@ -52,16 +52,17 @@ function renderLvl(){$$('.lvT').forEach(e=>e.textContent='LV '+S.lvl);$$('.xpI')
 function renderJP(){if(G&&G.onBet&&typeof API!=='undefined')G.onBet(API);const b=fs?fs.bet:bet();if(G&&G.jp)$$('.plq').forEach(p=>p.querySelector('.num').textContent=fmt(jpVal(p.dataset.t,b)));const mx=Math.max(0,...GAMES.list.filter(g=>g.jp).map(g=>pool(g.id).GRAND));$('tick').textContent=fmt(JPSEED.GRAND*1e4+mx);$$('.cjpv').forEach(e=>e.textContent=fmt(JPSEED.GRAND*1e4+pool(e.dataset.g).GRAND))}
 function renderBtns(){$('auto').classList.toggle('on',auto);$('turbo').classList.toggle('on',S.turbo);$$('.bgmB').forEach(e=>e.classList.toggle('off',!S.bgm));$$('.sfxB').forEach(e=>{e.classList.toggle('off',!S.sfx);e.textContent=S.sfx?'🔊':'🔇'});$('spin').classList.toggle('auto',auto)}
 function setWin(v,l='WIN'){$('win').textContent=fmt(v);$('winlbl').textContent=l}
-function countWin(from,to,d){return new Promise(res=>{const t0=performance.now();let lc=0;const st=t=>{const k=Math.min(1,(t-t0)/d);if(t-lc>70){lc=t;sfx.clink(1,0,.03)}$('win').textContent=fmt(from+(to-from)*k);if(k<1)requestAnimationFrame(st);else res()};requestAnimationFrame(st)})}
+function countWin(from,to,d){return new Promise(res=>{const t0=performance.now();let lc=0;const st=t=>{const k=Math.min(1,(t-t0)/d);if(t-lc>120){lc=t;sfx.clink(1,0,.03)}const e=1-(1-k)**3;$('win').textContent=fmt(from+(to-from)*e);if(k<1)requestAnimationFrame(st);else res()};requestAnimationFrame(st)})}
 const CHARGE_MS=600000,CHARGE_AMT=50000,BROKE=10000;
 function renderCharge(){const left=S.chargeAt-Date.now(),broke=S.bal<BROKE,ready=broke&&left<=0;$('charge').disabled=!ready;$('chargeT').textContent=!broke?'1만 미만일 때':ready?'+'+short(CHARGE_AMT):`${Math.floor(left/60000)}:${String(Math.floor(left/1000)%60).padStart(2,'0')}`}
 setInterval(()=>{renderCharge();if(!busy){GAMES.list.filter(g=>g.jp).forEach(g=>{const p=pool(g.id);for(const t in p)p[t]+=1e3*({GRAND:.06,MAJOR:.03,MINOR:.01,MINI:.005})[t]});renderJP()}},1000);
 
 const pop=$('pop');
+function popOut(cb){const c=pop.firstElementChild;pop.classList.add('out');setTimeout(()=>{pop.classList.remove('out');if(pop.firstElementChild===c)pop.classList.remove('on');cb&&cb()},220)}
 function popup(html,{autoMs=0,cls='',onShow=null}={}){
  return new Promise(res=>{
   pop.innerHTML=`<div class="card ${cls}">${html}</div>`;pop.classList.add('on');if(onShow)try{onShow()}catch(e){}
-  let done=false;const close=()=>{if(done)return;done=true;pop.classList.remove('on');pop.onclick=null;res()};
+  let done=false;const close=()=>{if(done)return;done=true;pop.onclick=null;popOut(res)};
   pop.onclick=e=>{if(!e.target.closest('.card')||e.target.closest('.go'))close()};
   if(autoMs)setTimeout(close,autoMs);
  });
@@ -96,22 +97,22 @@ function bigWin(amount,b){
   const d=(1600+tiers.length*1500)*(S.turbo?.6:1);
   pop.innerHTML=`<div class="card bw ${TCLS[tiers[0][1]]}" id="bwC"><div id="bwT">${T3(tiers[0][1])}</div><div class="bwn"><span class="t3" id="bwNt"><span class="ex" id="bwN1">0</span><span class="fr" id="bwN">0</span></span></div><p style="font-size:18px;color:#ffd0ea;margin-top:10px">${['소현이 대박! 💕','역시 소현이 💖','소현 부자 됐다 🥰','오늘의 승자 소현 👑'][Math.floor(Math.random()*4)].replace(/소현/g,HER)}</p><p>화면을 누르면 건너뛰기</p></div>`;pop.classList.add('on');
   setTimeout(()=>$$('#bwT .t3').forEach(e=>e.classList.add('wob')),560);
-  shower(true);sfx.fan();sfx.pile();flash();shake();boom(2);buzz([60,40,60,40,200]);AUDIO.duck(true);const ci=setInterval(()=>sfx.clink(2,.08,.03),85);
+  shower(true);sfx.fan();sfx.pile();flash();shake();boom(2);buzz([60,40,60,40,200]);AUDIO.duck(true);const ci=setInterval(()=>sfx.clink(1,.06,.03),150);
   let skip=false,ti=0,t0=performance.now(),last=0,fin=false,closed=false;
-  const close=()=>{if(closed)return;closed=true;clearInterval(ci);pop.classList.remove('on');pop.onclick=null;shower(false);AUDIO.duck(false);sfx.chaching();flyCoins(40,[innerWidth/2,innerHeight*.45]);res()};
+  const close=()=>{if(closed)return;closed=true;clearInterval(ci);pop.onclick=null;popOut(()=>{shower(false);AUDIO.duck(false);sfx.chaching();flyCoins(28,[innerWidth/2,innerHeight*.45]);res()})};
   pop.onclick=()=>{if(fin)close();else skip=true};
   const step=t=>{
    const k=skip?1:Math.min(1,(t-t0)/d);const v=k<1?amount*k*k*(3-2*k):amount;
    const tx=fmt(v);$('bwN').textContent=tx;$('bwN1').textContent=tx;
    while(ti+1<tiers.length&&v>=tiers[ti+1][0]*b){ti++;const nm=tiers[ti][1];$('bwC').className=`card bw ${TCLS[nm]}`;$('bwT').innerHTML=T3(nm);setTimeout(()=>$$('#bwT .t3').forEach(e=>e.classList.add('wob')),560);sfx.fan();sfx.pile();flash();shake();boom(1);buzz(120)}
-   if(t-last>70){last=t;sfx.tick(k)}
+   if(t-last>110){last=t;sfx.tick(k)}
    if(k<1)requestAnimationFrame(step);else{fin=true;boom(1);setTimeout(close,S.turbo?1200:2200)}
   };requestAnimationFrame(step);
  });
 }
 /* coin fx */
 const cv=$('fx'),cx=cv.getContext('2d');let parts=[],raf=0,showerOn=false;
-const fit=()=>{const r=devicePixelRatio||1;cv.width=innerWidth*r;cv.height=innerHeight*r;cx.setTransform(r,0,0,r,0,0)};fit();addEventListener('resize',fit);
+const fit=()=>{const r=Math.min(2,devicePixelRatio||1);cv.width=innerWidth*r;cv.height=innerHeight*r;cx.setTransform(r,0,0,r,0,0)};fit();addEventListener('resize',fit);
 const CSPR=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');const rg=g.createRadialGradient(24,20,2,32,32,32);rg.addColorStop(0,'#fffbe0');rg.addColorStop(.4,'#ffd34d');rg.addColorStop(.85,'#b8700a');rg.addColorStop(1,'#6e3f03');g.fillStyle=rg;g.beginPath();g.arc(32,32,31,0,7);g.fill();g.strokeStyle='#fff3b0';g.lineWidth=3;g.beginPath();g.arc(32,32,22,0,7);g.stroke();g.font='900 30px Arial';g.textAlign='center';g.textBaseline='middle';g.fillStyle='#a0560a';g.fillText('$',33,34);g.fillStyle='#fff3b0';g.fillText('$',32,32);return c})();
 function addCoin(x,y,vx,vy){parts.push({x,y,vx,vy,s:7+Math.random()*9,a:Math.random()*6,va:.1+Math.random()*.25,life:0})}
 function burst(n){if(RM)return;for(let i=0;i<n;i++)addCoin(innerWidth/2,innerHeight*.45,(Math.random()-.5)*18,-Math.random()*16-4);loop()}
@@ -121,21 +122,22 @@ function shake(){if(RM)return;const g=document.querySelector('.screen.on');g.cla
 function winPoint(){const hits=box.querySelectorAll('.hit');if(hits.length){let x=0,y=0;hits.forEach(h=>{const r=h.getBoundingClientRect();x+=r.left+r.width/2;y+=r.top+r.height/2});return [x/hits.length,y/hits.length]}const r=box.getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2]}
 function floatText(t,[x,y]){const d=document.createElement('div');d.className='flt';d.textContent=t;d.style.left=x+'px';d.style.top=y+'px';document.body.appendChild(d);const a=d.animate([{opacity:0,transform:'translate(-50%,-30%) scale(.5)'},{opacity:1,transform:'translate(-50%,-80%) scale(1.15)',offset:.25},{opacity:1,transform:'translate(-50%,-140%) scale(1)',offset:.75},{opacity:0,transform:'translate(-50%,-200%) scale(.9)'}],{duration:1500,easing:'ease-out'});a.onfinish=()=>d.remove()}
 const COINM='<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="url(#cG)" stroke="#6e3f03" stroke-width="5"/><circle cx="50" cy="50" r="30" fill="none" stroke="#fff3b0" stroke-width="4" opacity=".7"/><path d="M24 36a30 30 0 0 1 26-18" stroke="#fff" stroke-width="7" fill="none" opacity=".6" stroke-linecap="round"/></svg>';
-function flyCoins(n,[x,y]){
+const COINU=()=>COINU.u||(COINU.u=U(COINM));
+function flyCoins(n,[x,y]){n=Math.min(n,28);
  const pill=document.querySelector('.screen.on .pill');if(!pill||RM){sfx.clink(n,.5);return}
  const r=pill.getBoundingClientRect(),tx=r.left+22,ty=r.top+r.height/2;
- for(let i=0;i<n;i++){const d=document.createElement('div');d.className='fc';d.innerHTML=IMG(COINM);const sx=x+(Math.random()-.5)*90,sy=y+(Math.random()-.5)*60;d.style.transform=`translate(${sx}px,${sy}px) scale(0)`;document.body.appendChild(d);
+ for(let i=0;i<n;i++){const d=document.createElement('div');d.className='fc';d.innerHTML=`<img alt="" src="${COINU()}">`;const sx=x+(Math.random()-.5)*90,sy=y+(Math.random()-.5)*60;d.style.transform=`translate(${sx}px,${sy}px) scale(0)`;document.body.appendChild(d);
   const mx=(sx+tx)/2+(Math.random()-.5)*180,my=Math.min(sy,ty)-40-Math.random()*140;
-  const a=d.animate([{transform:`translate(${sx}px,${sy}px) scale(.2)`},{transform:`translate(${sx+(Math.random()-.5)*70}px,${sy-36}px) scale(1.25)`,offset:.18},{transform:`translate(${mx}px,${my}px) scale(1)`,offset:.6},{transform:`translate(${tx}px,${ty}px) scale(.55)`}],{duration:780+Math.random()*260,delay:i*40,easing:'ease-in',fill:'forwards'});
-  a.onfinish=()=>{d.remove();sfx.clink(1,0,.04);pill.classList.remove('bump');void pill.offsetWidth;pill.classList.add('bump')}}
+  const a=d.animate([{transform:`translate(${sx}px,${sy}px) scale(.2)`},{transform:`translate(${sx+(Math.random()-.5)*70}px,${sy-36}px) scale(1.25)`,offset:.18},{transform:`translate(${mx}px,${my}px) scale(1)`,offset:.6},{transform:`translate(${tx}px,${ty}px) scale(.55)`}],{duration:900+Math.random()*260,delay:i*45,easing:'cubic-bezier(.45,.05,.55,.95)',fill:'forwards'});
+  a.onfinish=()=>{d.remove();if(i%3===0)sfx.clink(1,0,.04);if(i%2===0){pill.classList.remove('bump');void pill.offsetWidth;pill.classList.add('bump')}}}
 }
 function celebrate(win,b,pt=winPoint()){const x=win/b;floatText('+'+fmt(win),pt);sfx.jjr(x>=4);flyCoins(Math.min(40,Math.round(5+x*2)),pt);const st=document.querySelector('.stage');st.classList.remove('win');void st.offsetWidth;st.classList.add('win');setTimeout(()=>st.classList.remove('win'),2000);if(x>=3){burst(20);flash()}buzz(x>=3?[30,30,60]:30)}
 const wpick=ws=>{let t=0;for(const w of ws)t+=w[1];let r=Math.random()*t;for(const w of ws){if((r-=w[1])<0)return w[0]}return ws[0][0]};
 function loop(){if(!raf)raf=requestAnimationFrame(frame)}
 function frame(){
  cx.clearRect(0,0,innerWidth,innerHeight);
- if(showerOn)for(let i=0;i<3;i++)addCoin(Math.random()*innerWidth,-20,(Math.random()-.5)*2,Math.random()*3+2);
- parts=parts.filter(p=>p.y<innerHeight+40&&p.life<400);if(parts.length>260)parts.splice(0,parts.length-260);
+ if(showerOn)for(let i=0;i<2;i++)addCoin(Math.random()*innerWidth,-20,(Math.random()-.5)*2,Math.random()*3+2);
+ parts=parts.filter(p=>p.y<innerHeight+40&&p.life<400);if(parts.length>180)parts.splice(0,parts.length-180);
  for(const p of parts){p.life++;p.vy+=.32;p.x+=p.vx;p.y+=p.vy;p.a+=p.va;const w=Math.abs(Math.cos(p.a))*p.s+1;
   cx.drawImage(CSPR,p.x-w,p.y-p.s,w*2,p.s*2)}
  raf=(parts.length||showerOn)?requestAnimationFrame(frame):0;
@@ -158,7 +160,7 @@ document.body.classList.add('lob');
 
 /* ---------- game screen ---------- */
 const box=$('box');let reels=[],strips=[],tcols=[],tEls=[],C=70;
-function openGame(id){
+function openGame(id){try{const im=new Image();im.src=U(DECOR.pano(id));im.decode&&im.decode().catch(()=>{})}catch(e){}
  if(busy||fs)return;
  if(G&&G.unmount)G.unmount();document.querySelectorAll('.tx').forEach(e=>e.remove());
  {const stg=document.querySelector('#game .stage');stg.style.width='';stg.style.height='';box.style.gridTemplateColumns=''}
@@ -420,7 +422,7 @@ async function cinematic(n,o={}){
 async function fsSign(n,o={}){
  sfx.sign();boom(1);
  const big=o.big||String(n),ln=o.line||'FREE GAMES WON';
- await popup(`<div class="dia${big.length>3?' wide':''}"><div>${T3(big)}<span class="t3 t3s"><span class="ex">${ln}</span><span class="fr">${ln}</span></span></div></div>${o.sub?`<p class="csub">${o.sub}</p>`:''}<button class="go start">${o.btn||'START'}</button>`,{cls:'fsign',autoMs:auto?2600:0});
+ await popup(`<div class="dia${big.length>3?' wide':''}"><div>${T3(big)}<span class="t3 t3s"><span class="ex">${ln}</span><span class="fr">${ln}</span></span></div></div>${o.sub?`<p class="csub">${o.sub}</p>`:''}<button class="go start">${o.btn||'START'}</button>`,{cls:'fsign',autoMs:0});
 }
 async function buffalonize(u){
  AUDIO.sfx.sign();flash();shake();
@@ -595,7 +597,7 @@ async function pickBonus(b,opt={}){const PE=opt.emoji||PICKE[G.id];
    if(cnt[t]===2&&t===tg){toast('하나만 더!',700)}
    if(k===seq.length){lock=true;clearInterval(at);res()}};
   grid.onclick=e=>{const x=e.target.closest('button');if(x)open(x)};
-  if(auto)at=setInterval(()=>{const c=[...grid.children].filter(x=>!x.classList.contains('op'));if(c.length)open(c[Math.floor(Math.random()*c.length)])},650);
+
  });
  grid.onclick=null;
  const rest=[];PT.forEach((t,i)=>{for(let j=cnt[i];j<3;j++)rest.push(i)});
@@ -674,7 +676,7 @@ async function ladderBonus(b){
  const render=msg=>{pop.innerHTML=`<div class="card bcard"><h3>${T.t}</h3><div class="lad">${order.map(cell).join('')}</div><div class="prize">${fmt(prize)}</div><p id="lmsg">${msg||''}</p>${state==='go'?`<div class="gbtns"><button class="red" data-c="up">⬆ 올라가기 (${Math.round(P[lv+1]*100)}%)</button><button class="take" data-c="take" style="grid-column:auto">받고 끝내기</button></div>`:''}</div>`;pop.classList.add('on')};
  render(`다음 칸: x${M[0]}`);
  for(;;){
-  let ch;if(auto){await sleep(800);ch=(lv<3)?'up':'take'}else ch=await new Promise(res=>{pop.onclick=e=>{const x=e.target.closest('[data-c]');if(x)res(x.dataset.c)}});
+  let ch;ch=await new Promise(res=>{pop.onclick=e=>{const x=e.target.closest('[data-c]');if(x)res(x.dataset.c)}});
   pop.onclick=null;if(ch==='take'&&lv>=0)break;
   pop.querySelectorAll('.gbtns button').forEach(x=>x.disabled=true);sfx.drum(.6);await sleep(650);
   if(Math.random()<P[lv+1]){lv++;prize=M[lv]*b;AUDIO.sfx.step(lv);buzz(30);if(lv>=9){state='top';render('꼭대기 도착!! 🎉');sfx.jp();burst(120);flash();await sleep(1800);break}render(`성공! 다음 칸 x${M[lv+1]}`);if(lv>=4)burst(20)}
@@ -870,7 +872,7 @@ function loveCard(){const L=window.LOVE||{};const notes=L.notes&&L.notes.length?
  if(L.since){const d=Math.floor((Date.now()-new Date(L.since+'T00:00:00+09:00'))/864e5)+1;$('dday').textContent=d>0?`우리 D+${d}`:''}
  if(L.her)$('vip').textContent=`VIP ${L.her}님 전용 카지노`;try{STATS.setTitle()}catch(e){}}
 loveCard();
-(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.8.1'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
+(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.9'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
 (async()=>{const L=window.LOVE||{};heartRain(46);
  await popup(`<div class="hb">💝</div><h3>${(L.welcome||'웰컴 자기야 오늘도 사랑해🥰')}</h3><div class="sig">- ${L.owner||'태율랜드 주인장'} -</div><button class="go">나도 사랑해 💕</button>`,{cls:'wel'});
  AUDIO.init();[784,988,1175,1568].forEach((f,i)=>AUDIO.tone(f,.3,i*.12,'sine',.08));heartRain(24);})();
