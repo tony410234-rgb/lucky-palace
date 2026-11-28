@@ -186,6 +186,7 @@ PF.mount=A=>{
  <div class="tx ppots"><img id="ppL" class="pp L" alt=""><img id="ppU" class="pp U" alt=""><img id="ppP" class="pp P" alt=""></div>
  <div class="tx pframe"></div>`);
  document.getElementById('pbst').onclick=()=>{if(A.busy||A.free)return;PF.boost=(PF.boost+1)%3;A.sfx('click');PF.paintBoost();A.toast(['부스트 OFF','부스트 1: 베팅 x1.5 · 코인이 더 자주!','부스트 2: 베팅 x1.25 · 스페셜 코인 3배!'][PF.boost],1500)};
+ document.getElementById('pemp').onclick=e=>{e.stopPropagation();A.loveTap&&A.loveTap(e.currentTarget)};
  document.getElementById('pbuy').onclick=()=>{if(A.busy||A.free)return;PF.buyMenu(A)};
  PF.paintBoost();PF.onBet(A);PF.paintPots(A);
  try{window.TLApp&&TLApp.orient('portrait')}catch(e){}

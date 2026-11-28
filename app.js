@@ -631,6 +631,8 @@ function mascot(kind,shagF){const m=$('masc'),dc=DECOR.get(G.id),L=[...(dc[kind]
  if(kind==='big'||kind==='win'){m.classList.add('spin3d');if(kind==='big')m.classList.add('big');sigFX(kind==='big'?2:1)}
  const shag=kind==='lose'&&!!shagF;const Lx=L.filter(x=>x!=='샤갈!');const talk=shag||kind==='big'||kind==='idle'||(kind==='win'&&Math.random()<.2)||(kind==='lose'&&Math.random()<.5);const b=$('bub');if(talk){const txt=shag?'샤갈!':Lx[Math.floor(Math.random()*Lx.length)]||'';b.textContent=txt;b.classList.add('on');if(G.say)G.say(txt,kind);if(shag)speak('샤갈!')}clearTimeout(mbT);mbT=setTimeout(()=>b.classList.remove('on'),kind==='big'?2800:1700);
  setTimeout(()=>m.classList.remove('jump','dance','sad','spin3d','big'),kind==='big'?2800:1300)}
+function loveTap(el){if(Math.random()<.75){const t=LOVETAP[Math.floor(Math.random()*LOVETAP.length)];if(G&&G.say)G.say(t+' ♥','win');speak(t,'dealer');heartRain(12)}else{mascot('idle');try{AUDIO.voice(SIG[G.id].v)}catch(e){}}
+ if(el)el.animate([{scale:'1'},{scale:'1.08'},{scale:'.97'},{scale:'1'}],{duration:550,easing:'ease-out'})}
 $('masc').onclick=()=>{if(Math.random()<.75){const m=$('masc'),b=$('bub'),t=LOVETAP[Math.floor(Math.random()*LOVETAP.length)];m.classList.remove('jump');void m.offsetWidth;m.classList.add('jump');b.textContent=t+' 💕';b.classList.add('on');clearTimeout(mbT);mbT=setTimeout(()=>b.classList.remove('on'),2400);setTimeout(()=>m.classList.remove('jump'),1300);speak(t,'dealer');heartRain(12)}else{mascot('idle');const m=$('masc');m.classList.add('spin3d');setTimeout(()=>m.classList.remove('spin3d'),1100);AUDIO.voice(SIG[G.id].v)}};
 const SIG={vault:{e:['🪙','✨','🪙','✨'],m:'jump',v:'roar'},toad:{e:['🪙','✨','🪙','✨'],m:'jump',v:'croak'},olympus:{e:['⚡','✨','💎','✨'],m:'burst',v:'aria'},egypt:{e:['🪲','✨','🪙','✨'],m:'swirl',v:'growl'},buffalo:{e:['💨','🪶','🪙','💨'],m:'quake',v:'moo'},lucky:{e:['🍀','7️⃣','💎','🎲','🪙'],m:'burst',v:'squeak'},
  panda:{e:['🥟','🍡','🌸','🥟'],m:'throw',v:'boing'},piggy:{e:['🪙','🪙','💰','🪙'],m:'fountain',v:'oink'},dragon:{e:['🔥','🔥','🧧','✨'],m:'breath',v:'roar'},
@@ -814,7 +816,7 @@ addEventListener('resize',()=>{if(G&&!busy&&document.body.dataset.g!=='lobby'){s
 renderBal(false);renderLvl();renderBtns();renderCharge();renderJP();renderLW();
 
 /* ---------- 커스텀 게임용 API ---------- */
-const API={praise,U,IMG,AUDIO,sleep,T,speak,announce,popup,cinematic,jpVal,pool,shake,heartRain,showerOn:on=>shower(on),get auto(){return auto},buySpin:cost=>{S.bal-=cost;renderBal(true);S.xp+=cost;buying=true;sfx.chaching();save();spin()},get S(){return S},save,toast,flash,burst,fmt,short,bet,buyFS,box,banner,renderBal,
+const API={praise,loveTap,U,IMG,AUDIO,sleep,T,speak,announce,popup,cinematic,jpVal,pool,shake,heartRain,showerOn:on=>shower(on),get auto(){return auto},buySpin:cost=>{S.bal-=cost;renderBal(true);S.xp+=cost;buying=true;sfx.chaching();save();spin()},get S(){return S},save,toast,flash,burst,fmt,short,bet,buyFS,box,banner,renderBal,
  get C(){return C},get free(){return !!fs},get fs(){return fs},get busy(){return busy},get reels(){return reels},spin:()=>spin(),sfx:(k,...a)=>AUDIO.sfx[k]&&AUDIO.sfx[k](...a),LAND};
 window.TL_API=API;
 /* ---------- 주인장 리모컨 (원격 선물·설정) ---------- */
@@ -863,7 +865,7 @@ function loveCard(){const L=window.LOVE||{};const notes=L.notes&&L.notes.length?
  if(L.since){const d=Math.floor((Date.now()-new Date(L.since+'T00:00:00+09:00'))/864e5)+1;$('dday').textContent=d>0?`우리 D+${d}`:''}
  if(L.her)$('vip').textContent=`VIP ${L.her}님 전용 카지노`}
 loveCard();
-(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.4'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
+(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.4.1'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
 (async()=>{const L=window.LOVE||{};heartRain(46);
  await popup(`<div class="hb">💝</div><h3>${(L.welcome||'웰컴 자기야 오늘도 사랑해🥰')}</h3><div class="sig">- ${L.owner||'태율랜드 주인장'} -</div><button class="go">나도 사랑해 💕</button>`,{cls:'wel'});
  AUDIO.init();[784,988,1175,1568].forEach((f,i)=>AUDIO.tone(f,.3,i*.12,'sine',.08));heartRain(24);})();

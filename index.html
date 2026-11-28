@@ -541,7 +541,7 @@ body[data-g=toad] .reel.spin .strip{filter:none}
 .cell.tglow{z-index:3}.cell.tglow img{animation:tglow .5s ease-in-out infinite alternate}
 .cell.tglow::after{content:"";position:absolute;inset:4% 7%;border-radius:10px;box-shadow:0 0 0 4px #7af8ff,0 0 22px 8px #3ae0ff;animation:tglow2 .5s ease-in-out infinite alternate}
 @keyframes tglow{to{transform:scale(1.07)}}@keyframes tglow2{from{opacity:.6}to{opacity:1}}
-.ttoad{position:absolute;left:41.6%;top:-1%;width:17%;z-index:2;transform-origin:50% 90%;pointer-events:none}
+.ttoad{position:absolute;left:41.6%;top:-1%;width:17%;z-index:2;transform-origin:50% 90%;pointer-events:auto;cursor:pointer}
 .ttoad.tpulse{animation:tpulse .45s ease-out}@keyframes tpulse{0%{transform:scale(1)}35%{transform:scale(1.08,1.04)}100%{transform:scale(1)}}
 .tglowd{position:absolute;left:36%;top:-12%;width:28%;height:42%;z-index:1;opacity:0;pointer-events:none;background:radial-gradient(closest-side,#fff8c0,#ffd34d99 45%,#ffd34d00)}
 .tcoin{position:fixed;left:0;top:0;width:30px;height:30px;margin:-15px 0 0 -15px;z-index:40;pointer-events:none;will-change:transform}
@@ -625,7 +625,7 @@ body.pt #game .stage{align-self:center;container-type:inline-size}
 .pplq b{text-shadow:0 1px 0 #000,0 0 3px #000}.pplq.me b{color:#ff3a3a}.pplq.ma b{color:#d05aff}.pplq.mi b{color:#3ab0ff}.pplq.mn b{color:#4ae06a}
 .pplq.r{width:45.5%;height:2.2%}.pplq.r b{position:static;padding:0 4%;-webkit-text-stroke:0}
 .pplq.me.r{background:linear-gradient(90deg,#5a0610,#000 40%)}.pplq.ma.r{background:linear-gradient(90deg,#3a0a5a,#000 40%)}.pplq.mi.r{background:linear-gradient(90deg,#06205a,#000 40%)}.pplq.mn.r{background:linear-gradient(90deg,#063a14,#000 40%)}
-.pemp{position:absolute;left:21%;top:13%;width:58%;z-index:1;pointer-events:none;transform-origin:50% 100%;animation:pempi 3s ease-in-out infinite}
+.pemp{position:absolute;left:21%;top:13%;width:58%;z-index:1;pointer-events:auto;cursor:pointer;transform-origin:50% 100%;animation:pempi 3s ease-in-out infinite}
 @keyframes pempi{50%{transform:translateY(-1.5%) rotate(-1deg)}}
 .pemp.cheer{animation:pcheer .35s ease-in-out infinite alternate}@keyframes pcheer{to{transform:translateY(-4%) scale(1.04)}}
 .pbtn{position:absolute;top:17.5%;width:19%;height:11%;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3%;border-radius:8px;border:3px solid #ffcc33;background:linear-gradient(#8a3ad0,#4a0a8a);box-shadow:0 0 0 2px #5a2a02,0 4px 8px #0008;color:#fff;font-family:Jua,sans-serif;line-height:1.15;padding:2px}

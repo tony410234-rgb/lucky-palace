@@ -155,6 +155,7 @@ T88.mount=A=>{
  A.box.insertAdjacentHTML('beforeend','<i class="tx tarw l"></i><i class="tx tarw r"></i>');
  document.getElementById('tbst').onclick=()=>{if(A.busy||A.free)return;T88.boost=!T88.boost;document.getElementById('tbst').classList.toggle('on',T88.boost);A.sfx('click');A.toast(T88.boost?`부스트 ON · 베팅 x${T88.boostX} · 배수 릴 빈칸 없음`:'부스트 OFF',1400)};
  document.getElementById('tbst').classList.toggle('on',T88.boost);
+ document.getElementById('ttoad').onclick=e=>{e.stopPropagation();A.loveTap&&A.loveTap(e.currentTarget)};
  document.getElementById('tbuy').onclick=()=>{if(A.busy||A.free)return;A.buyFS()};
  T88.onBet(A);T88.meter(A);
 };
