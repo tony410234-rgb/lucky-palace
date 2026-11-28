@@ -440,7 +440,9 @@ async function openMP(){A=window.TL_API;if(!A)return;if(!ui)build();ui.classList
  <div class="hetb" style="margin-top:1.6cqw"><button id="mpmk" style="background:linear-gradient(#3ad06a,#1a8a3a)">방 만들기<small>코드를 상대에게 알려줘요</small></button><button id="mpjn" style="background:linear-gradient(#ffb03a,#c06a00)">방 들어가기<small>받은 코드 입력</small></button></div><button class="hex" id="hex">나가기</button>`);
  let me=nm;$('mpwho').onclick=e=>{const b=e.target.closest('button');if(!b)return;me=b.dataset.n;[...$('mpwho').children].forEach(x=>x.style.outline=x===b?'3px solid #fff':'none')};
  $('hex').onclick=()=>{unmodal();close()};
- $('mpmk').onclick=()=>{if(!me){api().toast('먼저 누구인지 골라주세요');return}S.mpName=me;api().save();unmodal();hostFlow(me)};
+ $('mpmk').onclick=()=>{if(!me){api().toast('먼저 누구인지 골라주세요');return}S.mpName=me;api().save();
+  modal(`<h3>어떤 게임?</h3><div class="hetb"><button id="mpghe" style="background:linear-gradient(#2a8a5a,#0a4a2a)">텍사스 홀덤<small>AI 3명 + 둘이서</small></button><button id="mpgbj" style="background:linear-gradient(#8a4ae0,#3a1a8a)">블랙잭<small>AI 3명 + 둘이서</small></button></div><button class="hex" id="hex">뒤로</button>`);
+  $('hex').onclick=()=>{unmodal();openMP()};$('mpghe').onclick=()=>{unmodal();hostFlow(me)};$('mpgbj').onclick=()=>{unmodal();close();window.BJ&&BJ.hostMP(me)}};
  $('mpjn').onclick=()=>{if(!me){api().toast('먼저 누구인지 골라주세요');return}S.mpName=me;api().save();joinFlow(me)}}
 
 async function hostFlow(me){const t=await buyModal(false);if(!t){close();return}
@@ -467,6 +469,7 @@ async function joinFlow(me){modal(`<h3>방 코드 입력</h3><input id="mpcode" 
   let room=null;try{room=await NM().req('GET','rooms/'+code)}catch(e){api().toast('인터넷 연결을 확인해 주세요');return}
   if(!room||!room.host){api().toast('그 코드의 방이 없어요');return}if(room.guest&&!room.guest.left){api().toast('이미 다른 사람이 들어가 있어요');return}
   if(room.host.name===me){api().toast(`방장도 ${me}예요! 다른 사람을 골라주세요`);return}
+  if(room.host.g==='bj'){unmodal();close();window.BJ&&BJ.joinMP(me,code,room);return}
   const t=TABLES.find(x=>x.id===room.host.t)||TABLES[0];if(bal()<t.bb*20){api().toast('코인이 부족해요');return}
   const buy=Math.min(t.buy,bal());setBal(bal()-buy);T=t;
   MP={role:'guest',code,G:3,me:who(me),other:who(room.host.name),hid:-1,evN:0,ans:0,myStack:buy,boardN:0};api().S.mpStack=buy;api().save();mpUI();
@@ -522,5 +525,5 @@ function gRebuy(){const t=T;const amt=Math.min(t.buy,bal());
 
 css();
 window.HE={open,openMP,close,ev7,hname,equity,get card(){const k=K();return `<button class="gcard c-he" data-ext="he"><span class="rays"></span><span class="bdg">NEW</span><span class="hero hehero"><span>${k.cardSVG('A','s')}</span><span>${k.cardSVG('A','h')}</span></span><b class="en" style="font-family:Bungee,sans-serif">HOLD'EM</b><span class="kn">텍사스 홀덤</span><small>AI 4명 · 실시간 족보·승률 표시</small></button>`},
- get mpcard(){const k=K();return `<button class="gcard c-mp" data-ext="mp"><span class="rays"></span><span class="bdg">2인</span><span class="hero hehero mphero">${MPART}</span><b class="en" style="font-family:Bungee,sans-serif">TOGETHER</b><span class="kn">같이하기</span><small>각자 폰으로 둘이 홀덤 한판 ♥</small></button>`}};
+ get mpcard(){const k=K();return `<button class="gcard c-mp" data-ext="mp"><span class="rays"></span><span class="bdg">2인</span><span class="hero hehero mphero">${MPART}</span><b class="en" style="font-family:Bungee,sans-serif">TOGETHER</b><span class="kn">같이하기</span><small>각자 폰으로 둘이 홀덤·블랙잭 ♥</small></button>`}};
 })();
