@@ -93,6 +93,9 @@ const sfx={
 /* ---------- BGM ---------- */
 const MAJ=[0,2,4,5,7,9,11];
 const TH={
+ love:{bpm:104,root:53,scale:[0,2,4,5,7,9,11],swing:.08,chords:[[0,4,7,11],[9,12,16,19],[5,9,12,16],[7,11,14,17]],
+  lead:{wave:'triangle',rh:'x..x..x.x.x..x..',v:.05,cut:3200,oct:12},bass:{wave:'sine',pat:'x...x.x.x...x.x.',mode:'walk',v:.2},pad:{wave:'sine',v:.035,cut:1800},arp:true,
+  dr:{k:'x.......x.......',s:'....x.......x...',h:'..x...x...x...x.',hv:.01}},
  bj:{bpm:92,root:50,scale:[0,2,3,5,7,9,10],swing:.2,chords:[[2,5,9,12],[7,11,14,17],[0,4,7,11],[9,12,16,19]],
   lead:{wave:'triangle',rh:'x..x.x....x.x...',v:.045,cut:2400,oct:12},bass:{wave:'sine',pat:'x.x.x.x.x.x.x.x.',mode:'walk',v:.24},pad:{wave:'triangle',v:.03,cut:1400},
   dr:{k:'x.......x.......',s:'....x.......x...',h:'x.xxx.xxx.xxx.xx',hv:.012}},
@@ -198,12 +201,13 @@ function sched(){
   nextT+=sp*(1+sw);step=(step+1)%(16*song.bars);
  }
 }
-function play(name){if(!TH[name])name='lobby';if(cur===name&&timer)return;stop();cur=name;song=build(TH[name],name);intense=false;init();step=0;nextT=ac?ac.currentTime+.1:0;timer=setInterval(sched,25)}
+let LOBBY='lobby';function setLobby(n){LOBBY=TH[n]?n:'lobby'}
+function play(name,force){if(name==='lobby')name=LOBBY;if(!TH[name])name='lobby';if(cur===name&&timer&&!force)return;stop();cur=name;song=build(TH[name],name);intense=false;init();step=0;nextT=ac?ac.currentTime+.1:0;timer=setInterval(sched,25)}
 function stop(){clearInterval(timer);timer=0}
 function setIntense(v){intense=v}
 function set(k,v){st[k]=v;if(!ac)return;if(k==='bgm')bgmG.gain.setTargetAtTime(v?.24:0,ac.currentTime,.05);if(k==='sfx')sfxG.gain.value=v?1:0}
 function duck(on){if(ac&&st.bgm)bgmG.gain.setTargetAtTime(on?.08:.24,ac.currentTime,.1)}
 document.addEventListener('visibilitychange',()=>{if(!ac)return;if(document.hidden)ac.suspend().catch(()=>{});else ac.resume().catch(()=>{})});
 ['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,()=>init(),{passive:true}));
-return {init,sfx,tone,play,stop,setIntense,set,st,duck,voice:k=>{try{(VO[k]||VO.boing)()}catch(e){}}};
+return {init,sfx,tone,play,stop,setIntense,set,st,duck,setLobby,voice:k=>{try{(VO[k]||VO.boing)()}catch(e){}}};
 })();

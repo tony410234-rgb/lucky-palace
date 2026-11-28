@@ -76,11 +76,11 @@ const AIP=()=>{const N=K().ANI;return [
 const SEAT=[[50,78],[9,56],[19,24],[81,24],[91,56]],CEN=[50,44];
 const toward=(i,f)=>[SEAT[i][0]+(CEN[0]-SEAT[i][0])*f,SEAT[i][1]+(CEN[1]-SEAT[i][1])*f];
 
-let MP=null,turnI=-1,DL=null,ui=null,P=[],T=TABLES[0],board=[],pot=0,cur=0,minR=0,btn=0,gen=0,inHand=false,meWait=null,handNo=0,stage='';
+let TOUR=null,MP=null,turnI=-1,DL=null,ui=null,P=[],T=TABLES[0],board=[],pot=0,cur=0,minR=0,btn=0,gen=0,inHand=false,meWait=null,handNo=0,stage='';
 const ABORT={};
 const bal=()=>api().S.bal;
 function setBal(v){api().S.bal=v;api().save();api().renderBal&&api().renderBal();$('hebal').textContent=fmt(v)}
-function saveStk(){api().S.heStack=P[0]?P[0].stack:0;api().S.heTable=T.id;api().save()}
+function saveStk(){if(TOUR){api().S.heStack=0;api().save();return}api().S.heStack=P[0]?P[0].stack:0;api().S.heTable=T.id;api().save()}
 const sfx=k=>{try{api().sfx(k)}catch(e){}};
 
 /* ================= 화면 ================= */
@@ -209,7 +209,7 @@ const sEl=i=>$('hes'+i);
 function avOf(k){const AV=K().AV;if(k==='her')return AV('#ffe4d0','#4a2a1a','#ff6ab0','girl');if(k==='ty')return AV('#ffe0cc','#1a1016','#2a2238','boy');const n=+String(k).slice(2);return AIP()[n].av}
 function setSeatUI(i,name,ak){const e=sEl(i);e.querySelector('.hebox b').textContent=name;const im=e.querySelector('.hebox img');if(im.dataset.ak!==ak){im.dataset.ak=ak;im.src=api().U(avOf(ak))}}
 function cardDiv(c,down){const d=document.createElement('div');d.className='hec';d.dataset.c=c;d.innerHTML=`<img alt="" src="${api().U(down?K().BACK:cImg(c))}">`;return d}
-function paint(p){const e=sEl(p.i);e.querySelector('.hestk').textContent=p.out?'자리 비움':p.allin&&inHand?'올인!':short(p.stack);
+function paint(p){const e=sEl(p.i);e.querySelector('.hestk').textContent=p.out?(TOUR?'탈락':'자리 비움'):p.allin&&inHand?'올인!':short(p.stack);
  e.classList.toggle('fold',!!p.folded);e.classList.toggle('out',!!p.out);snap();
  const b=$('heb'+p.i);b.innerHTML=p.bet?`<img alt="" src="${api().U(K().chipSVG(chipFor(p.bet)))}">${short(p.bet)}`:''}
 const chipFor=a=>{let v=100;for(const [x] of K().CHIPS)if(a>=x)v=x;return v};
@@ -245,9 +245,9 @@ function rankModal(){const X=t=>t.split(' ').map(x=>{const r=x.slice(0,-1),su='s
  $('hemodal').classList.add('on');$('hex').onclick=()=>$('hemodal').classList.remove('on')}
 
 /* ---------- 바이인 ---------- */
-function buyModal(re){return new Promise(res=>{const b=bal();
- $('hemin').innerHTML=`<h3>${re?'칩이 다 떨어졌어요! 다시 바이인':'테이블 선택'}</h3><div class="hetb">${TABLES.map((t,i)=>`<button data-i="${i}" style="background:linear-gradient(${t.col},#1a0a30)" ${b<t.bb*20?'disabled':''}>${t.name}<small>블라인드 ${short(t.sb)}/${short(t.bb)}</small><small>바이인 ${short(Math.min(t.buy,b))}</small></button>`).join('')}</div><button class="hex" id="hex">나가기</button>`;
- $('hemodal').classList.add('on');$('hemin').querySelector('.hetb').onclick=e=>{const x=e.target.closest('button');if(!x||x.disabled)return;$('hemodal').classList.remove('on');res(TABLES[+x.dataset.i])};
+function buyModal(re,tour){return new Promise(res=>{const b=bal();const TL=tour?[...TABLES,TOUR_T]:TABLES;
+ $('hemin').innerHTML=`<h3>${re?'칩이 다 떨어졌어요! 다시 바이인':'테이블 선택'}</h3><div class="hetb">${TL.map((t,i)=>`<button data-i="${i}" style="background:linear-gradient(${t.col},#1a0a30)" ${(t.id==='tour'?b<t.buy:b<t.bb*20)?'disabled':''}>${t.name}${t.id==='tour'?`<small>참가비 ${short(t.buy)} · 5인 생존전</small><small>1등 ${short(TPRIZE[1])} 🏆</small>`:`<small>블라인드 ${short(t.sb)}/${short(t.bb)}</small><small>바이인 ${short(Math.min(t.buy,b))}</small>`}</button>`).join('')}</div><button class="hex" id="hex">나가기</button>`;
+ $('hemodal').classList.add('on');$('hemin').querySelector('.hetb').onclick=e=>{const x=e.target.closest('button');if(!x||x.disabled)return;$('hemodal').classList.remove('on');res(TL[+x.dataset.i])};
  $('hex').onclick=()=>{$('hemodal').classList.remove('on');res(null)}})}
 
 /* ================= 게임 진행 ================= */
@@ -305,6 +305,7 @@ async function dealBoard(n,W){const slots=$('heboard').children;for(let k=0;k<n;
 
 let deck=[];
 async function hand(){const g=gen;const W=async ms=>{if(ms)await sleep(ms);if(g!==gen)throw ABORT};
+ if(TOUR){TOUR.hands++;const lv=Math.min(TLV.length-1,Math.floor((TOUR.hands-1)/5));if(lv!==TOUR.lvl){TOUR.lvl=lv;T.sb=TLV[lv][0];T.bb=TLV[lv][1];DL.say('블라인드가 올라갑니다!');msg(`레벨 ${lv+1}`,`블라인드 ${T.sb}/${T.bb}`);setTimeout(()=>msg(''),1500);await W(1200)}tourLabel()}
  inHand=true;handNo++;board=[];pot=0;cur=0;minR=T.bb;
  deck=[];for(let c=0;c<52;c++)deck.push(c);for(let i=51;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}
  if(MP&&MP.role==='host'){const g=P[MP.G];if(MP.rebuy>0){g.stack+=MP.rebuy;MP.rebuy=0;g.out=false}if(MP.gone){g.out=true;g.stack=0}}
@@ -329,8 +330,9 @@ async function hand(){const g=gen;const W=async ms=>{if(ms)await sleep(ms);if(g!
   lv.forEach(p=>{const e=ev7([...p.hole,...board]);p.ev=e;const sd=sEl(p.i).querySelector('.hesd');sd.textContent=p.sdT=e.cat===9?'로열 플러시':hname(e);sd.classList.add('on')});snap();
   await W(api().T(700,300));
   await award(pots(),W,true)}
- inHand=false;P.forEach(paint);saveStk();
- P.forEach(p=>{if(p.i&&p.ai&&p.stack<=0){p.stack=Math.round(T.buy*(.6+Math.random()*.9)/T.bb)*T.bb;setTimeout(()=>{act(p,'리바이!','c');paint(p)},1200)}});
+ inHand=false;if(TOUR){const r=tourCheck();if(r){P.forEach(paint);await W(1600);await tourEnd(r);throw ABORT}}
+ if(!TOUR&&!(MP&&MP.role==='guest')&&P[0].total)STATS.bet('he',P[0].total);P.forEach(paint);saveStk();
+ P.forEach(p=>{if(p.i&&p.ai&&!TOUR&&p.stack<=0){p.stack=Math.round(T.buy*(.6+Math.random()*.9)/T.bb)*T.bb;setTimeout(()=>{act(p,'리바이!','c');paint(p)},1200)}});
  await W(api().T(2600,1400))}
 
 function pots(){const ins=P.filter(p=>p.inh&&p.total>0);const lv=[...new Set(ins.map(p=>p.total))].sort((a,b)=>a-b);let prev=0;const out=[];
@@ -357,6 +359,7 @@ async function award(list,W,sd){let meWon=0,best=null;const gain=new Map(),winS=
  msg(`${nm} 승리!`,'+'+fmt(tot)+(hn?' · '+hn:''));pot=0;paintPot();
  sfx(wl.some(w=>!w.i)?'chaching':'coin');try{api().sfx('chipStack')}catch(x){}await W(api().T(1900,1000));
  pot=0;paintPot();
+ if(meWon&&!TOUR){STATS.win('he',meWon);STATS.ev('hewin',P[0].ev&&!P[0].folded?P[0].ev.cat:-1)}
  if(meWon){const e=P[0].ev;const L=window.LOVE||{};const her=L.her||'소현';
   if(e&&e.cat>=6){api().announce(e.cat===9?'ROYAL FLUSH':e.cat===8?'STRAIGHT FLUSH':e.cat===7?'FOUR OF A KIND':'FULL HOUSE',`+${fmt(meWon)}`,'gold');setTimeout(()=>DL.say(e.cat===9?'세상에, 로열 플러시예요!!':e.cat===8?'와~ 스트레이트 플러시!':e.cat===7?'포카드! 대박이다~':'풀하우스! 멋지다 소현아~'),900);try{api().heartRain&&api().heartRain()}catch(x){}}
   sfx('jjr')}
@@ -364,6 +367,7 @@ async function award(list,W,sd){let meWon=0,best=null;const gain=new Map(),winS=
  if(!meWon&&P[0].inh&&!P[0].folded)try{api().sfx('lose')}catch(e){}}
 
 async function loop(){const g=gen;try{while(g===gen){
+  if(TOUR&&P[0].stack<=0)return;
   if(P[0].stack<=0){const t=await buyModal(true);if(g!==gen)return;if(!t){close();return}await seat(t)}
   if(P[0].stack<T.bb)P[0].stack=0;
   await hand()}}catch(e){if(e!==ABORT)console.error(e)}}
@@ -374,24 +378,55 @@ async function seat(t,restore=0){T=t;if(restore)P[0].stack=restore;else{const am
  if(MP&&MP.role==='host'){const g=P[MP.G];g.ai=null;g.remote=true;g.nm=MP.other.name;g.ak=MP.other.av;g.vo=MP.other.vo;g.stack=MP.other.buy;setSeatUI(MP.G,g.nm,g.ak)}
  P.forEach(paint);saveStk()}
 
-function tryClose(){const p=P[0];if(MP&&MP.role==='guest'&&!(inHand&&p.inh&&!p.folded)){close();return}if(inHand&&p.inh&&!p.folded){
+function tryClose(){const p=P[0];if(TOUR&&!tryClose.tq){tryClose.tq=1;api().toast('한 번 더 누르면 토너먼트를 포기해요 (참가비 환불 없음)');setTimeout(()=>tryClose.tq=0,2200);return}tryClose.tq=0;if(TOUR){close();return}if(MP&&MP.role==='guest'&&!(inHand&&p.inh&&!p.folded)){close();return}if(inHand&&p.inh&&!p.folded){
   if(meWait){if(!tryClose.ok){tryClose.ok=1;api().toast('한 번 더 누르면 폴드하고 나가요');setTimeout(()=>tryClose.ok=0,2000);return}tryClose.ok=0;meAct({t:'fold'})}
   else{api().toast('내 차례에 나갈 수 있어요 (폴드 후 퇴장)');return}}
  close()}
 
-async function open(){A=window.TL_API;if(!A)return;if(!ui)build();MP=null;mpUI();refundMP();ui.classList.add('on');document.body.classList.add('heon');try{A.AUDIO.play('bj')}catch(e){}
+async function open(){A=window.TL_API;if(!A)return;if(!ui)build();MP=null;TOUR=null;mpUI();refundMP();ui.classList.add('on');document.body.classList.add('heon');try{A.AUDIO.play('bj')}catch(e){}
  try{window.TLApp&&TLApp.orient('landscape')}catch(e){}
  $('hebal').textContent=fmt(bal());$('hesnd').textContent=A.AUDIO.st.sfx?'소리':'무음';gen++;
  if(!P.length)P=[0,1,2,3,4].map(i=>({i,stack:0,hole:[],ai:null,tight:.5,aggr:.5,bluff:.2}));
  const S=A.S;if(S.heStack>0)await seat(TABLES.find(t=>t.id===S.heTable)||TABLES[0],S.heStack);
- else{P[0].stack=0;P.forEach(paint);const t=await buyModal(false);if(!t){close();return}await seat(t)}
+ else{P[0].stack=0;P.forEach(paint);const t=await buyModal(false,true);if(!t){close();return}if(t.id==='tour'){startTour();return}await seat(t)}
  msg('텍사스 홀덤','내 패와 족보가 왼쪽 아래에 실시간으로 떠요!');setTimeout(()=>msg(''),2200);setTimeout(()=>DL.say(`어서 와 ${(window.LOVE||{}).her||'소현'}아~ 오늘 딜러는 나야!`),500);
  [...$('heboard').children].forEach(s=>s.innerHTML='');myInfo();
  loop()}
 function close(){if(!ui)return;gen++;mpEnd();if(meWait){const f=meWait;meWait=null;f({t:'fold'})}inHand=false;
- if(P[0]&&P[0].stack>0){setBal(bal()+P[0].stack);P[0].stack=0}api().S.heStack=0;api().save();
+ if(P[0]&&P[0].stack>0){if(!TOUR)setBal(bal()+P[0].stack);P[0].stack=0}TOUR=null;api().S.heStack=0;api().save();
  $('hectl').classList.add('off');$('herp').classList.remove('on');$('hemodal').classList.remove('on');ui.classList.remove('on');document.body.classList.remove('heon');
  try{A.AUDIO.play('lobby')}catch(e){}A.renderBal&&A.renderBal()}
+
+/* ================= 홀덤 토너먼트 ================= */
+const TOUR_T={id:'tour',name:'🏆 토너먼트',sb:10,bb:20,buy:50000,col:'#e0357e'};
+const TPRIZE={1:150000,2:70000,3:30000};
+const TLV=[[10,20],[15,30],[25,50],[50,100],[75,150],[100,200],[150,300],[200,400],[300,600],[500,1000],[800,1600],[1000,2000],[1500,3000]];
+const TROPHY=(c1,c2,c3)=>`<svg viewBox="0 0 120 130" style="width:clamp(56px,11cqw,110px);display:block;margin:0 auto"><defs><linearGradient id="trg${c2.slice(1)}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset=".5" stop-color="${c2}"/><stop offset="1" stop-color="${c3}"/></linearGradient></defs>
+<path d="M28 18H10q-2 24 22 30M92 18h18q2 24-22 30" fill="none" stroke="${c2}" stroke-width="7"/><path d="M26 10h68v22q0 34-34 40Q26 66 26 32z" fill="url(#trg${c2.slice(1)})" stroke="#fff" stroke-width="3"/>
+<path d="M60 22l5 10 11 1.6-8 7.8 2 11-10-5.2-10 5.2 2-11-8-7.8 11-1.6z" fill="#fff" opacity=".9"/><rect x="52" y="72" width="16" height="18" fill="${c2}"/><path d="M34 90h52l6 18H28z" fill="url(#trg${c2.slice(1)})" stroke="#fff" stroke-width="3"/>
+<path d="M18 112h84v12H18z" fill="#ff5fa2" stroke="#fff" stroke-width="2.5"/><path d="M40 28q4-10 14-12" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".7"/></svg>`;
+function tourLabel(){if(!TOUR)return;const al=P.filter(p=>!p.out&&p.stack>0).length;$('heblind').textContent=`토너먼트 Lv${TOUR.lvl+1} · 블라인드 ${T.sb}/${T.bb} · 남은 ${al}명`}
+function startTour(){const e=TOUR_T.buy;if(bal()<e){api().toast('참가비가 부족해요');close();return}
+ setBal(bal()-e);STATS.bet('tour',e);TOUR={lvl:0,hands:0,out:0};T=Object.assign({},TOUR_T,{sb:TLV[0][0],bb:TLV[0][1]});
+ const ai=AIP();P.forEach(p=>{p.stack=1500;p.out=false;p.hole=[];p.inh=false;p.folded=false;sEl(p.i).classList.remove('win','fold','out');sEl(p.i).querySelector('.hehole').innerHTML='';sEl(p.i).querySelector('.hesd').className='hesd'});
+ for(let i=1;i<5;i++){const p=P[i];p.ai=ai[i-1];p.remote=false;p.nm=ai[i-1].name;p.ak='ai'+(i-1);setSeatUI(i,p.nm,p.ak);Object.assign(p,{tight:ai[i-1].tight,aggr:ai[i-1].aggr,bluff:ai[i-1].bluff})}
+ P[0].nm=myName();P[0].ak=myAv();P[0].vo=myVo();setSeatUI(0,P[0].nm,P[0].ak);P.forEach(paint);tourLabel();
+ [...$('heboard').children].forEach(s=>s.innerHTML='');myInfo();pot=0;paintPot();
+ msg('🏆 홀덤 토너먼트','칩 1,500으로 시작 · 5판마다 블라인드 상승 · 마지막까지 살아남기!');setTimeout(()=>msg(''),2600);
+ setTimeout(()=>DL.say(`토너먼트 시작! ${myName()} 우승 가보자~`),600);gen++;setTimeout(loop,1800)}
+function tourCheck(){const busted=P.filter(p=>!p.out&&p.stack<=0);const aliveAfter=P.filter(p=>!p.out&&p.stack>0).length;
+ busted.forEach(p=>{p.out=true;p.place=aliveAfter+1;if(p.i){act(p,'탈락!','f');try{api().speak(K().tagL('탈락이야',p.ai.tag),'ai'+(p.i-1))}catch(e){}}});
+ if(busted.length){tourLabel();if(!P[0].out&&aliveAfter>1)setTimeout(()=>DL.say(`${busted.map(p=>p.nm).join(', ')} 탈락! 남은 인원 ${aliveAfter}명`),900)}
+ if(P[0].out)return P[0].place;if(aliveAfter===1)return 1;return 0}
+function tourEnd(place){return new Promise(res=>{const prize=TPRIZE[place]||0;if(prize){setBal(bal()+prize);STATS.win('tour',prize)}if(place===1)STATS.ev('tourwin');
+ const cols={1:['#fff6b0','#f0b020','#a06a00'],2:['#ffffff','#c0c8d8','#6a7488'],3:['#ffd8b0','#d08a4a','#7a4a1a']}[place];
+ if(place===1){api().announce('CHAMPION!',`+${fmt(prize)}`,'gold');try{api().heartRain(30)}catch(e){}sfx('jjr');DL.say(`우승이야! 역시 ${myName()}이 최고!`)}
+ else if(prize){sfx('chaching');DL.say(`${place}등! 상금 받아가~`)}else{sfx('lose');DL.say('아쉽다~ 다음엔 우승하자!')}
+ TOUR=null;inHand=false;P[0].stack=0;saveStk();
+ $('hemin').innerHTML=`<h3 style="margin:0">${place===1?'우승!!':place+'등'}</h3>${cols?TROPHY(...cols):''}<p style="font-size:clamp(13px,2cqw,20px);margin:.6cqw 0">${place===1?'모든 상대를 물리쳤어요!':place<=3?'입상 축하해요!':'아쉽게 탈락했어요'}</p><div style="font:900 clamp(18px,3.4cqw,34px) Arial;color:#ffe04a">${prize?'+'+fmt(prize):'상금 없음'}</div>
+ <div class="hetb" style="margin-top:1.2cqw"><button id="tagain" style="background:linear-gradient(#ff7ab8,#c0357e)" ${bal()<TOUR_T.buy?'disabled':''}>다시 도전<small>참가비 ${short(TOUR_T.buy)}</small></button></div><button class="hex" id="hex">나가기</button>`;
+ $('hemodal').classList.add('on');
+ $('tagain').onclick=()=>{$('hemodal').classList.remove('on');res();startTour()};$('hex').onclick=()=>{$('hemodal').classList.remove('on');res();close()}})}
 
 /* ================= 같이하기 (2인 온라인) ================= */
 const MPART=`<svg viewBox="0 0 160 110"><defs><linearGradient id="mpH1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb0d4"/><stop offset="1" stop-color="#ff4f99"/></linearGradient><linearGradient id="mpH2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8d0ff"/><stop offset="1" stop-color="#5a7aff"/></linearGradient></defs>
@@ -422,7 +457,7 @@ function mpEnd(){if(!MP)return;const m=MP;MP=null;NM().stop();
  if(m.role==='host')NM().req('DELETE','rooms/'+m.code).catch(()=>{});
  else{NM().req('PUT','rooms/'+m.code+'/guest/left',true).catch(()=>{});const S=api().S;const s=m.myStack||0;if(s>0){setBal(bal()+s)}S.mpStack=0;api().save();P[0].stack=0}
  mpUI()}
-function sendHeart(){if(!MP)return;NM().req('PUT',RP()+'/heart',{n:Date.now(),from:MP.me.name}).catch(()=>{});try{api().heartRain(8)}catch(e){}api().toast('♥ 보냈어요!',900)}
+function sendHeart(){if(!MP)return;STATS.ev('heart');NM().req('PUT',RP()+'/heart',{n:Date.now(),from:MP.me.name}).catch(()=>{});try{api().heartRain(8)}catch(e){}api().toast('♥ 보냈어요!',900)}
 let lastHeart=0;
 function onHeart(hh){if(!hh||hh.n===lastHeart)return;const first=!lastHeart;lastHeart=hh.n;if(first&&Date.now()-hh.n>8000)return;if(hh.from===MP.me.name)return;
  try{api().heartRain(24)}catch(e){}msgFlash(`♥ ${hh.from}이가 사랑한대요 ♥`);try{api().speak(`${hh.from}이가 사랑한대요~`,'ann')}catch(e){}}
@@ -457,7 +492,7 @@ async function hostFlow(me){const t=await buyModal(false);if(!t){close();return}
   if(m.guest&&m.guest.left&&MP.live&&!MP.gone){MP.gone=true;msgFlash(`${MP.other.name}이가 나갔어요`);const g=P[MP.G];if(!inHand){g.out=true;g.stack=0;paint(g)}}
   if(m.guest&&!m.guest.left&&!MP.live){MP.other=Object.assign(who(m.guest.name),{buy:m.guest.buy||0});MP.live=true;gr0=m.gr?m.gr.n:null;unmodal();startHost(t)}});
 }
-async function startHost(t){await seat(t);setSeatUI(0,myName(),myAv());msg('같이하기 시작!',`${MP.other.name} 입장 · 방 ${MP.code}`);setTimeout(()=>msg(''),2000);
+async function startHost(t){STATS.ev('mp');await seat(t);setSeatUI(0,myName(),myAv());msg('같이하기 시작!',`${MP.other.name} 입장 · 방 ${MP.code}`);setTimeout(()=>msg(''),2000);
  setTimeout(()=>DL.say(`${MP.me.name}, ${MP.other.name} 어서 와~ 둘이 한판 붙어볼까?`),400);snap();
  [...$('heboard').children].forEach(s=>s.innerHTML='');myInfo();loop()}
 
@@ -474,7 +509,7 @@ async function joinFlow(me){modal(`<h3>방 코드 입력</h3><input id="mpcode" 
   const buy=Math.min(t.buy,bal());setBal(bal()-buy);T=t;
   MP={role:'guest',code,G:3,me:who(me),other:who(room.host.name),hid:-1,evN:0,ans:0,myStack:buy,boardN:0};api().S.mpStack=buy;api().save();mpUI();
   await NM().req('PUT',RP()+'/guest',{name:me,buy,at:Date.now()});
-  unmodal();$('heblind').textContent=`${t.name} · 블라인드 ${short(t.sb)}/${short(t.bb)}`;msg('입장 완료!',`${MP.other.name}이가 시작하길 기다리는 중…`);
+  STATS.ev('mp');unmodal();$('heblind').textContent=`${t.name} · 블라인드 ${short(t.sb)}/${short(t.bb)}`;msg('입장 완료!',`${MP.other.name}이가 시작하길 기다리는 중…`);
   NM().listen(RP(),guestOn)}}
 let gBusy=Promise.resolve();
 function guestOn(path,m,gone){if(!MP||MP.role!=='guest')return;
@@ -524,6 +559,6 @@ function gRebuy(){const t=T;const amt=Math.min(t.buy,bal());
  $('mprb').onclick=()=>{if(!MP)return;setBal(bal()-amt);MP.myStack+=amt;api().S.mpStack=MP.myStack;api().save();NM().req('PUT',RP()+'/gr',{n:Date.now(),amt}).catch(()=>{});unmodal();MP.rb=0;msg('바이인 완료','다음 판부터 참여해요');setTimeout(()=>msg(''),1600)}}
 
 css();
-window.HE={open,openMP,close,ev7,hname,equity,get card(){const k=K();return `<button class="gcard c-he" data-ext="he"><span class="rays"></span><span class="bdg">NEW</span><span class="hero hehero"><span>${k.cardSVG('A','s')}</span><span>${k.cardSVG('A','h')}</span></span><b class="en" style="font-family:Bungee,sans-serif">HOLD'EM</b><span class="kn">텍사스 홀덤</span><small>AI 4명 · 실시간 족보·승률 표시</small></button>`},
+window.HE={_s:()=>({inHand,turnI,cur,pot,stage,mw:!!meWait,board:board.length,gen,T:T.bb}),_P:()=>P,isTour:()=>!!TOUR,open,openMP,close,ev7,hname,equity,get card(){const k=K();return `<button class="gcard c-he" data-ext="he"><span class="rays"></span><span class="bdg">NEW</span><span class="hero hehero"><span>${k.cardSVG('A','s')}</span><span>${k.cardSVG('A','h')}</span></span><b class="en" style="font-family:Bungee,sans-serif">HOLD'EM</b><span class="kn">텍사스 홀덤</span><small>AI 4명 · 실시간 족보·승률 표시</small></button>`},
  get mpcard(){const k=K();return `<button class="gcard c-mp" data-ext="mp"><span class="rays"></span><span class="bdg">2인</span><span class="hero hehero mphero">${MPART}</span><b class="en" style="font-family:Bungee,sans-serif">TOGETHER</b><span class="kn">같이하기</span><small>각자 폰으로 둘이 홀덤·블랙잭 ♥</small></button>`}};
 })();

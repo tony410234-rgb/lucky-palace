@@ -104,24 +104,26 @@ const EG=(()=>{
 const BF=(()=>{
  const WT={T:14,J:14,Q:13,K:12,A:11,elk:7,cou:6,wolf:5,eag:4,buf:4.5,W:[0,2.5,2.5,2.5,0],S:2.4};
  const PAY=scale({T:P(5,10,25),J:P(5,10,25),Q:P(5,15,30),K:P(5,15,30),A:P(10,20,40),elk:P(15,30,75),cou:P(20,40,100),wolf:P(25,50,150),eag:P(30,75,200),buf:P(40,100,300)},1);
- let D=10.5;
+ let D=11.5;
  const SCAT={3:[2,8],4:[10,15],5:[50,20]};
  const HI=['buf','eag','wolf','cou','elk'];
- const cell=(c,fs)=>{const s=wsel(fs?{...WT,W:[0,6,6,6,0]}:WT,c);if(s==='W'&&fs)return {s,m:pick([[2,2],[3,1.4],[5,.5]])};return {s}};
+ const cell=(c,fs,st)=>{let s=wsel(fs?{...WT,W:[0,6,6,6,0]}:WT,c);if(s==='W'&&fs)return {s,m:pick([[2,2],[3,1.4],[5,.5]])};if(fs&&st&&st.upg.includes(s))s='buf';if(s==='buf'&&fs&&Math.random()<.55)return {s,gold:true};return {s}};
+ const UPO=['eag','wolf','cou','elk'];
  const F="Rye,serif";
  const ART={T:royal('10','lO',F,400),J:royal('J','lB',F,400),Q:royal('Q','lGr',F,400),K:royal('K','lR',F,400),A:royal('A','lP',F,400),
-  elk:etile('tGr','🦌',60,72),cou:etile('tY','🐆',62,72),wolf:etile('tB','🐺',62,72),eag:etile('tSky','🦅',62,72),buf:tile('tO',emo('🦬',70,76),6),
+  elk:etile('tGr','🦌',60,72),cou:etile('tY','🐆',62,72),wolf:etile('tB','🐺',62,72),eag:etile('tSky','🦅',62,72),buf:tile('tO',emo('🦬',70,76),6),bufG:tile('tY',emo('🦬',72,77),8),
   W:tile('tR','<circle cx="50" cy="40" r="22" fill="#ffb02a"/><path d="M8 66l22-20 14 12 18-22 30 30v10H8z" fill="#5a1a0a"/>'+label('WILD',86,26,F)),
   S:tile('tK','<circle cx="50" cy="44" r="30" fill="url(#cG)" stroke="#6e3f03" stroke-width="3"/>'+emo('🦬',36,57)+label('BONUS',90,19,F))};
  return {id:'buffalo',name:'썬더 버팔로',en:'THUNDER BUFFALO',sub:'243 WAYS · 스택 심볼 · 배수 와일드',hero:'🦬',badge:'HOT',font:F,
   cols:5,rows:3,mode:'reels',ART,
-  draw:x=>x.s==='W'&&x.m>1?badge(ART.W,'x'+x.m):ART[x.s],
+  draw:x=>x.s==='W'&&x.m>1?badge(ART.W,'x'+x.m):x.gold?ART.bufG:ART[x.s],
   fill:(c,fs)=>cell(c,fs),
   antic:g=>{const a=[];let s=0;for(let c=0;c<5;c++){a.push(c>=2&&s>=2);s+=g[c].filter(x=>x.s==='S').length}return a},
-  fsInit:n=>({left:n}),
-  spin(fs){
-   const g=gen(5,3,c=>cell(c,fs));
-   for(let c=0;c<5;c++)if(Math.random()<(fs?.22:.11)){const s=pick(HI.map((h,i)=>[h,[1,1.3,1.6,2,2.4][i]]));g[c]=[{s},{s},{s}]}
+  fsInit:n=>({left:n,golds:0,upg:[]}),
+  spin(fs,st){
+   const g=gen(5,3,c=>cell(c,fs,st));
+   for(let c=0;c<5;c++)if(Math.random()<(fs?.22:.11)){let s=pick(HI.map((h,i)=>[h,[1,1.3,1.6,2,2.4][i]]));if(fs&&st&&st.upg.includes(s))s='buf';g[c]=[0,1,2].map(()=>s==='buf'&&fs&&Math.random()<.55?{s,gold:true}:{s})}
+   let upgrade=null;if(fs&&st){const gd=g.flat().filter(x=>x.gold).length;st.golds+=gd;while(st.golds>=4&&st.upg.length<4){st.golds-=4;const u=UPO[st.upg.length];st.upg.push(u);(upgrade=upgrade||[]).push(u)}}
    const wins=[];
    for(const s of Object.keys(PAY)){
     let n=0,ways=1;const cells=[];
@@ -131,7 +133,7 @@ const BF=(()=>{
    let total=wins.reduce((a,w)=>a+w.amt,0),fsAward=0;
    const sc=count(g,'S');
    if(sc>=3){const [m,f]=SCAT[Math.min(sc,5)];total+=m;fsAward=fs?5:f;wins.push({cells:cellsOf(g,'S'),amt:m,scat:true})}
-   return {grid:g,wins,total,fsAward};
+   return {grid:g,wins,total,fsAward,upgrade,golds:g.flat().filter(x=>x.gold).length};
   },
   setD:v=>{D=v},
   paytable:{order:['buf','eag','wolf','cou','elk','A','K','Q','J','T'],pay:PAY,get unit(){return D},ways:true,
@@ -385,6 +387,39 @@ const OC=(()=>{
 })();
 const pick_=pick;
 
-return {DEFS,list:[DR,EG,TG,OC,BF,LK,PD,PG],byId:{egypt:EG,buffalo:BF,lucky:LK,panda:PD,piggy:PG,dragon:DR,tiger:TG,ocean:OC},JPS,JPW,JCOL,coinSVG,short,emo,EF};
+/* =============== 9. SWEET LOVE (핑크 · 데이트 코스 프리게임) =============== */
+const LVG=(()=>{
+ const WT={T:13,J:13,Q:12,K:11,A:10,cake:7,rose:6,ring:5,bear:3.5,W:[0,3,3,3,3],S:2.4};
+ let PM=2.55;
+ const BASE={T:P(5,10,30),J:P(5,10,30),Q:P(5,12,40),K:P(8,15,50),A:P(8,20,60),cake:P(10,30,100),rose:P(15,40,150),ring:P(20,60,200),bear:P(30,100,500,2),W:P(30,100,500,2)};
+ let PAY=scale(BASE,PM);
+ const SCAT={3:10,4:12,5:15};
+ const COURSE=[['카페 데이트',1],['영화관',2],['놀이공원',3],['야경 산책',5],['고백 타임',10]];
+ const cell=(c,fs)=>{const w=fs?{...WT,W:[0,4.5,4.5,4.5,4.5],bear:4.5}:WT;return {s:wsel(w,c)}};
+ const F="Lilita One,sans-serif";
+ const ART={T:royal('10','lP',F,400),J:royal('J','lB',F,400),Q:royal('Q','lR',F,400),K:royal('K','lP',F,400),A:royal('A','lR',F,400),
+  cake:etile('tSky','🍰',62,72),rose:etile('tR','🌹',62,74),ring:etile('tP','💍',62,72),bear:tile('tPk',emo('🧸',70,76),6),
+  W:tile('tPk',emo('💖',50,56)+label('WILD',88,26,F)),S:tile('tN',emo('💌',50,58)+label('FREE',91,20,F,'#fff'))};
+ return {id:'love',name:'스위트 러브',en:'SWEET LOVE',sub:'20라인 · 💌 3개 → 데이트 코스 프리게임 · 최대 x10',hero:'🧸',badge:'NEW ♥',font:F,
+  cols:5,rows:3,mode:'reels',lines:L20,ART,COURSE,
+  draw:x=>ART[x.s],fill:(c,fs)=>cell(c,fs),antic:anticBy(['S'],2),
+  fsInit:n=>({step:0,mult:1}),
+  spin(fs,st){
+   const g=gen(5,3,c=>cell(c,fs));
+   const wins=linesEval(g,L20,PAY,['S']).map(w=>({...w,amt:w.amt/20}));
+   let total=wins.reduce((a,w)=>a+w.amt,0),fsAward=0,course=null;const sc=count(g,'S');
+   if(sc>=3){total+=sc>=5?20:sc===4?5:2;fsAward=fs?5:SCAT[Math.min(sc,5)];wins.push({cells:cellsOf(g,'S'),amt:0,scat:true})}
+   if(fs&&st){if(count(g,'W')>0&&st.step<COURSE.length-1){st.step++;course=COURSE[st.step]}st.mult=COURSE[st.step][1];total*=st.mult}
+   return {grid:g,wins,total,fsAward,course};
+  },
+  post:async(o,b,A)=>{if(o.course){A.announce(o.course[0]+'!',`데이트 코스 x${o.course[1]}`,'small');A.speak&&A.speak(o.course[1]>=10?'고백 타임! 열 배야!':`${o.course[0]}! ${o.course[1]}배!`,'dealer');await A.sleep(700)}},
+  setPM:v=>{PM=v;PAY=scale(BASE,v)},
+  paytable:{order:['bear','ring','rose','cake','A','K','Q','J','T'],get pay(){return PAY},unit:20,
+   rules:['20라인','💖 WILD는 💌을 뺀 모든 심볼 대신','💌 3/4/5개 → 프리게임 10/12/15회','프리게임은 데이트 코스! 하트가 나올 때마다 다음 코스로 이동해요','카페 x1 → 영화관 x2 → 놀이공원 x3 → 야경 x5 → 고백 타임 x10']}
+ };
+})();
+
+return {DEFS,list:[LVG,DR,EG,TG,OC,BF,LK,PD,PG],byId:{love:LVG,egypt:EG,buffalo:BF,lucky:LK,panda:PD,piggy:PG,dragon:DR,tiger:TG,ocean:OC},JPS,JPW,JCOL,coinSVG,short,emo,EF};
 })();
 if(typeof module!=='undefined')module.exports=GAMES;
+if(typeof CHARS!=='undefined'&&typeof ICONS!=='undefined')CHARS.love=`<svg viewBox="0 0 120 130"><path d="M86 104Q96 70 92 34" stroke="#c0508a" stroke-width="1.8" fill="none"/><g transform="translate(68 0) scale(.46)">${ICONS['💖']}</g><g transform="translate(4 26)">${ICONS['🧸']}</g><g transform="translate(78 50) rotate(-15)"><path d="M0 0l-12-7v14zM0 0l12-7v14z" fill="#ff4f99" stroke="#2b1a2e" stroke-width="2" stroke-linejoin="round"/><circle r="4" fill="#ff8ac0" stroke="#2b1a2e" stroke-width="2"/></g></svg>`;

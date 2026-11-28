@@ -137,7 +137,7 @@ function ctlPlay(h,s){const canD=h.cards.length===2&&bal()>=h.bet,canP=h.cards.l
 
 /* ================= 라운드 ================= */
 async function round(){if(running)return;running=true;phase='deal';clearTimeout(timerId);
- const me=seats[2];lastBet=me.bet;lastPP=me.pp;$('bjctl').innerHTML='';$('bjhint').textContent='';if(MP)evt({t:'clr',rn:++MP.rn});
+ const me=seats[2];lastBet=me.bet;lastPP=me.pp;if(me.bet+me.pp)STATS.bet('bj',me.bet+me.pp);$('bjctl').innerHTML='';$('bjhint').textContent='';if(MP)evt({t:'clr',rn:++MP.rn});
  /* AI 베팅 */
  for(const s of seats){if(s.me)continue;s.hands=[];if(s.remote){s.el.querySelector('.bjhands').innerHTML='';s.el.querySelector('.bjres').innerHTML='';const g=MP.m.gb||{};if(MP.gone||g.for!==MP.rn){s.bet=0;s.pp=0}else{s.bet=g.bet||0;s.pp=g.pp||0}paintSeat(s);continue}s.el.querySelector('.bjhands').innerHTML='';s.el.querySelector('.bjres').innerHTML='';
   if(Math.random()<.12||s.ai.bal<1000){s.bet=0;s.pp=0;paintSeat(s);continue}
@@ -152,7 +152,7 @@ async function round(){if(running)return;running=true;phase='deal';clearTimeout(
  paintTot($('bjdt').parentNode,{cards:[dealer.cards[0]]});
  /* P.P 정산 */
  for(const s of act){if(!s.pp)continue;const r=ppResult(s.hands[0].cards[0],s.hands[0].cards[1]);const ppEl=s.el.querySelector('.bjppc');
-  if(r){const w=s.pp*(r[1]+1);if(s.me){setBal(bal()+w);api().sfx('jjr');toast(`${r[0]}! +${fmt(w)}`,1800)}else if(s.remote)evt({t:'gpay',amt:w,why:r[0]});else s.ai.bal+=w;ppEl.classList.add('win');say(s,r[0]+'!')}else{ppEl.classList.add('lose')}evt({t:'pp',s:s.i,win:!!r});
+  if(r){const w=s.pp*(r[1]+1);if(s.me){setBal(bal()+w);STATS.win('bj',w);api().sfx('jjr');toast(`${r[0]}! +${fmt(w)}`,1800)}else if(s.remote)evt({t:'gpay',amt:w,why:r[0]});else s.ai.bal+=w;ppEl.classList.add('win');say(s,r[0]+'!')}else{ppEl.classList.add('lose')}evt({t:'pp',s:s.i,win:!!r});
   s.pp=0;paintSeat(s)}
  await sleep(400);seats.forEach(s=>s.el.querySelector('.bjppc').classList.remove('win','lose'));
  /* 딜러 블랙잭 확인 (보험 없음) */
@@ -163,14 +163,14 @@ async function round(){if(running)return;running=true;phase='deal';clearTimeout(
   /* 각 자리 플레이 */
   phase='play';
   for(const s of act){for(let hi=0;hi<s.hands.length;hi++){const h=s.hands[hi],box=handBox(s,hi);s.el.classList.add('turn');box.classList.add('turn');evt({t:'turn',s:s.i,hi,on:1});
-    if(isBJ(h)){if(s.me||s.remote){DL.say(`블랙잭! 축하해 ${s.me?myName():s.nm}아~`);if(s.me)api().sfx('jp')}say(s,'블랙잭!');s.el.classList.remove('turn');box.classList.remove('turn');evt({t:'turn',s:s.i,hi,on:0});await sleep(500);continue}
+    if(isBJ(h)){if(s.me)STATS.ev('bjbj');if(s.me||s.remote){DL.say(`블랙잭! 축하해 ${s.me?myName():s.nm}아~`);if(s.me)api().sfx('jp')}say(s,'블랙잭!');s.el.classList.remove('turn');box.classList.remove('turn');evt({t:'turn',s:s.i,hi,on:0});await sleep(500);continue}
     while(total(h.cards).t<21){let a;
      if(s.me)a=await ctlPlay(h,s);else if(s.remote)a=await remoteDecide(s,h,hi);else{await sleep(A.T(650,280));a=strategy({...h,canSplit:s.hands.length<2},dealer.cards[0]);if(Math.random()<.06)a=a==='S'?'H':'S';if((a==='D'||a==='P')&&s.ai.bal<h.bet)a='H';if(a==='P'&&s.hands.length>=2)a='H';if(a==='D'&&h.cards.length>2)a='H'}
      if(s.me)$('bjctl').innerHTML='';if(s.remote)$('bjhint').textContent='';
      if(a==='S'){say(s,'스탠드',s.me||s.remote?(s.remote?'스탠드!':0):(['스탠드!','여기까지~','스탠드.','그만 받을래~'][[0,1,-1,2,3][s.i]]));break}
      if(a==='H'){if(s.remote)say(s,'히트',1);else if(!s.me)say(s,'히트',['히트!','한 장 더~','히트.','하나 더 줘~'][[0,1,-1,2,3][s.i]]);const c=draw();h.cards.push(c);await dealTo(box.querySelector('.bjhand'),c);paintTot(box,h);continue}
-     if(a==='D'){if(s.me)setBal(bal()-h.bet);else if(!s.remote)s.ai.bal-=h.bet;h.bet*=2;s.bet=s.hands.reduce((x,y)=>x+y.bet,0);paintSeat(s);api().sfx('chip',3);say(s,'더블!',s.me||s.remote?0:1);const c=draw();h.cards.push(c);await dealTo(box.querySelector('.bjhand'),c,false,90);paintTot(box,h);break}
-     if(a==='P'){if(s.me)setBal(bal()-h.bet);else if(!s.remote)s.ai.bal-=h.bet;evt({t:'split',s:s.i,hi});const c2=h.cards.pop();const nh={cards:[c2],bet:h.bet,split:true};h.split=true;s.hands.splice(hi+1,0,nh);s.bet=s.hands.reduce((x,y)=>x+y.bet,0);paintSeat(s);say(s,'스플릿!',s.me||s.remote?0:1);
+     if(a==='D'){if(s.me){setBal(bal()-h.bet);STATS.bet('bj',h.bet)}else if(!s.remote)s.ai.bal-=h.bet;h.bet*=2;s.bet=s.hands.reduce((x,y)=>x+y.bet,0);paintSeat(s);api().sfx('chip',3);say(s,'더블!',s.me||s.remote?0:1);const c=draw();h.cards.push(c);await dealTo(box.querySelector('.bjhand'),c,false,90);paintTot(box,h);break}
+     if(a==='P'){if(s.me){setBal(bal()-h.bet);STATS.bet('bj',h.bet)}else if(!s.remote)s.ai.bal-=h.bet;evt({t:'split',s:s.i,hi});const c2=h.cards.pop();const nh={cards:[c2],bet:h.bet,split:true};h.split=true;s.hands.splice(hi+1,0,nh);s.bet=s.hands.reduce((x,y)=>x+y.bet,0);paintSeat(s);say(s,'스플릿!',s.me||s.remote?0:1);
       box.querySelector('.bjhand').lastChild.remove();const nb=handBox(s,hi+1);const d=cardEl(c2);nb.querySelector('.bjhand').appendChild(d);
       const c=draw();h.cards.push(c);await dealTo(box.querySelector('.bjhand'),c);paintTot(box,h);const c3=draw();nh.cards.push(c3);await dealTo(nb.querySelector('.bjhand'),c3);paintTot(nb,nh);
       if(h.cards[0].r==='A')break;continue}}
@@ -191,9 +191,9 @@ async function round(){if(running)return;running=true;phase='deal';clearTimeout(
    pay+=p;result(s,hi,r,cls);if(s.me)myNet+=p-h.bet});
   const betEl=s.el.querySelector('.bjbet');
   if(pay>s.bet)chipFly(document.querySelector('.bjrack'),betEl,5);else if(pay<s.bet)chipFly(betEl,document.querySelector('.bjrack'),3);evt({t:'fly',s:s.i,d:pay>s.bet?1:pay<s.bet?-1:0});
-  if(s.me){if(pay)setBal(bal()+pay);myWin=pay>s.bet}else if(s.remote){if(pay)evt({t:'gpay',amt:pay});evt({t:'gres',net:pay-s.bet});if(pay>s.bet)DL.say(`${s.nm}이가 이겼다! 축하해~`)}else{s.ai.bal+=pay;if(pay>s.bet&&Math.random()<.5)say(s,s.ai.chat[2]);else if(pay<s.bet&&Math.random()<.4)say(s,s.ai.chat[1])}
+  if(s.me){if(pay){setBal(bal()+pay);STATS.win('bj',pay)}myWin=pay>s.bet}else if(s.remote){if(pay)evt({t:'gpay',amt:pay});evt({t:'gres',net:pay-s.bet});if(pay>s.bet)DL.say(`${s.nm}이가 이겼다! 축하해~`)}else{s.ai.bal+=pay;if(pay>s.bet&&Math.random()<.5)say(s,s.ai.chat[2]);else if(pay<s.bet&&Math.random()<.4)say(s,s.ai.chat[1])}
   s.bet=0;paintSeat(s)}
- if(seats[2].hands.length){if(myWin){streak++;api().sfx('jjr');DL.say(pick2([`${myName()}이가 이겼다! 축하해~`,'와~ 이겼어요! 축하해요~',`역시 우리 ${myName()}이!`]))}else if(myNet<0){streak=0;api().sfx('lose')}
+ if(seats[2].hands.length){if(myWin){streak++;STATS.ev('bjwin');STATS.ev('bjstreak',streak);api().sfx('jjr');DL.say(pick2([`${myName()}이가 이겼다! 축하해~`,'와~ 이겼어요! 축하해요~',`역시 우리 ${myName()}이!`]))}else if(myNet<0){streak=0;api().sfx('lose')}
   msg(myNet>0?`+${fmt(myNet)}`:myNet<0?`${fmt(myNet)}`:'PUSH',myNet>0?(streak>=2?`${streak}연승!`:'승리!'):myNet<0?'다음 판에 복수!':'무승부');paintSeat(seats[2])}
  await sleep(A.T(2200,1200));
  /* 정리 */
@@ -266,7 +266,7 @@ function mpUI(){$('bjheart').style.display=MP?'':'none';$('bjroom').textContent=
 function bjModal(h){$('bjmin').innerHTML=h;$('bjmodal').classList.add('on')}
 function mpEnd(){if(!MP)return;const m=MP;MP=null;open.mp=0;NM().stop();
  if(m.role==='host')NM().req('DELETE','rooms/'+m.code).catch(()=>{});else NM().req('PUT','rooms/'+m.code+'/guest/left',true).catch(()=>{});mpUI()}
-function sendHeart(){if(!MP)return;NM().req('PUT',RP()+'/heart',{n:Date.now(),from:MP.me.name}).catch(()=>{});try{api().heartRain(8)}catch(e){}toast('♥ 보냈어요!',900)}
+function sendHeart(){if(!MP)return;STATS.ev('heart');NM().req('PUT',RP()+'/heart',{n:Date.now(),from:MP.me.name}).catch(()=>{});try{api().heartRain(8)}catch(e){}toast('♥ 보냈어요!',900)}
 let lastHeart=0;
 function onHeart(hh){if(!hh||hh.n===lastHeart)return;const first=!lastHeart;lastHeart=hh.n;if(first&&Date.now()-hh.n>8000)return;if(hh.from===MP.me.name)return;
  try{api().heartRain(24)}catch(e){}msg(`♥ ${hh.from}이가 사랑한대요 ♥`);setTimeout(()=>{if($('bjmsg').textContent.startsWith('♥'))msg('')},2200);try{api().speak(`${hh.from}이가 사랑한대요~`,'ann')}catch(e){}}
@@ -279,7 +279,7 @@ async function hostMP(me){const code=String(1000+Math.floor(Math.random()*9000))
  NM().listen(RP(),(path,m,gone)=>{if(!MP)return;MP.m=m;if(m.heart)onHeart(m.heart);
   if(m.guest&&m.guest.left&&MP.other&&!MP.gone){MP.gone=true;msg(`${MP.other.name}이가 나갔어요`);setTimeout(()=>msg(''),2000);const g=seats[3];if(phase==='bet'){g.bet=g.pp=0;paintSeat(g)}ctlBetIf()}
   if(m.guest&&!m.guest.left&&!MP.other){MP.other=who(m.guest.name);$('bjmodal').classList.remove('on');const g=seats[3];g.remote=true;g.ai=null;g.nm=MP.other.name;g.vo=MP.other.vo;setSeat(3,g.nm,avOf(MP.other.av));setSeat(2,myName(),avOf(MP.me.av));mpUI();
-   msg('같이하기 시작!',`${MP.other.name} 입장 · 둘 다 베팅하면 딜!`);setTimeout(()=>msg(''),2200);DL.say(`${MP.me.name}, ${MP.other.name} 어서 와~ 같이 해볼까?`);evt({t:'hello',host:MP.me.name,hav:MP.me.av})}
+   STATS.ev('mp');msg('같이하기 시작!',`${MP.other.name} 입장 · 둘 다 베팅하면 딜!`);setTimeout(()=>msg(''),2200);DL.say(`${MP.me.name}, ${MP.other.name} 어서 와~ 같이 해볼까?`);evt({t:'hello',host:MP.me.name,hav:MP.me.av})}
   if(m.gb&&MP.other&&!MP.gone){const g=seats[3];g.rbal=m.gb.bal||0;if(phase==='bet'&&!running){if(m.gb.for===MP.rn+1){g.bet=m.gb.bet||0;g.pp=m.gb.pp||0}paintSeat(g);ctlBetIf()}}});}
 function ctlBetIf(){if(phase==='bet'&&!running)ctlBet()}
 
@@ -287,7 +287,7 @@ function ctlBetIf(){if(phase==='bet'&&!running)ctlBet()}
 async function joinMP(me,code,room){MP={role:'guest',code,me:who(me),other:who(room.host.name),evN:0,rn:0,m:{},inRound:false,ready:false,locked:0,q:Promise.resolve(),gm:null};open.mp=1;open();
  const g=seats[3];g.remote=true;g.ai=null;g.nm=MP.other.name;setSeat(3,g.nm,avOf(MP.other.av));setSeat(2,myName(),avOf(MP.me.av));mpUI();ctlBet();
  await NM().req('PUT',RP()+'/guest',{name:me,at:Date.now()});gbSend();
- msg('입장 완료!',`베팅하고 준비를 누르면 ${MP.other.name}이가 딜해요`);setTimeout(()=>msg(''),2500);
+ STATS.ev('mp');msg('입장 완료!',`베팅하고 준비를 누르면 ${MP.other.name}이가 딜해요`);setTimeout(()=>msg(''),2500);
  NM().listen(RP(),(path,m,gone)=>{if(!MP||MP.role!=='guest')return;MP.m=m;
   if(gone||(path==='/'&&!m.host)){msg('방이 닫혔어요','');setTimeout(()=>close(),1500);return}
   if(m.heart)onHeart(m.heart);
@@ -297,7 +297,7 @@ async function joinMP(me,code,room){MP={role:'guest',code,me:who(me),other:who(r
 async function gEv(e){if(!MP)return;const v=GVb(e.s);const s=seats[v];
  switch(e.t){
  case 'hello':break;
- case 'clr':MP.rn=e.rn;MP.inRound=true;MP.ready=false;phase='deal';MP.locked=seats[2].bet+seats[2].pp;lastBet=seats[2].bet;lastPP=seats[2].pp;$('bjctl').innerHTML='';$('bjhint').textContent='';
+ case 'clr':MP.rn=e.rn;MP.inRound=true;MP.ready=false;phase='deal';MP.locked=seats[2].bet+seats[2].pp;if(MP.locked)STATS.bet('bj',MP.locked);lastBet=seats[2].bet;lastPP=seats[2].pp;$('bjctl').innerHTML='';$('bjhint').textContent='';
   MP.gm={h:{0:[],1:[],2:[],3:[],4:[]},d:[]};seats.forEach(x=>{x.el.querySelector('.bjhands').innerHTML='';x.el.querySelector('.bjres').innerHTML='';x.hands=[]});dealer={cards:[]};$('bjdh').innerHTML='';paintTot($('bjdt').parentNode,{cards:[]});break;
  case 'seat':if(v===2){if(!MP.inRound)return;s.bet=e.bet;s.pp=e.pp;paintSeat(s);return}s.bet=e.bet;s.pp=e.pp;if(s.remote)s.rbal=e.b;else if(s.ai)s.ai.bal=e.b;paintSeat(s);break;
  case 'card':{if(e.s===-1){const c=e.c||{r:'A',s:'s'};MP.gm.d.push(e.c);await dealTo($('bjdh'),c,!!e.down,0);paintTot($('bjdt').parentNode,{cards:MP.gm.d.filter(Boolean)});return}
@@ -306,15 +306,15 @@ async function gEv(e){if(!MP)return;const v=GVb(e.s);const s=seats[v];
  case 'reveal':{MP.gm.d[1]=e.c;dealer={cards:MP.gm.d.slice()};const hole=$('bjdh').children[1];if(hole){await hole.animate([{transform:'scaleX(1)'},{transform:'scaleX(0)'}],{duration:150}).finished.catch(()=>{});hole.querySelector('img').src=A.U(cardSVG(e.c.r,e.c.s));await hole.animate([{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:150}).finished.catch(()=>{});api().sfx('flip')}paintTot($('bjdt').parentNode,{cards:MP.gm.d.filter(Boolean)});break}
  case 'turn':{const box=handBox(s,e.hi);s.el.classList.toggle('turn',!!e.on);box.classList.toggle('turn',!!e.on);break}
  case 'say':{const b2=s.el.querySelector('.bjsay');b2.textContent=e.txt;b2.classList.remove('on');void b2.offsetWidth;b2.classList.add('on');if(e.v)try{api().speak(e.v,e.vo)}catch(x){}break}
- case 'res':result(s,e.hi,e.txt,e.cls);break;
+ case 'res':result(s,e.hi,e.txt,e.cls);if(v===2&&e.txt==='BLACKJACK')STATS.ev('bjbj');break;
  case 'pp':{const p=s.el.querySelector('.bjppc');p.classList.add(e.win?'win':'lose');setTimeout(()=>p.classList.remove('win','lose'),500);if(v===2&&!e.win){s.pp=0;paintSeat(s)}break}
  case 'fly':{const be=s.el.querySelector('.bjbet');if(e.d>0)chipFly(document.querySelector('.bjrack'),be,5);else if(e.d<0)chipFly(be,document.querySelector('.bjrack'),3);break}
- case 'gpay':setBal(bal()+e.amt);if(e.why){api().sfx('jjr');toast(`${e.why}! +${fmt(e.amt)}`,1800)}break;
- case 'gres':{const n=e.net;if(n>0){streak++;api().sfx('jjr')}else if(n<0){streak=0;api().sfx('lose')}msg(n>0?`+${fmt(n)}`:n<0?fmt(n):'PUSH',n>0?(streak>=2?`${streak}연승!`:'승리!'):n<0?'다음 판에 복수!':'무승부');MP.locked=0;break}
+ case 'gpay':setBal(bal()+e.amt);STATS.win('bj',e.amt);if(e.why){api().sfx('jjr');toast(`${e.why}! +${fmt(e.amt)}`,1800)}break;
+ case 'gres':{const n=e.net;if(n>0){streak++;STATS.ev('bjwin');STATS.ev('bjstreak',streak);api().sfx('jjr')}else if(n<0){streak=0;api().sfx('lose')}msg(n>0?`+${fmt(n)}`:n<0?fmt(n):'PUSH',n>0?(streak>=2?`${streak}연승!`:'승리!'):n<0?'다음 판에 복수!':'무승부');MP.locked=0;break}
  case 'msg':msg(e.m,e.s);if(e.m)setTimeout(()=>{if($('bjmsg').textContent.startsWith(e.m))msg('')},1600);break;
  case 'dl':DL.say(e.txt);break;
  case 'need':{const hs=MP.gm.h[2];const h=Object.assign({},hs[e.hi],{bet:e.bet});const fake={hands:{length:e.nh}};dealer={cards:[MP.gm.d[0]]};
-  const a=await ctlPlay(h,fake);$('bjctl').innerHTML='';if(a==='D'||a==='P')setBal(bal()-e.bet);NM().req('PUT',RP()+'/ga',{n:e.n,a}).catch(()=>{});break}
+  const a=await ctlPlay(h,fake);$('bjctl').innerHTML='';if(a==='D'||a==='P'){setBal(bal()-e.bet);STATS.bet('bj',e.bet)}NM().req('PUT',RP()+'/ga',{n:e.n,a}).catch(()=>{});break}
  case 'end':{MP.inRound=false;MP.locked=0;const disc=ui.querySelector('.bjdcards');ui.querySelectorAll('.bjhand .bjc').forEach(c=>c.animate([{opacity:1},{opacity:0,transform:'translate(-200px,-200px) scale(.5)'}],{duration:350,fill:'forwards'}));
   await sleep(380);ui.querySelectorAll('.bjhands').forEach(x=>x.innerHTML='');ui.querySelectorAll('.bjres').forEach(x=>x.innerHTML='');$('bjdh').innerHTML='';paintTot($('bjdt').parentNode,{cards:[]});
   setTimeout(()=>{if(MP&&!MP.inRound)msg('')},1500);phase='bet';const me=seats[2];me.bet=0;me.pp=0;seats.forEach(x=>{if(x.i!==2)x.bet=x.pp=0});seats.forEach(paintSeat);ctlBet();gbSend();break}
