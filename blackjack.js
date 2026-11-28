@@ -22,7 +22,10 @@ function cardSVG(r,s){const k=r+s;if(cardCache[k])return cardCache[k];const [sym
  <text x="15" y="30" text-anchor="middle" font-family="'Arial Narrow',Arial,sans-serif" font-weight="700" font-size="${r==='10'?24:30}" fill="${col}" letter-spacing="-2">${r}</text><text x="15" y="54" text-anchor="middle" font-size="22" fill="${col}">${sym}</text>${mid}</svg>`}
 const BACK=`<svg viewBox="0 0 100 140"><defs><pattern id="bjck" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#6a5ad0"/><rect width="4" height="4" fill="#8a7af0"/><rect x="4" y="4" width="4" height="4" fill="#8a7af0"/></pattern></defs><rect x="1" y="1" width="98" height="138" rx="8" fill="#fff" stroke="#bbb" stroke-width="1.5"/><rect x="8" y="8" width="84" height="124" rx="4" fill="url(#bjck)" stroke="#4a3ab0" stroke-width="2"/></svg>`;
 /* 칩 */
-const CHIPS=[[100,'#2a8a3a'],[500,'#7a3ad0'],[1000,'#d0202a'],[5000,'#e08a10'],[10000,'#2a5ae0'],[50000,'#1a1a1a'],[100000,'#d0a010']];
+const CHIPS=[[100,'#2a8a3a'],[500,'#7a3ad0'],[1000,'#d0202a'],[5000,'#e08a10'],[10000,'#2a5ae0'],[50000,'#1a1a1a'],[100000,'#d0a010'],[500000,'#e0357e'],[1000000,'#6a2ad0']];
+const BJCH=[10000,50000,100000,500000,1000000],BMIN=10000,BMAX=1000000,PPMAX=100000;
+const dblOK=h=>{const t=total(h.cards);return h.cards.length===2&&t.t>=9&&t.t<=11};
+const HN=s=>s.me?myName():s.nm;
 const chipCache={};
 function chipSVG(v){if(chipCache[v])return chipCache[v];const c=(CHIPS.find(x=>x[0]===v)||CHIPS[0])[1];const t=short(v);
  return chipCache[v]=`<svg viewBox="0 0 100 100"><circle cx="50" cy="52" r="46" fill="#000" opacity=".35"/><circle cx="50" cy="50" r="46" fill="${c}"/>${Array.from({length:8},(_,i)=>`<rect x="45" y="5" width="10" height="16" rx="2" fill="#fff" transform="rotate(${i*45} 50 50)"/>`).join('')}<circle cx="50" cy="50" r="31" fill="${c}" stroke="#fff" stroke-width="3" stroke-dasharray="6 4"/><circle cx="50" cy="50" r="26" fill="#fff"/><text x="50" y="${t.length>2?57:59}" text-anchor="middle" font-family="'Arial Black',sans-serif" font-weight="900" font-size="${t.length>2?18:24}" fill="${c}">${t}</text></svg>`}
@@ -36,10 +39,10 @@ const ANI={
  sheep:`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#ffe7b8"/><g fill="#fff" stroke="#efe6dc" stroke-width="1.5"><circle cx="30" cy="26" r="11"/><circle cx="44" cy="20" r="11"/><circle cx="58" cy="20" r="11"/><circle cx="71" cy="27" r="11"/><circle cx="24" cy="40" r="10"/><circle cx="77" cy="40" r="10"/><circle cx="20" cy="88" r="16"/><circle cx="40" cy="92" r="16"/><circle cx="60" cy="92" r="16"/><circle cx="80" cy="88" r="16"/></g><path d="M14 46Q6 46 6 52Q12 56 22 52Z" fill="#f6d2c0"/><path d="M86 46Q94 46 94 52Q88 56 78 52Z" fill="#f6d2c0"/><ellipse cx="50" cy="52" rx="26" ry="24" fill="#fbe2d2"/><g fill="#fff" stroke="#efe6dc" stroke-width="1.2"><circle cx="38" cy="32" r="8"/><circle cx="50" cy="29" r="8.5"/><circle cx="62" cy="32" r="8"/></g><path d="M36 50Q40 46 44 50M56 50Q60 46 64 50" stroke="#5a3a2a" stroke-width="2.6" fill="none" stroke-linecap="round"/><ellipse cx="34" cy="58" rx="5" ry="3" fill="#ff8aa8" opacity=".6"/><ellipse cx="66" cy="58" rx="5" ry="3" fill="#ff8aa8" opacity=".6"/><path d="M46 60Q50 64 54 60" stroke="#a05a5a" stroke-width="2.2" fill="none" stroke-linecap="round"/><circle cx="68" cy="26" r="4" fill="#ffb0c8"/><circle cx="68" cy="26" r="1.6" fill="#ffe46a"/></svg>`};
 const tagL=(t,s)=>{const m=String(t).match(/^(.*?)([!?.~…]*)$/);return m[1].trim()+' '+s+(m[2]||'!')};
 const AV=(skin,hair,shirt,style)=>`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#3a1a6a"/><path d="M14 100Q16 72 50 70Q84 72 86 100Z" fill="${shirt}"/><circle cx="50" cy="46" r="24" fill="${skin}"/>${style==='girl'?`<path d="M24 50Q22 18 50 18Q78 18 76 50Q78 70 70 80L66 52Q50 30 34 52L30 80Q22 70 24 50Z" fill="${hair}"/><circle cx="72" cy="30" r="7" fill="#ff7ab8"/>`:style==='cap'?`<path d="M24 40Q26 18 50 18Q74 18 76 40Z" fill="${hair}"/><path d="M24 40H86" stroke="${hair}" stroke-width="6" stroke-linecap="round"/>`:style==='bald'?`<path d="M28 38Q30 26 36 24" stroke="${hair}" stroke-width="4" fill="none"/><path d="M38 58q12 8 24 0" stroke="${hair}" stroke-width="5" fill="none"/>`:`<path d="M26 44Q24 20 50 20Q76 20 74 44Q66 30 50 32Q34 30 26 44Z" fill="${hair}"/>`}<circle cx="41" cy="47" r="3" fill="#1a1020"/><circle cx="59" cy="47" r="3" fill="#1a1020"/><path d="M43 58q7 5 14 0" stroke="#8a2a2a" stroke-width="2.5" fill="none" stroke-linecap="round"/><ellipse cx="36" cy="55" rx="4" ry="2.5" fill="#ff8aa0" opacity=".5"/><ellipse cx="64" cy="55" rx="4" ry="2.5" fill="#ff8aa0" opacity=".5"/></svg>`;
-const AIS=[{name:'개굴이',tag:'개굴',av:ANI.frog,bal:1500000,risk:.6,chat:['가즈아!','이번엔 된다','역시 나야!']},
- {name:'삐죽이',tag:'삐죽',av:ANI.dolphin,bal:900000,risk:.45,chat:['헤헤 운 좋다','앗…','이겼다~']},
- {name:'펭돌이',tag:'펭돌',av:ANI.penguin,bal:3200000,risk:.8,chat:['정석대로 간다','흠…','계산대로야.']},
- {name:'몽실이',tag:'몽실',av:ANI.sheep,bal:600000,risk:.35,chat:['제발~','샤갈!','오예~']}];
+const AIS=[{name:'개굴이',tag:'개굴',av:ANI.frog,bal:15000000,bal0:15000000,risk:.6,chat:['가즈아!','이번엔 된다','역시 나야!']},
+ {name:'삐죽이',tag:'삐죽',av:ANI.dolphin,bal:9000000,bal0:9000000,risk:.45,chat:['헤헤 운 좋다','앗…','이겼다~']},
+ {name:'펭돌이',tag:'펭돌',av:ANI.penguin,bal:32000000,bal0:32000000,risk:.8,chat:['정석대로 간다','흠…','계산대로야.']},
+ {name:'몽실이',tag:'몽실',av:ANI.sheep,bal:6000000,bal0:6000000,risk:.35,chat:['제발~','샤갈!','오예~']}];
 
 /* ================= 규칙 ================= */
 const val=c=>c.r==='A'?11:['J','Q','K','10'].includes(c.r)?10:+c.r;
@@ -54,7 +57,7 @@ const ADV={H:'히트',S:'스탠드',D:'더블',P:'스플릿'};
 function ppResult(a,b){if(a.r!==b.r)return null;if(a.s===b.s)return ['PERFECT PAIR',25];const red=x=>x.s==='h'||x.s==='d';if(red(a)===red(b))return ['COLOR PAIR',12];return ['MIXED PAIR',6]}
 
 /* ================= 상태 ================= */
-let MP=null,DL=null,shoe=[],cutAt=0,ui=null,seats=[],dealer=null,phase='bet',chipSel=1000,lastBet=0,lastPP=0,streak=0,running=false,timerId=null,bjAuto=false;
+let MP=null,DL=null,shoe=[],cutAt=0,ui=null,seats=[],dealer=null,phase='bet',chipSel=10000,lastBet=0,lastPP=0,streak=0,running=false,timerId=null,bjAuto=false;
 function newShoe(){shoe=[];for(let d=0;d<6;d++)for(const s of 'scdh')for(const r of RK)shoe.push({r,s});for(let i=shoe.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shoe[i],shoe[j]]=[shoe[j],shoe[i]]}cutAt=Math.floor(shoe.length*.25)}
 const draw=()=>{if(shoe.length<10)newShoe();return shoe.pop()};
 const SEATX=[13,31,50,69,87],SEATY=[53,59,62,59,53];
@@ -65,11 +68,11 @@ function build(){
  const el=document.createElement('div');el.id='bj';el.innerHTML=`
  <svg class="bjfelt" viewBox="0 0 1000 460" preserveAspectRatio="none"><defs><radialGradient id="bjg" cx=".5" cy=".3" r=".8"><stop offset="0" stop-color="#9a5ae0"/><stop offset=".55" stop-color="#6a2ab0"/><stop offset="1" stop-color="#3a0a6a"/></radialGradient>
  <path id="bjarc1" d="M240 175Q500 40 760 175"/><path id="bjarc2" d="M200 215Q500 70 800 215"/><path id="bjarc3" d="M220 260Q500 120 780 260"/></defs><rect width="1000" height="460" fill="url(#bjg)"/>
- <g fill="#fff" opacity=".22" font-family="Georgia,serif" font-weight="700"><text font-size="22" letter-spacing="3"><textPath href="#bjarc1" startOffset="50%" text-anchor="middle">BLACKJACK PAYS 3 TO 2</textPath></text><text font-size="34" letter-spacing="4"><textPath href="#bjarc2" startOffset="50%" text-anchor="middle">NO INSURANCE</textPath></text><text font-size="20" letter-spacing="3"><textPath href="#bjarc3" startOffset="50%" text-anchor="middle">DEALER MUST STAND ON 17</textPath></text></g>
+ <g fill="#fff" opacity=".22" font-family="Georgia,serif" font-weight="700"><text font-size="22" letter-spacing="3"><textPath href="#bjarc1" startOffset="50%" text-anchor="middle">BLACKJACK PAYS 6 TO 5</textPath></text><text font-size="34" letter-spacing="4"><textPath href="#bjarc2" startOffset="50%" text-anchor="middle">NO INSURANCE</textPath></text><text font-size="20" letter-spacing="3"><textPath href="#bjarc3" startOffset="50%" text-anchor="middle">DEALER HITS SOFT 17</textPath></text></g>
  <path d="M150 420Q500 330 850 420" stroke="#fff" stroke-opacity=".08" stroke-width="40" fill="none"/></svg>
  <div class="bjtop"><button class="bjback" id="bjback">‹ 로비</button><div class="bjbal"><i>G</i><b id="bjbal">0</b></div><button class="bjib" id="bjsnd">🔊</button><button class="bjib" id="bjheart" style="display:none;background:linear-gradient(#ff8ac0,#e0357e);border-color:#fff;color:#fff">♥</button><span class="bjroom" id="bjroom"></span></div><div class="bjmodal" id="bjmodal"><div class="in" id="bjmin"></div></div>
  <div class="bjdisc"><div class="bjdcards"></div></div>
- <div class="bjlim"><span>MIN</span><b>100</b><span>MAX</span><b>10만</b></div>
+ <div class="bjlim"><span>MIN</span><b>1만</b><span>MAX</span><b>100만</b></div>
  <div class="bjrack">${Array.from({length:14},(_,i)=>`<i style="background:${['#d0a010','#e08a10','#d0202a'][i%3]}"></i>`).join('')}</div>
  <div class="bjshoe" id="bjshoe"><div class="bjsc"></div></div>
  <div class="bjpp"><b>★ P.P PAYS ★</b><div><span>Perfect Pair</span><span>x 25</span></div><div><span>Color Pair</span><span>x 12</span></div><div><span>Mixed Pair</span><span>x 6</span></div></div>
@@ -119,7 +122,7 @@ function chipFly(fromEl,toEl,n=4){const a=fromEl.getBoundingClientRect(),b=toEl.
 
 /* ================= 컨트롤 ================= */
 function ctlBet(){const me=seats[2];
- $('bjctl').innerHTML=`<div class="bjchips">${CHIPS.map(([v])=>`<button class="bjchip${v===chipSel?' on':''}" data-v="${v}"><img alt="" src="${A.U(chipSVG(v))}"></button>`).join('')}</div>
+ $('bjctl').innerHTML=`<div class="bjchips">${BJCH.map(v=>`<button class="bjchip${v===chipSel?' on':''}" data-v="${v}"><img alt="" src="${A.U(chipSVG(v))}"></button>`).join('')}</div>
  <div class="bjbtns"><button class="bjb g" data-a="clear">취소</button><button class="bjb g" data-a="rebet">리벳${lastBet?'<small>'+short(lastBet+lastPP)+'</small>':''}</button><button class="bjb p" data-a="pp">P.P 베팅<small>${me.pp?short(me.pp):'없음'}</small></button><button class="bjb deal" data-a="deal">${MP&&MP.role==='guest'?(MP.ready?'준비 완료✓':'준비'):'딜'}</button></div>`;
  $('bjhint').textContent=MP?(MP.role==='host'?`칩을 골라 내 자리에 베팅 · ${MP.other?MP.other.name:'상대'}: ${MP.gone?'나감':(seats[3].bet?short(seats[3].bet)+' 베팅':'베팅 중')}${MP.m.gb&&MP.m.gb.ready&&MP.m.gb.for===MP.rn+1?' · 준비✓':''}`:`칩을 골라 베팅하고 준비 · 딜은 ${MP.other?MP.other.name:'방장'}이가 해요`):'칩을 고르고 가운데 내 자리 동그라미를 눌러 베팅 · 오토 '+(bjAuto?'ON':'OFF');
  $('bjctl').onclick=e=>{const c=e.target.closest('.bjchip'),b=e.target.closest('[data-a]');
@@ -127,10 +130,10 @@ function ctlBet(){const me=seats[2];
   if(!b)return;const a=b.dataset.a;
   if(a==='clear'){setBal(bal()+me.bet+me.pp);me.bet=0;me.pp=0;paintSeat(me);ctlBet();gbSend()}
   if(a==='rebet'&&lastBet){const need=lastBet+lastPP-me.bet-me.pp;if(bal()<need)return toast('코인 부족!');setBal(bal()+me.bet+me.pp-lastBet-lastPP);me.bet=lastBet;me.pp=lastPP;api().sfx('chip',1);paintSeat(me);ctlBet();gbSend()}
-  if(a==='pp'){const add=Math.min(chipSel,10000);if(me.pp+add>20000){setBal(bal()+me.pp);me.pp=0}else{if(bal()<add)return toast('코인 부족!');setBal(bal()-add);me.pp+=add}api().sfx('chip',1);paintSeat(me);ctlBet();gbSend()}
+  if(a==='pp'){const add=Math.min(chipSel,50000);if(me.pp+add>PPMAX){setBal(bal()+me.pp);me.pp=0}else{if(bal()<add)return toast('코인 부족!');setBal(bal()-add);me.pp+=add}api().sfx('chip',1);paintSeat(me);ctlBet();gbSend()}
   if(a==='deal'){if(MP&&MP.role==='guest'){if(!me.bet)return toast('먼저 베팅해 주세요!');MP.ready=!MP.ready;gbSend();ctlBet();return}if(!me.bet&&!(MP&&seats[3].bet))return toast('먼저 베팅해 주세요!');round()}}}
-function addBet(){if(phase!=='bet'||(MP&&MP.role==='guest'&&(MP.inRound||MP.ready)))return;const me=seats[2];if(me.bet+chipSel>100000)return toast('최대 10만까지!');if(bal()<chipSel)return toast('코인 부족!');setBal(bal()-chipSel);me.bet+=chipSel;api().sfx('chip',1);paintSeat(me);ctlBet();gbSend()}
-function ctlPlay(h,s){const canD=h.cards.length===2&&bal()>=h.bet,canP=h.cards.length===2&&h.cards[0].r===h.cards[1].r&&s.hands.length<2&&bal()>=h.bet;
+function addBet(){if(phase!=='bet'||(MP&&MP.role==='guest'&&(MP.inRound||MP.ready)))return;const me=seats[2];if(me.bet+chipSel>BMAX)return toast('최대 100만까지!');if(bal()<chipSel)return toast('코인 부족!');setBal(bal()-chipSel);me.bet+=chipSel;api().sfx('chip',1);paintSeat(me);ctlBet();gbSend()}
+function ctlPlay(h,s){const canD=dblOK(h)&&bal()>=h.bet,canP=h.cards.length===2&&h.cards[0].r===h.cards[1].r&&s.hands.length<2&&bal()>=h.bet;
  $('bjctl').innerHTML=`<div class="bjbtns play"><button class="bjb hit" data-a="H">히트</button><button class="bjb st" data-a="S">스탠드</button><button class="bjb dbl" data-a="D" ${canD?'':'disabled'}>더블</button><button class="bjb spl" data-a="P" ${canP?'':'disabled'}>스플릿</button></div>`;
  const adv=strategy({...h,canSplit:canP},dealer.cards[0]);$('bjhint').textContent=`추천: ${ADV[adv==='D'&&!canD?'H':adv==='P'&&!canP?'H':adv]}`;
  return new Promise(res=>{$('bjctl').onclick=e=>{const b=e.target.closest('[data-a]');if(!b||b.disabled)return;$('bjctl').onclick=null;api().sfx('click');res(b.dataset.a)}})}
@@ -140,8 +143,8 @@ async function round(){if(running)return;running=true;phase='deal';clearTimeout(
  const me=seats[2];lastBet=me.bet;lastPP=me.pp;if(me.bet+me.pp)STATS.bet('bj',me.bet+me.pp);$('bjctl').innerHTML='';$('bjhint').textContent='';if(MP)evt({t:'clr',rn:++MP.rn});
  /* AI 베팅 */
  for(const s of seats){if(s.me)continue;s.hands=[];if(s.remote){s.el.querySelector('.bjhands').innerHTML='';s.el.querySelector('.bjres').innerHTML='';const g=MP.m.gb||{};if(MP.gone||g.for!==MP.rn){s.bet=0;s.pp=0}else{s.bet=g.bet||0;s.pp=g.pp||0}paintSeat(s);continue}s.el.querySelector('.bjhands').innerHTML='';s.el.querySelector('.bjres').innerHTML='';
-  if(Math.random()<.12||s.ai.bal<1000){s.bet=0;s.pp=0;paintSeat(s);continue}
-  const base=[1000,2000,5000,10000,20000,40000][Math.floor(Math.random()*(2+s.ai.risk*4))];s.bet=Math.min(base,s.ai.bal);s.ai.bal-=s.bet;s.pp=Math.random()<s.ai.risk*.5?Math.min(2000,s.ai.bal):0;s.ai.bal-=s.pp;paintSeat(s);api().sfx('chip',2);await sleep(A.T(150,60))}
+  if(s.ai.bal<BMIN)s.ai.bal=s.ai.bal0||3000000;if(Math.random()<.12){s.bet=0;s.pp=0;paintSeat(s);continue}
+  const base=[10000,20000,50000,100000,200000,300000][Math.floor(Math.random()*(2+s.ai.risk*4))];s.bet=Math.min(base,s.ai.bal);s.ai.bal-=s.bet;s.pp=Math.random()<s.ai.risk*.5?Math.min(20000,s.ai.bal):0;s.ai.bal-=s.pp;paintSeat(s);api().sfx('chip',2);await sleep(A.T(150,60))}
  me.hands=[];me.el.querySelector('.bjhands').innerHTML='';me.el.querySelector('.bjres').innerHTML='';
  const act=seats.filter(s=>s.bet);act.forEach(s=>{s.hands=[{cards:[],bet:s.bet,done:false,canSplit:true}];handBox(s,0)});
  DL.say(pick2(['카드 나갑니다~','자, 딜 들어갈게요~','행운을 빌어요~']));dealer={cards:[],hole:null};$('bjdh').innerHTML='';paintTot($('bjdt').parentNode,{cards:[]});
@@ -165,12 +168,12 @@ async function round(){if(running)return;running=true;phase='deal';clearTimeout(
   for(const s of act){for(let hi=0;hi<s.hands.length;hi++){const h=s.hands[hi],box=handBox(s,hi);s.el.classList.add('turn');box.classList.add('turn');evt({t:'turn',s:s.i,hi,on:1});
     if(isBJ(h)){if(s.me)STATS.ev('bjbj');if(s.me||s.remote){DL.say(`블랙잭! 축하해 ${s.me?myName():s.nm}아~`);if(s.me)api().sfx('jp')}say(s,'블랙잭!');s.el.classList.remove('turn');box.classList.remove('turn');evt({t:'turn',s:s.i,hi,on:0});await sleep(500);continue}
     while(total(h.cards).t<21){let a;
-     if(s.me)a=await ctlPlay(h,s);else if(s.remote)a=await remoteDecide(s,h,hi);else{await sleep(A.T(650,280));a=strategy({...h,canSplit:s.hands.length<2},dealer.cards[0]);if(Math.random()<.06)a=a==='S'?'H':'S';if((a==='D'||a==='P')&&s.ai.bal<h.bet)a='H';if(a==='P'&&s.hands.length>=2)a='H';if(a==='D'&&h.cards.length>2)a='H'}
+     if(s.me)a=await ctlPlay(h,s);else if(s.remote)a=await remoteDecide(s,h,hi);else{await sleep(A.T(650,280));a=strategy({...h,canSplit:s.hands.length<2},dealer.cards[0]);if(Math.random()<.06)a=a==='S'?'H':'S';if((a==='D'||a==='P')&&s.ai.bal<h.bet)a='H';if(a==='P'&&s.hands.length>=2)a='H';if(a==='D'&&!dblOK(h))a='H'}
      if(s.me)$('bjctl').innerHTML='';if(s.remote)$('bjhint').textContent='';
-     if(a==='S'){say(s,'스탠드',s.me||s.remote?(s.remote?'스탠드!':0):(['스탠드!','여기까지~','스탠드.','그만 받을래~'][[0,1,-1,2,3][s.i]]));break}
-     if(a==='H'){if(s.remote)say(s,'히트',1);else if(!s.me)say(s,'히트',['히트!','한 장 더~','히트.','하나 더 줘~'][[0,1,-1,2,3][s.i]]);const c=draw();h.cards.push(c);await dealTo(box.querySelector('.bjhand'),c);paintTot(box,h);continue}
-     if(a==='D'){if(s.me){setBal(bal()-h.bet);STATS.bet('bj',h.bet)}else if(!s.remote)s.ai.bal-=h.bet;h.bet*=2;s.bet=s.hands.reduce((x,y)=>x+y.bet,0);paintSeat(s);api().sfx('chip',3);say(s,'더블!',s.me||s.remote?0:1);const c=draw();h.cards.push(c);await dealTo(box.querySelector('.bjhand'),c,false,90);paintTot(box,h);break}
-     if(a==='P'){if(s.me){setBal(bal()-h.bet);STATS.bet('bj',h.bet)}else if(!s.remote)s.ai.bal-=h.bet;evt({t:'split',s:s.i,hi});const c2=h.cards.pop();const nh={cards:[c2],bet:h.bet,split:true};h.split=true;s.hands.splice(hi+1,0,nh);s.bet=s.hands.reduce((x,y)=>x+y.bet,0);paintSeat(s);say(s,'스플릿!',s.me||s.remote?0:1);
+     if(a==='S'){say(s,'스탠드',s.me||s.remote?`스탠드 ${HN(s)}!`:(['스탠드!','여기까지~','스탠드.','그만 받을래~'][[0,1,-1,2,3][s.i]]));break}
+     if(a==='H'){if(s.me||s.remote)say(s,'히트',`한 장 더 ${HN(s)}~`);else say(s,'히트',['히트!','한 장 더~','히트.','하나 더 줘~'][[0,1,-1,2,3][s.i]]);const c=draw();h.cards.push(c);await dealTo(box.querySelector('.bjhand'),c);paintTot(box,h);continue}
+     if(a==='D'){if(s.me){setBal(bal()-h.bet);STATS.bet('bj',h.bet)}else if(!s.remote)s.ai.bal-=h.bet;h.bet*=2;s.bet=s.hands.reduce((x,y)=>x+y.bet,0);paintSeat(s);api().sfx('chip',3);say(s,'더블!',s.me||s.remote?`더블 ${HN(s)}!`:1);const c=draw();h.cards.push(c);await dealTo(box.querySelector('.bjhand'),c,false,90);paintTot(box,h);break}
+     if(a==='P'){if(s.me){setBal(bal()-h.bet);STATS.bet('bj',h.bet)}else if(!s.remote)s.ai.bal-=h.bet;evt({t:'split',s:s.i,hi});const c2=h.cards.pop();const nh={cards:[c2],bet:h.bet,split:true};h.split=true;s.hands.splice(hi+1,0,nh);s.bet=s.hands.reduce((x,y)=>x+y.bet,0);paintSeat(s);say(s,'스플릿!',s.me||s.remote?`스플릿 ${HN(s)}!`:1);
       box.querySelector('.bjhand').lastChild.remove();const nb=handBox(s,hi+1);const d=cardEl(c2);nb.querySelector('.bjhand').appendChild(d);
       const c=draw();h.cards.push(c);await dealTo(box.querySelector('.bjhand'),c);paintTot(box,h);const c3=draw();nh.cards.push(c3);await dealTo(nb.querySelector('.bjhand'),c3);paintTot(nb,nh);
       if(h.cards[0].r==='A')break;continue}}
@@ -180,13 +183,13 @@ async function round(){if(running)return;running=true;phase='deal';clearTimeout(
   /* 딜러 */
   phase='dealer';await reveal();
   const live=act.some(s=>s.hands.some(h=>total(h.cards).t<=21&&!isBJ(h)));
-  if(live)while(total(dealer.cards).t<17){await sleep(A.T(550,250));const c=draw();dealer.cards.push(c);await dealTo($('bjdh'),c);paintTot($('bjdt').parentNode,dealer)}
+  if(live)while((x=>x.t<17||(x.t===17&&x.soft))(total(dealer.cards))){await sleep(A.T(550,250));const c=draw();dealer.cards.push(c);await dealTo($('bjdh'),c);paintTot($('bjdt').parentNode,dealer)}
   const dt=total(dealer.cards).t;if(dt>21){msgB('딜러 BUST!');DL.say('딜러 버스트! 모두 축하드려요~')}
  }
  /* 정산 */
  await sleep(A.T(500,250));const dt=total(dealer.cards).t,dBust=dt>21;let myNet=0,myWin=false;
  for(const s of act){let pay=0;s.hands.forEach((h,hi)=>{const t=total(h.cards).t,bj=isBJ(h);let r,cls,p=0;
-   if(t>21){r='BUST';cls='lose'}else if(dBJ&&bj){r='PUSH';cls='push';p=h.bet}else if(dBJ){r='LOSE';cls='lose'}else if(bj){r='BLACKJACK';cls='bj';p=h.bet*2.5}
+   if(t>21){r='BUST';cls='lose'}else if(dBJ&&bj){r='PUSH';cls='push';p=h.bet}else if(dBJ){r='LOSE';cls='lose'}else if(bj){r='BLACKJACK';cls='bj';p=h.bet*2.2}
    else if(dBust||t>dt){r='WIN';cls='win';p=h.bet*2}else if(t===dt){r='PUSH';cls='push';p=h.bet}else{r='LOSE';cls='lose'}
    pay+=p;result(s,hi,r,cls);if(s.me)myNet+=p-h.bet});
   const betEl=s.el.querySelector('.bjbet');
