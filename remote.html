@@ -71,8 +71,10 @@ ol{padding-left:20px;margin:6px 0;font-size:13px;line-height:1.7;color:#e8d8ff}
  <div class="card">
   <h2><span data-i="🍀"></span>행운 배율 (몰래)</h2>
   <div class="lv" id="lv">x1</div>
-  <input id="luck" type="range" min="0.5" max="20" step="0.5" value="1">
+  <input id="luck" type="range" min="0.3" max="20" step="0.1" value="1">
   <div class="hint">보너스·빅윈이 나오는 빈도예요. 소현이 화면에는 아무 표시 없이 바로 적용돼요. (x1 = 기본)</div>
+  <div style="display:flex;gap:6px;margin:8px 0;flex-wrap:wrap"><button class="go" style="flex:1;min-width:70px;padding:8px" data-lp="1.3">쉬움</button><button class="go" style="flex:1;min-width:70px;padding:8px" data-lp="1">보통</button><button class="go" style="flex:1;min-width:70px;padding:8px" data-lp=".8">어려움</button><button class="go" style="flex:1;min-width:70px;padding:8px" data-lp=".6">지옥</button></div>
+  <div class="hint">난이도 버튼을 누르면 배율이 맞춰져요. 코인이 많이 쌓이면 앱이 알아서 운을 식혀요 (보통 기준 환수율 약 80~90%).</div>
   <button class="go blue" id="sendLuck">행운 적용</button>
  </div>
 
@@ -161,6 +163,7 @@ const AM=[10000,50000,100000,300000,1000000];
 $('amtChips').innerHTML=AM.map(a=>`<button class="chip" data-a="${a}">${a>=10000?(a/10000)+'만':fmt(a)}</button>`).join('');
 $('amtChips').onclick=e=>{const c=e.target.closest('.chip');if(!c)return;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));$('amt').value=c.dataset.a};
 $('luck').oninput=e=>$('lv').textContent='x'+e.target.value;
+document.querySelectorAll('[data-lp]').forEach(b=>b.onclick=()=>{$('luck').value=b.dataset.lp;$('lv').textContent='x'+b.dataset.lp});
 $('sendCoins').onclick=()=>{const a=+$('amt').value;if(!(a>0))return toast('금액을 입력해 주세요');send({t:'coins',amt:a,msg:$('gmsg').value.trim()},`${fmt(a)} 코인 선물`).then(()=>$('gmsg').value='')};
 $('sendMsg').onclick=()=>{const m=$('lmsg').value.trim();if(!m)return toast('편지를 써 주세요');send({t:'msg',msg:m},'편지').then(()=>$('lmsg').value='')};
 $('sendLuck').onclick=()=>send({t:'luck',val:+$('luck').value},'행운 x'+$('luck').value);
