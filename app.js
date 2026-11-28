@@ -148,11 +148,11 @@ let LV='menu';
 function slotCards(){return GAMES.list.map(g=>`<button class="gcard c-${g.id}" data-id="${g.id}"><span class="rays"></span>${g.jp?`<span class="cjp">JACKPOT<b class="cjpv" data-g="${g.id}">0</b></span>`:''}<span class="bdg">${g.badge}</span><span class="hero">${IMG(CHARS[g.id])}</span><b class="en" style="font-family:${g.font}">${g.en}</b><span class="kn">${g.name}</span><small>${g.sub}</small></button>`).join('')}
 function renderLobby(){const c=$('cards');c.className='cards v-'+LV;
  if(LV==='menu')c.innerHTML=`<button class="mcard m-slot" data-v="slot"><span class="rays"></span><span class="mart">${ART_SLOT}</span><b>슬롯게임</b><small>${GAMES.list.length}가지 슬롯 · 잭팟 · 프리게임</small></button><button class="mcard m-card" data-v="card"><span class="rays"></span><span class="mart">${ART_CARD}</span><b>카드게임</b><small>블랙잭 · 텍사스 홀덤</small><span class="mnew">NEW</span></button>`;
- else c.innerHTML=`<div class="lvbar"><button class="lvback" data-v="menu">‹ 메뉴</button><b>${LV==='slot'?'슬롯게임':'카드게임'}</b></div>`+(LV==='slot'?slotCards():(window.BJ?BJ.card:'')+(window.HE?HE.card:''));
+ else c.innerHTML=`<div class="lvbar"><button class="lvback" data-v="menu">‹ 메뉴</button><b>${LV==='slot'?'슬롯게임':'카드게임'}</b></div>`+(LV==='slot'?slotCards():(window.HE?HE.mpcard:'')+(window.BJ?BJ.card:'')+(window.HE?HE.card:''));
  try{$$('.cjpv').forEach(e=>e.textContent=fmt(JPSEED.GRAND*1e4+pool(e.dataset.g).GRAND))}catch(e){}}
 renderLobby();
 $('cards').onclick=e=>{const v=e.target.closest('[data-v]');if(v){sfx.click();LV=v.dataset.v;renderLobby();return}
- const c=e.target.closest('.gcard');if(c){sfx.click();if(c.dataset.ext==='bj'){window.BJ&&BJ.open();return}if(c.dataset.ext==='he'){window.HE&&HE.open();return}openGame(c.dataset.id)}};
+ const c=e.target.closest('.gcard');if(c){sfx.click();if(c.dataset.ext==='bj'){window.BJ&&BJ.open();return}if(c.dataset.ext==='he'){window.HE&&HE.open();return}if(c.dataset.ext==='mp'){window.HE&&HE.openMP();return}openGame(c.dataset.id)}};
 function showScreen(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id===id));document.body.classList.toggle('lob',id==='lobby');scrollTo(0,0)}
 document.body.classList.add('lob');
 
@@ -863,7 +863,7 @@ function loveCard(){const L=window.LOVE||{};const notes=L.notes&&L.notes.length?
  if(L.since){const d=Math.floor((Date.now()-new Date(L.since+'T00:00:00+09:00'))/864e5)+1;$('dday').textContent=d>0?`우리 D+${d}`:''}
  if(L.her)$('vip').textContent=`VIP ${L.her}님 전용 카지노`}
 loveCard();
-(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.3'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
+(()=>{const v=document.createElement('div');v.id='ver';v.textContent='v4.4'+(location.protocol==='file:'?' · 오프라인':'');v.style.cssText='position:fixed;left:6px;bottom:4px;font:11px sans-serif;color:#fff8;z-index:5;pointer-events:none';document.body.appendChild(v);const f=()=>v.style.display=document.body.dataset.g==='lobby'?'':'none';new MutationObserver(f).observe(document.body,{attributes:true,attributeFilter:['data-g']});f()})();
 (async()=>{const L=window.LOVE||{};heartRain(46);
  await popup(`<div class="hb">💝</div><h3>${(L.welcome||'웰컴 자기야 오늘도 사랑해🥰')}</h3><div class="sig">- ${L.owner||'태율랜드 주인장'} -</div><button class="go">나도 사랑해 💕</button>`,{cls:'wel'});
  AUDIO.init();[784,988,1175,1568].forEach((f,i)=>AUDIO.tone(f,.3,i*.12,'sine',.08));heartRain(24);})();

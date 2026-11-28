@@ -76,7 +76,7 @@ const AIP=()=>{const N=K().ANI;return [
 const SEAT=[[50,78],[9,56],[19,24],[81,24],[91,56]],CEN=[50,44];
 const toward=(i,f)=>[SEAT[i][0]+(CEN[0]-SEAT[i][0])*f,SEAT[i][1]+(CEN[1]-SEAT[i][1])*f];
 
-let DL=null,ui=null,P=[],T=TABLES[0],board=[],pot=0,cur=0,minR=0,btn=0,gen=0,inHand=false,meWait=null,handNo=0,stage='';
+let MP=null,turnI=-1,DL=null,ui=null,P=[],T=TABLES[0],board=[],pot=0,cur=0,minR=0,btn=0,gen=0,inHand=false,meWait=null,handNo=0,stage='';
 const ABORT={};
 const bal=()=>api().S.bal;
 function setBal(v){api().S.bal=v;api().save();api().renderBal&&api().renderBal();$('hebal').textContent=fmt(v)}
@@ -161,6 +161,7 @@ function css(){if($('hecss'))return;const s=document.createElement('style');s.id
 .hex{margin-top:1.4cqw;background:#ff5a7a;border:0;color:#fff;font:900 clamp(12px,1.9cqw,19px) Jua,sans-serif;padding:.4em 2em;border-radius:1em}
 .hefly{position:fixed;left:0;top:0;width:3cqw;z-index:90;pointer-events:none}
 .hedeal{position:fixed;left:0;top:0;z-index:90;pointer-events:none}
+.c-mp{background:radial-gradient(circle at 50% 30%,#ff9ccb,#c0357e 55%,#4a0a2a)}.mphero{width:80%}.mphero svg{width:100%;display:block}
 .c-he{background:radial-gradient(circle at 50% 30%,#4ad09a,#0a6a4a 50%,#022a1a)}
 .hehero{display:flex;justify-content:center;align-items:center}.hehero span{width:34%;display:block;filter:drop-shadow(0 4px 6px #0008)}.hehero span:first-child{transform:rotate(-12deg) translateX(14%)}.hehero span:nth-child(2){transform:rotate(10deg) translateX(-14%)}
 `;document.head.appendChild(s)}
@@ -172,7 +173,7 @@ function build(){css();const L=window.LOVE||{};const her=L.her||'소현';const A
  <rect x="40" y="40" width="920" height="420" rx="210" fill="url(#heg)"/><rect x="70" y="70" width="860" height="360" rx="180" fill="none" stroke="#fff" stroke-opacity=".12" stroke-width="3"/>
  <text x="500" y="330" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="34" fill="#fff" opacity=".13" letter-spacing="6">TAEYUL HOLD'EM</text>
  <text x="500" y="362" text-anchor="middle" font-family="Georgia,serif" font-size="16" fill="#fff" opacity=".12" letter-spacing="4">NO LIMIT TEXAS HOLD'EM</text></svg>
- <div class="hetop"><button id="heback">‹ 나가기</button><div class="hebal"><i>G</i><b id="hebal">0</b></div><button id="hesnd">소리</button><button id="herk">족보표</button><span class="heblind" id="heblind"></span></div>
+ <div class="hetop"><button id="heback">‹ 나가기</button><div class="hebal"><i>G</i><b id="hebal">0</b></div><button id="hesnd">소리</button><button id="herk">족보표</button><button id="heheart" style="display:none;background:linear-gradient(#ff8ac0,#e0357e);font-size:clamp(14px,2.4cqw,24px);padding:.15em .7em">♥</button><span class="heblind" id="heblind"></span></div>
  <div id="hepot"><img alt="" src="${api().U(K().chipSVG(10000))}"><b id="hepv">POT 0</b></div>
  <div id="heboard">${'<div class="slot"></div>'.repeat(5)}</div>
  ${[0,1,2,3,4].map(i=>`<div class="hes ${i?'':'me'}" id="hes${i}" style="left:${SEAT[i][0]}%;top:${SEAT[i][1]}%"><div class="hehole"></div><div class="hebox"><img alt="" src="${api().U(i?AIP()[i-1].av:AV('#ffe4d0','#4a2a1a','#ff6ab0','girl'))}"><div><b>${i?AIP()[i-1].name:her}</b><span class="hestk">0</span></div></div><div class="heact"></div><div class="hesd"></div></div>
@@ -185,10 +186,11 @@ function build(){css();const L=window.LOVE||{};const her=L.her||'소현';const A
  <div id="hemsg"></div>
  <div class="hemodal" id="hemodal"><div class="in" id="hemin"></div></div>`;
  document.body.appendChild(el);ui=el;
- DL=K().dealerEl();DL.id='hety';el.insertBefore(DL,$('hepot'));
+ DL=K().dealerEl();DL.id='hety';el.insertBefore(DL,$('hepot'));{const o=DL.say;DL.say=(t,v=true)=>{o(t,v);evt({t:'dl',txt:t})}}
  $('heback').onclick=tryClose;
  $('hesnd').onclick=()=>{const Au=api().AUDIO;Au.set&&Au.set('sfx',!Au.st.sfx);$('hesnd').textContent=Au.st.sfx?'소리':'무음'};
  $('herk').onclick=()=>rankModal();
+ $('heheart').onclick=sendHeart;
  $('hef').onclick=()=>meAct({t:'fold'});
  $('hec').onclick=()=>{const p=P[0];const tc=cur-p.bet;meAct(tc>0?{t:'call'}:{t:'check'})};
  $('her').onclick=()=>{const rp=$('herp');if(rp.classList.contains('on')){rp.classList.remove('on');return}openRaise()};
@@ -204,15 +206,17 @@ function rngVal(){const f=+$('herng').value/100;if(f>=1)return rMax;let v=rMin+(
 
 /* ---------- 그리기 ---------- */
 const sEl=i=>$('hes'+i);
+function avOf(k){const AV=K().AV;if(k==='her')return AV('#ffe4d0','#4a2a1a','#ff6ab0','girl');if(k==='ty')return AV('#ffe0cc','#1a1016','#2a2238','boy');const n=+String(k).slice(2);return AIP()[n].av}
+function setSeatUI(i,name,ak){const e=sEl(i);e.querySelector('.hebox b').textContent=name;const im=e.querySelector('.hebox img');if(im.dataset.ak!==ak){im.dataset.ak=ak;im.src=api().U(avOf(ak))}}
 function cardDiv(c,down){const d=document.createElement('div');d.className='hec';d.dataset.c=c;d.innerHTML=`<img alt="" src="${api().U(down?K().BACK:cImg(c))}">`;return d}
 function paint(p){const e=sEl(p.i);e.querySelector('.hestk').textContent=p.out?'자리 비움':p.allin&&inHand?'올인!':short(p.stack);
- e.classList.toggle('fold',!!p.folded);e.classList.toggle('out',!!p.out);
+ e.classList.toggle('fold',!!p.folded);e.classList.toggle('out',!!p.out);snap();
  const b=$('heb'+p.i);b.innerHTML=p.bet?`<img alt="" src="${api().U(K().chipSVG(chipFor(p.bet)))}">${short(p.bet)}`:''}
 const chipFor=a=>{let v=100;for(const [x] of K().CHIPS)if(a>=x)v=x;return v};
-function paintPot(){$('hepv').textContent='POT '+fmt(pot)}
-function act(p,txt,cls){const a=sEl(p.i).querySelector('.heact');a.textContent=txt;a.className='heact on '+(cls||'');clearTimeout(a._t);a._t=setTimeout(()=>a.classList.remove('on'),1600)}
-function msg(t,sub=''){const m=$('hemsg');m.innerHTML=t?`<b>${t}</b>${sub?`<small>${sub}</small>`:''}`:'';m.classList.toggle('on',!!t)}
-function turn(i){P.forEach(p=>sEl(p.i).classList.toggle('turn',p.i===i))}
+function paintPot(){$('hepv').textContent='POT '+fmt(pot);snap()}
+function act(p,txt,cls){evt({t:'act',s:p.i,txt,cls:cls||''});const a=sEl(p.i).querySelector('.heact');a.textContent=txt;a.className='heact on '+(cls||'');clearTimeout(a._t);a._t=setTimeout(()=>a.classList.remove('on'),1600)}
+function msg(t,sub=''){if(MP&&MP.role==='host'){MP.msg=t?{t,s:sub}:null;snap()}const m=$('hemsg');m.innerHTML=t?`<b>${t}</b>${sub?`<small>${sub}</small>`:''}`:'';m.classList.toggle('on',!!t)}
+function turn(i){turnI=i;snap();P.forEach(p=>sEl(p.i).classList.toggle('turn',p.i===i))}
 function rectOf(el){return el.getBoundingClientRect()}
 async function flyCard(toEl,c,down,W){const from=rectOf($('hepot')),to=rectOf(toEl);const im=document.createElement('img');im.className='hedeal';im.src=api().U(K().BACK);im.style.width=to.width+'px';im.style.height=to.height+'px';document.body.appendChild(im);
  sfx('flip');await im.animate([{transform:`translate(${from.left+from.width/2-to.width/2}px,${from.top}px) rotate(-30deg) scale(.5)`},{transform:`translate(${to.left}px,${to.top}px) rotate(0) scale(1)`}],{duration:api().T(260,160),easing:'ease-out'}).finished.catch(()=>{});im.remove();await W(0)}
@@ -285,17 +289,17 @@ const VL={her:{check:['체크!'],call:['콜!'],fold:['다이~'],raise:['레이�
  ai1:{check:['체크할게~'],call:['콜!','받을게~'],fold:['다이할래~'],raise:['조금 올릴게~'],half:['하프~'],allin:['다 걸어볼게!']},
  ai2:{check:['체크.'],call:['콜.'],fold:['다이.'],raise:['레이즈.'],half:['하프.'],allin:['올인.']},
  ai3:{check:['체크~'],call:['콜이야~','받아볼게~'],fold:['다이할게~'],raise:['올려볼게~','레이즈~'],half:['하프 갈게~'],allin:['몽땅 올인!']}};
-function voice(p,k){const vx=p.i?'ai'+(p.i-1):'her';let t=pick(VL[vx][k]||['']);if(p.ai)t=K().tagL(t,p.ai.tag);if(p.i&&k!=='check'&&k!=='call')say(p,t);try{api().speak(t,vx)}catch(e){}}
+function voice(p,k){const vl=p.ai?'ai'+(p.i-1):'her';const vo=p.ai?vl:(p.vo||'her');let t=pick(VL[vl][k]||['']);if(p.ai)t=K().tagL(t,p.ai.tag);const sb=p.i&&k!=='check'&&k!=='call';if(sb)say(p,t);evt({t:'vo',s:p.i,txt:t,vo,sb});try{api().speak(t,vo)}catch(e){}}
 function chipS(a){sfx2('chip',Math.max(1,Math.min(6,Math.round(Math.log2(1+a/T.bb)))))}
 const sfx2=(k,...x)=>{try{api().sfx(k,...x)}catch(e){}};
 
 async function betRound(first,W){let i=first,g=0;
  while(g++<300){const lv=live();if(lv.length<=1)return;const able=lv.filter(p=>!p.allin);if(!able.length)return;
   if(able.every(p=>p.acted&&p.bet===cur))return;if(able.length===1&&able[0].bet>=cur&&lv.length>1&&(able[0].acted||lv.every(q=>q.allin||q===able[0])))return;
-  const p=P[i];if(p.inh&&!p.folded&&!p.allin&&!(p.acted&&p.bet===cur)){turn(p.i);const a=p.i===0?await decideMe():await decideAI(p,W);await W(0);apply(p,a);turn(-1);await W(api().T(280,120))}
+  const p=P[i];if(p.inh&&!p.folded&&!p.allin&&!(p.acted&&p.bet===cur)){turn(p.i);const a=p.i===0?await decideMe():p.remote?await decideRemote(p,W):await decideAI(p,W);await W(0);apply(p,a);turn(-1);await W(api().T(280,120))}
   i=(i+1)%5}}
 
-async function collect(W){const any=P.some(p=>p.bet);if(any){sfx2('chipSlide');P.forEach(p=>{if(p.bet)chipFly($('heb'+p.i),$('hepot'),2)});await W(api().T(450,250))}P.forEach(p=>{p.bet=0;p.acted=false;paint(p)});cur=0;minR=T.bb}
+async function collect(W){const any=P.some(p=>p.bet);if(any){evt({t:'col',bs:P.filter(p=>p.bet).map(p=>p.i)});sfx2('chipSlide');P.forEach(p=>{if(p.bet)chipFly($('heb'+p.i),$('hepot'),2)});await W(api().T(450,250))}P.forEach(p=>{p.bet=0;p.acted=false;paint(p)});cur=0;minR=T.bb}
 
 async function dealBoard(n,W){const slots=$('heboard').children;for(let k=0;k<n;k++){const c=deck.pop();board.push(c);const sl=slots[board.length-1];await flyCard(sl,c,true,W);const d=cardDiv(c,true);sl.appendChild(d);await flipIn(d,c);await W(api().T(90,40))}myInfo()}
 
@@ -303,7 +307,8 @@ let deck=[];
 async function hand(){const g=gen;const W=async ms=>{if(ms)await sleep(ms);if(g!==gen)throw ABORT};
  inHand=true;handNo++;board=[];pot=0;cur=0;minR=T.bb;
  deck=[];for(let c=0;c<52;c++)deck.push(c);for(let i=51;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}
- [...$('heboard').children].forEach(s=>s.innerHTML='');P.forEach(p=>{p.hole=[];p.folded=false;p.allin=false;p.bet=0;p.total=0;p.acted=false;p.inh=p.stack>0&&!p.out;const e=sEl(p.i);e.classList.remove('win','fold','turn');e.querySelector('.hehole').innerHTML='';e.querySelector('.hesd').className='hesd';paint(p)});
+ if(MP&&MP.role==='host'){const g=P[MP.G];if(MP.rebuy>0){g.stack+=MP.rebuy;MP.rebuy=0;g.out=false}if(MP.gone){g.out=true;g.stack=0}}
+ [...$('heboard').children].forEach(s=>s.innerHTML='');P.forEach(p=>{p.hole=[];p.shown=false;p.sdT='';p.win=false;p.folded=false;p.allin=false;p.bet=0;p.total=0;p.acted=false;p.inh=p.stack>0&&!p.out;const e=sEl(p.i);e.classList.remove('win','fold','turn');e.querySelector('.hehole').innerHTML='';e.querySelector('.hesd').className='hesd';paint(p)});
  paintPot();msg('');
  btn=nextIdx(btn,p=>p.inh);placeDB();
  const sb=nextIdx(btn,p=>p.inh),bb=nextIdx(sb,p=>p.inh);
@@ -319,19 +324,19 @@ async function hand(){const g=gen;const W=async ms=>{if(ms)await sleep(ms);if(g!
  await collect(W);
  const lv=live();
  if(lv.length===1){const w=lv[0];await award([{amt:pot,el:[w]}],W,false)}
- else{if(board.length<5){for(const p of lv)if(p.i)await reveal(p);await W(400);await dealBoard(5-board.length,W);await W(400)}
-  DL.say('쇼다운! 카드 오픈할게요~');for(const p of lv)if(p.i)await reveal(p);
-  lv.forEach(p=>{const e=ev7([...p.hole,...board]);p.ev=e;const sd=sEl(p.i).querySelector('.hesd');sd.textContent=e.cat===9?'로열 플러시':hname(e);sd.classList.add('on')});
+ else{if(board.length<5){lv.forEach(p=>{if(!p.i)p.shown=true});for(const p of lv)if(p.i)await reveal(p);await W(400);await dealBoard(5-board.length,W);await W(400)}
+  DL.say('쇼다운! 카드 오픈할게요~');lv.forEach(p=>{if(!p.i)p.shown=true});for(const p of lv)if(p.i)await reveal(p);
+  lv.forEach(p=>{const e=ev7([...p.hole,...board]);p.ev=e;const sd=sEl(p.i).querySelector('.hesd');sd.textContent=p.sdT=e.cat===9?'로열 플러시':hname(e);sd.classList.add('on')});snap();
   await W(api().T(700,300));
   await award(pots(),W,true)}
  inHand=false;P.forEach(paint);saveStk();
- P.forEach(p=>{if(p.i&&p.stack<=0){p.stack=Math.round(T.buy*(.6+Math.random()*.9)/T.bb)*T.bb;setTimeout(()=>{act(p,'리바이!','c');paint(p)},1200)}});
+ P.forEach(p=>{if(p.i&&p.ai&&p.stack<=0){p.stack=Math.round(T.buy*(.6+Math.random()*.9)/T.bb)*T.bb;setTimeout(()=>{act(p,'리바이!','c');paint(p)},1200)}});
  await W(api().T(2600,1400))}
 
 function pots(){const ins=P.filter(p=>p.inh&&p.total>0);const lv=[...new Set(ins.map(p=>p.total))].sort((a,b)=>a-b);let prev=0;const out=[];
  for(const L of lv){let amt=0;for(const p of ins)amt+=Math.min(p.total,L)-Math.min(p.total,prev);const el=live().filter(p=>p.total>=L);if(!el.length&&out.length)out[out.length-1].amt+=amt;else out.push({amt,el:el.length?el:live()});prev=L}
  return out}
-async function reveal(p){const h=sEl(p.i).querySelector('.hehole');const ds=h.querySelectorAll('.hec');for(let k=0;k<ds.length;k++){if(ds[k].dataset.up)continue;ds[k].dataset.up=1;await flipIn(ds[k],p.hole[k])}}
+async function reveal(p){p.shown=true;snap();const h=sEl(p.i).querySelector('.hehole');const ds=h.querySelectorAll('.hec');for(let k=0;k<ds.length;k++){if(ds[k].dataset.up)continue;ds[k].dataset.up=1;await flipIn(ds[k],p.hole[k])}}
 
 async function award(list,W,sd){let meWon=0,best=null;const gain=new Map(),winS=new Set();let mainWs=null;
  for(let k=0;k<list.length;k++){const pt=list[k];if(!pt.amt)continue;let ws=pt.el;
@@ -341,13 +346,14 @@ async function award(list,W,sd){let meWon=0,best=null;const gain=new Map(),winS=
   ws.forEach(w=>{gain.set(w,(gain.get(w)||0)+share+(rem>0?rem:0));rem=0;if(!ret)winS.add(w)});if(!mainWs&&!ret)mainWs=ws}
  const wl=[...winS];if(!wl.length)gain.forEach((v,w)=>wl.push(w));
  gain.forEach((v,w)=>{w.stack+=v;if(w.i===0)meWon+=v;chipFly($('hepot'),sEl(w.i).querySelector('.hebox'),winS.has(w)?8:3);paint(w)});
- wl.forEach(w=>{sEl(w.i).classList.add('win');best=w});
+ wl.forEach(w=>{sEl(w.i).classList.add('win');w.win=true;best=w});evt({t:'win',ws:[...gain.keys()].map(w=>w.i)});snap();
  const ws=mainWs||wl;
  if(sd&&ws[0]&&ws[0].ev){const all=[...ws[0].hole,...board];const u=new Set(used(all,ws[0].ev));document.querySelectorAll('#heboard .hec').forEach(el=>{el.classList.toggle('use',u.has(+el.dataset.c));el.classList.toggle('dim',!u.has(+el.dataset.c))});
   ws.forEach(w=>sEl(w.i).querySelectorAll('.hehole .hec').forEach(el=>el.classList.toggle('use',new Set(used([...w.hole,...board],w.ev)).has(+el.dataset.c))))}
  const nm=wl.map(w=>sEl(w.i).querySelector('b').textContent).join(', ');const hn=sd&&ws[0]&&ws[0].ev?(ws[0].ev.cat===9?'로열 플러시':hname(ws[0].ev)):'';
  const tot=wl.reduce((a,w)=>a+(gain.get(w)||0),0);
- DL.say(wl.some(w=>!w.i)?pick([`${(window.LOVE||{}).her||'소현'}이 승리! 축하해~`,'와~ 소현이가 가져갑니다!','역시 우리 소현이!']):`${nm} 님 승리입니다`,true);
+ {const hu=wl.find(w=>!w.ai);const hn2=hu?(hu.i===0?myName():hu.nm):'';DL.say(hu?pick([`${hn2} 승리! 축하해~`,`와~ ${hn2}이가 가져갑니다!`,`역시 우리 ${hn2}이!`]):`${nm} 님 승리입니다`,true)}
+ if(MP&&MP.role==='host'){const g=P[MP.G];if(gain.get(g)&&g.ev&&g.ev.cat>=6)evt({t:'big',cat:g.ev.cat,amt:gain.get(g)})}
  msg(`${nm} 승리!`,'+'+fmt(tot)+(hn?' · '+hn:''));pot=0;paintPot();
  sfx(wl.some(w=>!w.i)?'chaching':'coin');try{api().sfx('chipStack')}catch(x){}await W(api().T(1900,1000));
  pot=0;paintPot();
@@ -363,15 +369,17 @@ async function loop(){const g=gen;try{while(g===gen){
   await hand()}}catch(e){if(e!==ABORT)console.error(e)}}
 
 async function seat(t,restore=0){T=t;if(restore)P[0].stack=restore;else{const amt=Math.min(t.buy,bal());setBal(bal()-amt);P[0].stack=amt}$('heblind').textContent=`${t.name} · 블라인드 ${short(t.sb)}/${short(t.bb)}`;
- const ai=AIP();for(let i=1;i<5;i++){const p=P[i];p.stack=Math.round(t.buy*(.7+Math.random()*1.3)/t.bb)*t.bb;p.ai=ai[i-1];Object.assign(p,{tight:ai[i-1].tight,aggr:ai[i-1].aggr,bluff:ai[i-1].bluff})}
+ const ai=AIP();for(let i=1;i<5;i++){const p=P[i];p.stack=Math.round(t.buy*(.7+Math.random()*1.3)/t.bb)*t.bb;p.ai=ai[i-1];p.remote=false;p.out=false;p.nm=ai[i-1].name;p.ak='ai'+(i-1);setSeatUI(i,p.nm,p.ak);Object.assign(p,{tight:ai[i-1].tight,aggr:ai[i-1].aggr,bluff:ai[i-1].bluff})}
+ P[0].nm=myName();P[0].ak=myAv();P[0].vo=myVo();setSeatUI(0,P[0].nm,P[0].ak);
+ if(MP&&MP.role==='host'){const g=P[MP.G];g.ai=null;g.remote=true;g.nm=MP.other.name;g.ak=MP.other.av;g.vo=MP.other.vo;g.stack=MP.other.buy;setSeatUI(MP.G,g.nm,g.ak)}
  P.forEach(paint);saveStk()}
 
-function tryClose(){const p=P[0];if(inHand&&p.inh&&!p.folded){
+function tryClose(){const p=P[0];if(MP&&MP.role==='guest'&&!(inHand&&p.inh&&!p.folded)){close();return}if(inHand&&p.inh&&!p.folded){
   if(meWait){if(!tryClose.ok){tryClose.ok=1;api().toast('한 번 더 누르면 폴드하고 나가요');setTimeout(()=>tryClose.ok=0,2000);return}tryClose.ok=0;meAct({t:'fold'})}
   else{api().toast('내 차례에 나갈 수 있어요 (폴드 후 퇴장)');return}}
  close()}
 
-async function open(){A=window.TL_API;if(!A)return;if(!ui)build();ui.classList.add('on');document.body.classList.add('heon');try{A.AUDIO.play('bj')}catch(e){}
+async function open(){A=window.TL_API;if(!A)return;if(!ui)build();MP=null;mpUI();refundMP();ui.classList.add('on');document.body.classList.add('heon');try{A.AUDIO.play('bj')}catch(e){}
  try{window.TLApp&&TLApp.orient('landscape')}catch(e){}
  $('hebal').textContent=fmt(bal());$('hesnd').textContent=A.AUDIO.st.sfx?'소리':'무음';gen++;
  if(!P.length)P=[0,1,2,3,4].map(i=>({i,stack:0,hole:[],ai:null,tight:.5,aggr:.5,bluff:.2}));
@@ -380,11 +388,139 @@ async function open(){A=window.TL_API;if(!A)return;if(!ui)build();ui.classList.a
  msg('텍사스 홀덤','내 패와 족보가 왼쪽 아래에 실시간으로 떠요!');setTimeout(()=>msg(''),2200);setTimeout(()=>DL.say(`어서 와 ${(window.LOVE||{}).her||'소현'}아~ 오늘 딜러는 나야!`),500);
  [...$('heboard').children].forEach(s=>s.innerHTML='');myInfo();
  loop()}
-function close(){if(!ui)return;gen++;if(meWait){const f=meWait;meWait=null;f({t:'fold'})}inHand=false;
+function close(){if(!ui)return;gen++;mpEnd();if(meWait){const f=meWait;meWait=null;f({t:'fold'})}inHand=false;
  if(P[0]&&P[0].stack>0){setBal(bal()+P[0].stack);P[0].stack=0}api().S.heStack=0;api().save();
  $('hectl').classList.add('off');$('herp').classList.remove('on');$('hemodal').classList.remove('on');ui.classList.remove('on');document.body.classList.remove('heon');
  try{A.AUDIO.play('lobby')}catch(e){}A.renderBal&&A.renderBal()}
 
+/* ================= 같이하기 (2인 온라인) ================= */
+const MPART=`<svg viewBox="0 0 160 110"><defs><linearGradient id="mpH1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb0d4"/><stop offset="1" stop-color="#ff4f99"/></linearGradient><linearGradient id="mpH2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8d0ff"/><stop offset="1" stop-color="#5a7aff"/></linearGradient></defs>
+<rect x="18" y="26" width="46" height="68" rx="6" fill="#fff" stroke="#ccc" stroke-width="2" transform="rotate(-14 41 60)"/><rect x="96" y="26" width="46" height="68" rx="6" fill="#fff" stroke="#ccc" stroke-width="2" transform="rotate(14 119 60)"/>
+<path d="M41 52c0-8-12-8-12 0 0 7 12 13 12 17 0-4 12-10 12-17 0-8-12-8-12 0z" fill="url(#mpH2)" transform="rotate(-14 41 60)"/><path d="M119 52c0-8-12-8-12 0 0 7 12 13 12 17 0-4 12-10 12-17 0-8-12-8-12 0z" fill="url(#mpH1)" transform="rotate(14 119 60)"/>
+<path d="M80 30c0-14-22-14-22 0 0 13 22 23 22 31 0-8 22-18 22-31 0-14-22-14-22 0z" fill="url(#mpH1)" stroke="#fff" stroke-width="3"/><path d="M66 26q4-6 10-4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/>
+<path d="M80 8l2 5 5 2-5 2-2 5-2-5-5-2 5-2z M140 12l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z" fill="#fff"/></svg>`;
+
+const NM=()=>window.NET;
+const myName=()=>MP?MP.me.name:((window.LOVE||{}).her||'소현');
+const myAv=()=>MP?MP.me.av:'her';
+const myVo=()=>MP?MP.me.vo:'her';
+const who=n=>n==='태율'?{name:'태율',av:'ty',vo:'dealer'}:{name:n||'소현',av:'her',vo:'her'};
+const RP=()=>'rooms/'+MP.code;
+function evt(o){if(!MP||MP.role!=='host')return;const n=++MP.evN;NM().req('PUT',RP()+'/ev/'+n,o).catch(()=>{})}
+function snap(){if(!MP||MP.role!=='host'||!MP.live)return;clearTimeout(snap.t);snap.t=setTimeout(()=>{
+ const st={hid:handNo,pot,cur,minR,btn,turn:turnI,board:board.slice(),inHand,T:T.id,blind:$('heblind').textContent,msg:MP.msg||null,need:MP.need||null,
+  ps:P.map(p=>({n:p.i===0?myName():p.nm,a:p.i===0?myAv():p.ak,s:p.stack,b:p.bet||0,f:!!p.folded,al:!!p.allin,o:!!p.out,h:!!p.inh,sd:p.sdT||'',w:!!p.win,
+   c:(!p.hole||!p.hole.length||(p.folded&&p.i!==MP.G))?[]:(p.i===MP.G||p.shown)?p.hole.slice():p.hole.map(()=>-1)}))};
+ NM().req('PUT',RP()+'/st',st).catch(()=>{})},70)}
+async function decideRemote(p,W){const n=++MP.needN;MP.need={s:p.i,n};snap();const t0=Date.now();
+ while(true){await W(150);const ga=MP.m&&MP.m.ga;if(ga&&ga.n===n){MP.need=null;snap();return ga.a}
+  if(MP.gone||Date.now()-t0>60000){MP.need=null;snap();return cur-p.bet>0?{t:'fold'}:{t:'check'}}}}
+function mpUI(){const on=!!MP;$('heheart').style.display=on?'':'none';$('herk').style.display=on&&innerWidth<700?'none':''}
+function refundMP(){const S=api().S;if(S.mpStack>0){setBal(bal()+S.mpStack);S.mpStack=0;api().save()}}
+function refund(){const S=api().S;if(S.heStack>0){setBal(bal()+S.heStack);S.heStack=0;api().save()}if(S.mpStack>0){setBal(bal()+S.mpStack);S.mpStack=0;api().save()}}
+function mpEnd(){if(!MP)return;const m=MP;MP=null;NM().stop();
+ if(m.role==='host')NM().req('DELETE','rooms/'+m.code).catch(()=>{});
+ else{NM().req('PUT','rooms/'+m.code+'/guest/left',true).catch(()=>{});const S=api().S;const s=m.myStack||0;if(s>0){setBal(bal()+s)}S.mpStack=0;api().save();P[0].stack=0}
+ mpUI()}
+function sendHeart(){if(!MP)return;NM().req('PUT',RP()+'/heart',{n:Date.now(),from:MP.me.name}).catch(()=>{});try{api().heartRain(8)}catch(e){}api().toast('♥ 보냈어요!',900)}
+let lastHeart=0;
+function onHeart(hh){if(!hh||hh.n===lastHeart)return;const first=!lastHeart;lastHeart=hh.n;if(first&&Date.now()-hh.n>8000)return;if(hh.from===MP.me.name)return;
+ try{api().heartRain(24)}catch(e){}msgFlash(`♥ ${hh.from}이가 사랑한대요 ♥`);try{api().speak(`${hh.from}이가 사랑한대요~`,'ann')}catch(e){}}
+function msgFlash(t){const m=$('hemsg');const was=m.innerHTML,on=m.classList.contains('on');msg(t,'');setTimeout(()=>{if($('hemsg').textContent.startsWith('♥'))msg('')},2200)}
+function modal(html){$('hemin').innerHTML=html;$('hemodal').classList.add('on')}
+const unmodal=()=>$('hemodal').classList.remove('on');
+
+async function openMP(){A=window.TL_API;if(!A)return;if(!ui)build();ui.classList.add('on');document.body.classList.add('heon');try{A.AUDIO.play('bj')}catch(e){}
+ try{window.TLApp&&TLApp.orient('landscape')}catch(e){}refund();gen++;MP=null;mpUI();
+ $('hebal').textContent=fmt(bal());if(!P.length)P=[0,1,2,3,4].map(i=>({i,stack:0,hole:[],ai:null,tight:.5,aggr:.5,bluff:.2}));
+ [...$('heboard').children].forEach(s=>s.innerHTML='');P.forEach(p=>{p.hole=[];p.inh=false;p.folded=false;sEl(p.i).querySelector('.hehole').innerHTML=''});myInfo();
+ if(!NM()||!NM().ok()){modal(`<h3>같이하기 준비 중</h3><p style="font-size:clamp(12px,1.8cqw,18px)">서버(Firebase) 주소가 아직 설정되지 않았어요.</p><button class="hex" id="hex">닫기</button>`);$('hex').onclick=()=>{unmodal();close()};return}
+ const S=A.S;const nm=S.mpName||'';
+ modal(`<h3>♥ 같이하기 · 2인 홀덤</h3><p style="font-size:clamp(11px,1.7cqw,17px);margin:0 0 1cqw">나는 누구?</p><div class="hetb" id="mpwho"><button data-n="소현" style="background:linear-gradient(#ff8ac0,#c0357e)${nm==='소현'?';outline:3px solid #fff':''}">소현</button><button data-n="태율" style="background:linear-gradient(#5a8aff,#2a3aa0)${nm==='태율'?';outline:3px solid #fff':''}">태율</button></div>
+ <div class="hetb" style="margin-top:1.6cqw"><button id="mpmk" style="background:linear-gradient(#3ad06a,#1a8a3a)">방 만들기<small>코드를 상대에게 알려줘요</small></button><button id="mpjn" style="background:linear-gradient(#ffb03a,#c06a00)">방 들어가기<small>받은 코드 입력</small></button></div><button class="hex" id="hex">나가기</button>`);
+ let me=nm;$('mpwho').onclick=e=>{const b=e.target.closest('button');if(!b)return;me=b.dataset.n;[...$('mpwho').children].forEach(x=>x.style.outline=x===b?'3px solid #fff':'none')};
+ $('hex').onclick=()=>{unmodal();close()};
+ $('mpmk').onclick=()=>{if(!me){api().toast('먼저 누구인지 골라주세요');return}S.mpName=me;api().save();unmodal();hostFlow(me)};
+ $('mpjn').onclick=()=>{if(!me){api().toast('먼저 누구인지 골라주세요');return}S.mpName=me;api().save();joinFlow(me)}}
+
+async function hostFlow(me){const t=await buyModal(false);if(!t){close();return}
+ const code=String(1000+Math.floor(Math.random()*9000));MP={role:'host',code,G:3,me:who(me),other:null,evN:0,needN:0,live:false,m:{},rebuy:0,gone:false};mpUI();
+ try{await NM().req('PUT',RP(),{host:{name:me,t:t.id,at:Date.now()}})}catch(e){modal(`<h3>연결 실패</h3><p>인터넷 연결을 확인해 주세요.</p><button class="hex" id="hex">닫기</button>`);$('hex').onclick=()=>{unmodal();close()};return}
+ modal(`<h3>방 코드</h3><div style="font:900 clamp(36px,8cqw,80px) Arial;letter-spacing:.2em;color:#ffe04a;text-shadow:0 4px 0 #7a3a00">${code}</div><p style="font-size:clamp(11px,1.7cqw,17px)">상대 폰에서 <b>같이하기 → 방 들어가기</b>로 이 코드를 넣으면 시작해요</p><button class="hex" id="hex">취소</button>`);
+ $('hex').onclick=()=>{unmodal();close()};
+ let gr0=null;
+ NM().listen(RP(),(path,m,gone)=>{if(!MP)return;MP.m=m;if(gone&&path==='/'){return}
+  if(m.heart)onHeart(m.heart);
+  if(m.gr&&m.gr.n!==gr0){if(gr0!==null||true){if(gr0!==m.gr.n&&MP.live)MP.rebuy+=m.gr.amt||0}gr0=m.gr.n}
+  if(m.guest&&m.guest.left&&MP.live&&!MP.gone){MP.gone=true;msgFlash(`${MP.other.name}이가 나갔어요`);const g=P[MP.G];if(!inHand){g.out=true;g.stack=0;paint(g)}}
+  if(m.guest&&!m.guest.left&&!MP.live){MP.other=Object.assign(who(m.guest.name),{buy:m.guest.buy||0});MP.live=true;gr0=m.gr?m.gr.n:null;unmodal();startHost(t)}});
+}
+async function startHost(t){await seat(t);setSeatUI(0,myName(),myAv());msg('같이하기 시작!',`${MP.other.name} 입장 · 방 ${MP.code}`);setTimeout(()=>msg(''),2000);
+ setTimeout(()=>DL.say(`${MP.me.name}, ${MP.other.name} 어서 와~ 둘이 한판 붙어볼까?`),400);snap();
+ [...$('heboard').children].forEach(s=>s.innerHTML='');myInfo();loop()}
+
+/* ---------- 게스트 ---------- */
+const GV=s=>(s-MP.G+5)%5;   // 호스트 좌석 → 내 화면 좌석
+async function joinFlow(me){modal(`<h3>방 코드 입력</h3><input id="mpcode" inputmode="numeric" maxlength="4" style="font:900 clamp(28px,6cqw,60px) Arial;width:6em;text-align:center;border-radius:1.4cqw;border:3px solid #ffd76a;background:#0008;color:#ffe04a;letter-spacing:.2em"><div class="hetb" style="margin-top:1.4cqw"><button id="mpgo" style="background:linear-gradient(#3ad06a,#1a8a3a)">입장</button></div><button class="hex" id="hex">취소</button>`);
+ setTimeout(()=>$('mpcode').focus(),100);$('hex').onclick=()=>{unmodal();close()};
+ $('mpgo').onclick=async()=>{const code=$('mpcode').value.trim();if(!/^\d{4}$/.test(code)){api().toast('숫자 4자리를 넣어주세요');return}
+  let room=null;try{room=await NM().req('GET','rooms/'+code)}catch(e){api().toast('인터넷 연결을 확인해 주세요');return}
+  if(!room||!room.host){api().toast('그 코드의 방이 없어요');return}if(room.guest&&!room.guest.left){api().toast('이미 다른 사람이 들어가 있어요');return}
+  if(room.host.name===me){api().toast(`방장도 ${me}예요! 다른 사람을 골라주세요`);return}
+  const t=TABLES.find(x=>x.id===room.host.t)||TABLES[0];if(bal()<t.bb*20){api().toast('코인이 부족해요');return}
+  const buy=Math.min(t.buy,bal());setBal(bal()-buy);T=t;
+  MP={role:'guest',code,G:3,me:who(me),other:who(room.host.name),hid:-1,evN:0,ans:0,myStack:buy,boardN:0};api().S.mpStack=buy;api().save();mpUI();
+  await NM().req('PUT',RP()+'/guest',{name:me,buy,at:Date.now()});
+  unmodal();$('heblind').textContent=`${t.name} · 블라인드 ${short(t.sb)}/${short(t.bb)}`;msg('입장 완료!',`${MP.other.name}이가 시작하길 기다리는 중…`);
+  NM().listen(RP(),guestOn)}}
+let gBusy=Promise.resolve();
+function guestOn(path,m,gone){if(!MP||MP.role!=='guest')return;
+ if(gone||(path==='/'&&!m.host)){msg('방이 닫혔어요','');setTimeout(()=>close(),1600);return}
+ if(path==='#err')return;
+ if(m.heart)onHeart(m.heart);
+ const ev=m.ev||{};const mx=Math.max(0,...Object.keys(ev).map(Number).filter(n=>n>0));
+ for(let g=0;g<500;g++){if(ev[MP.evN+1]){MP.gapT=0;const e=ev[++MP.evN];try{gEv(e)}catch(x){console.error(x)}continue}
+  if(mx>MP.evN){if(!MP.gapT)MP.gapT=Date.now();if(Date.now()-MP.gapT>1500){MP.evN++;MP.gapT=0;continue}}break}
+ if(m.st&&(path==='/'||path.startsWith('/st')))gRender(m.st)}
+function gEv(e){const v=GV(e.s||0);const p=P[v];
+ if(e.t==='act'){if(!p)return;const a=sEl(v).querySelector('.heact');a.textContent=e.txt;a.className='heact on '+(e.cls||'');clearTimeout(a._t);a._t=setTimeout(()=>a.classList.remove('on'),1600);
+  if(/콜|올인|레이즈|베팅|SB|BB/.test(e.txt))sfx2('chip',2);else if(e.txt==='체크')sfx('tick');else if(e.txt==='다이')sfx('fail')}
+ else if(e.t==='vo'){if(e.sb){const a=sEl(v).querySelector('.heact');a.textContent=e.txt;a.className='heact on';clearTimeout(a._t);a._t=setTimeout(()=>a.classList.remove('on'),1600)}try{api().speak(e.txt,e.vo)}catch(x){}}
+ else if(e.t==='dl'){DL.say(e.txt)}
+ else if(e.t==='col'){sfx2('chipSlide');(e.bs||[]).forEach(s=>chipFly($('heb'+GV(s)),$('hepot'),2))}
+ else if(e.t==='win'){const mine=(e.ws||[]).includes(MP.G);(e.ws||[]).forEach(s=>chipFly($('hepot'),sEl(GV(s)).querySelector('.hebox'),6));sfx(mine?'chaching':'coin');sfx2('chipStack');if(mine)sfx('jjr')}
+ else if(e.t==='big'){api().announce(e.cat===9?'ROYAL FLUSH':e.cat===8?'STRAIGHT FLUSH':e.cat===7?'FOUR OF A KIND':'FULL HOUSE','+'+fmt(e.amt),'gold');try{api().heartRain()}catch(x){}}}
+const arr=x=>Array.isArray(x)?x:x&&typeof x==='object'?Object.keys(x).sort((a,b)=>a-b).map(k=>x[k]):[];
+function gRender(st){
+ T=TABLES.find(t=>t.id===st.T)||T;pot=st.pot||0;cur=st.cur||0;minR=st.minR||T.bb;inHand=!!st.inHand;$('heblind').textContent=st.blind||'';
+ const newHand=st.hid!==MP.hid;if(newHand){MP.hid=st.hid;MP.boardN=0;board=[];[...$('heboard').children].forEach(s=>s.innerHTML='');P.forEach(p=>{p.rc=[];sEl(p.i).querySelector('.hehole').innerHTML='';sEl(p.i).classList.remove('win');sEl(p.i).querySelector('.hesd').className='hesd'})}
+ const ps=arr(st.ps);
+ ps.forEach((q,s)=>{if(!q)return;const v=GV(s),p=P[v];p.nm=q.n;p.stack=q.s||0;p.bet=q.b||0;p.folded=!!q.f;p.allin=!!q.al;p.out=!!q.o;p.inh=!!q.h;
+  setSeatUI(v,q.n,q.a||'her');paint(p);
+  const want=arr(q.c);const h=sEl(v).querySelector('.hehole');p.rc=p.rc||[];
+  if(!want.length&&p.rc.length){p.rc=[];h.innerHTML=''}
+  for(let k=0;k<want.length;k++){const c=want[k];if(p.rc[k]===undefined){p.rc[k]=c;const d=cardDiv(c,c<0);h.appendChild(d);d.animate([{opacity:0,transform:'translateY(-3cqw) scale(.6)'},{opacity:1,transform:'none'}],{duration:260});sfx('flip')}
+   else if(p.rc[k]<0&&c>=0){p.rc[k]=c;const d=h.children[k];if(d){d.dataset.c=c;flipIn(d,c)}}}
+  p.hole=want.filter(c=>c>=0);
+  const sd=sEl(v).querySelector('.hesd');if(q.sd){sd.textContent=q.sd;sd.classList.add('on')}else sd.classList.remove('on');
+  sEl(v).classList.toggle('win',!!q.w)});
+ const bd=arr(st.board);const slots=$('heboard').children;
+ for(let k=MP.boardN;k<bd.length;k++){const c=bd[k];board.push(c);const d=cardDiv(c,true);slots[k].appendChild(d);setTimeout(()=>flipIn(d,c),120+(k-MP.boardN)*160)}
+ MP.boardN=bd.length;
+ paintPot();btn=GV(st.btn||0);placeDB();turnI=-1;P.forEach(p=>sEl(p.i).classList.toggle('turn',st.turn>=0&&p.i===GV(st.turn)));
+ if(st.msg){if($('hemsg').querySelector('b')?.textContent!==st.msg.t)msg(st.msg.t,st.msg.s)}else if(!$('hemsg').textContent.startsWith('♥'))msg('');
+ const me=ps[MP.G];if(me){MP.myStack=me.s||0;api().S.mpStack=MP.myStack;api().save()}
+ setTimeout(myInfo,300);
+ const nd=st.need;
+ if(nd&&nd.s===MP.G&&nd.n!==MP.ans&&!meWait){MP.ans=nd.n;decideMe().then(a=>{if(MP)NM().req('PUT',RP()+'/ga',{n:nd.n,a}).catch(()=>{})})}
+ else if((!nd||nd.s!==MP.G)&&meWait){meWait=null;$('hectl').classList.add('off');$('herp').classList.remove('on')}
+ if(me&&!st.inHand&&(me.s||0)<=0&&!MP.rb){MP.rb=1;gRebuy()}}
+function gRebuy(){const t=T;const amt=Math.min(t.buy,bal());
+ modal(`<h3>칩이 다 떨어졌어요!</h3><div class="hetb"><button id="mprb" style="background:linear-gradient(#3ad06a,#1a8a3a)" ${amt<t.bb*20?'disabled':''}>다시 바이인<small>${short(amt)}</small></button></div><button class="hex" id="hex">나가기</button>`);
+ $('hex').onclick=()=>{unmodal();close()};
+ $('mprb').onclick=()=>{if(!MP)return;setBal(bal()-amt);MP.myStack+=amt;api().S.mpStack=MP.myStack;api().save();NM().req('PUT',RP()+'/gr',{n:Date.now(),amt}).catch(()=>{});unmodal();MP.rb=0;msg('바이인 완료','다음 판부터 참여해요');setTimeout(()=>msg(''),1600)}}
+
 css();
-window.HE={open,close,ev7,hname,equity,get card(){const k=K();return `<button class="gcard c-he" data-ext="he"><span class="rays"></span><span class="bdg">NEW</span><span class="hero hehero"><span>${k.cardSVG('A','s')}</span><span>${k.cardSVG('A','h')}</span></span><b class="en" style="font-family:Bungee,sans-serif">HOLD'EM</b><span class="kn">텍사스 홀덤</span><small>AI 4명 · 실시간 족보·승률 표시</small></button>`}};
+window.HE={open,openMP,close,ev7,hname,equity,get card(){const k=K();return `<button class="gcard c-he" data-ext="he"><span class="rays"></span><span class="bdg">NEW</span><span class="hero hehero"><span>${k.cardSVG('A','s')}</span><span>${k.cardSVG('A','h')}</span></span><b class="en" style="font-family:Bungee,sans-serif">HOLD'EM</b><span class="kn">텍사스 홀덤</span><small>AI 4명 · 실시간 족보·승률 표시</small></button>`},
+ get mpcard(){const k=K();return `<button class="gcard c-mp" data-ext="mp"><span class="rays"></span><span class="bdg">2인</span><span class="hero hehero mphero">${MPART}</span><b class="en" style="font-family:Bungee,sans-serif">TOGETHER</b><span class="kn">같이하기</span><small>각자 폰으로 둘이 홀덤 한판 ♥</small></button>`}};
 })();
